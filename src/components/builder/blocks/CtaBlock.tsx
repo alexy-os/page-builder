@@ -1,0 +1,77 @@
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Sparkles } from "lucide-react";
+
+interface CtaBlockProps {
+  content: {
+    title: string;
+    subtitle: string;
+    buttonText: string;
+    secondaryButtonText?: string;
+  };
+  isPreview?: boolean;
+}
+
+export default function CtaBlock({ content }: CtaBlockProps) {
+  
+  return (
+    <section className="py-20 px-6 bg-gradient-to-r from-primary via-primary/90 to-primary/80 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse" />
+        <div className="absolute top-40 right-20 w-32 h-32 bg-white/5 rounded-full animate-pulse delay-1000" />
+        <div className="absolute bottom-20 left-1/3 w-16 h-16 bg-white/10 rounded-full animate-pulse delay-500" />
+      </div>
+      
+      <div className="max-w-4xl mx-auto text-center relative z-10">
+        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+          <Sparkles className="h-4 w-4 text-yellow-300" />
+          <span className="text-white/90 text-sm font-medium">Limited Time Offer</span>
+        </div>
+        
+        <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+          {content.title}
+        </h2>
+        <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">
+          {content.subtitle}
+        </p>
+        
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button 
+            size="lg"
+            className="text-lg px-8 py-6 h-auto bg-white text-primary hover:bg-white/90 hover:text-primary rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+          >
+            {content.buttonText}
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+          
+          {content.secondaryButtonText && (
+            <Button 
+              variant="outline" 
+              size="lg"
+              className="text-lg px-8 py-6 h-auto bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white rounded-lg backdrop-blur-sm"
+          >
+              {content.secondaryButtonText}
+            </Button>
+          )}
+        </div>
+        
+        <div className="mt-8 text-white/70 text-sm">
+          No credit card required • Cancel anytime • 30-day money back guarantee
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export const ctaTemplate = {
+  id: "cta",
+  name: "Call to Action",
+  description: "Drive conversions with compelling CTAs",
+  component: CtaBlock,
+  defaultContent: {
+    title: "Ready to Get Started?",
+    subtitle: "Join thousands of satisfied customers",
+    buttonText: "Start Free Trial",
+    secondaryButtonText: "Learn More"
+  }
+};

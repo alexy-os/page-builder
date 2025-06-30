@@ -1,0 +1,14 @@
+.DS_Store
+.vscode/
+.idea/
+.vite/
+node_modules/
+dist/
+.env
+.env.local
+bun.lock
+bun.lockb
+package-lock.json
+.manual/
+.cursor/
+.cursorignore
