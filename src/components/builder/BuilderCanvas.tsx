@@ -108,7 +108,7 @@ export default function BuilderCanvas({ blocks, setBlocks }: BuilderCanvasProps)
                         }`}
                       >
                         {/* Block Controls - Desktop */}
-                        <div className="hidden md:block absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <div className="absolute top-4 right-4 z-10">
                           <div className="flex gap-2 bg-black/80 backdrop-blur-sm rounded-lg p-2">
                             <Button
                               size="icon"
@@ -132,34 +132,6 @@ export default function BuilderCanvas({ blocks, setBlocks }: BuilderCanvasProps)
                             >
                               <GripVertical className="h-4 w-4" />
                             </div>
-                          </div>
-                        </div>
-
-                        {/* Block Controls - Mobile/Tablet - Always visible */}
-                        <div className="md:hidden absolute top-4 right-4 z-10">
-                          <div className="flex gap-2 bg-black/80 backdrop-blur-sm rounded-lg p-2">
-                            <div
-                              {...provided.dragHandleProps}
-                              className="p-1 text-white hover:text-sky-300 cursor-grab active:cursor-grabbing touch-manipulation"
-                            >
-                              <GripVertical className="h-4 w-4" />
-                            </div>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-6 w-6 text-white hover:text-red-300 hover:bg-red-500/20 touch-manipulation"
-                              onClick={() => removeBlock(block.id)}
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-6 w-6 text-white hover:text-sky-300 hover:bg-sky-500/20 touch-manipulation"
-                              onClick={() => openEditModal(block)}
-                            >
-                              <Braces className="h-3 w-3" />
-                            </Button>
                           </div>
                         </div>
 

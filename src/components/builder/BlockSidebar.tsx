@@ -1,5 +1,5 @@
 
-import { Plus, Grip } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -51,10 +51,10 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
   return (
     <div className="w-80 border-r border-border bg-card/30 backdrop-blur-sm overflow-y-auto">
       <div className="p-6">
-        <h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
+        {/*<h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
           <Grip className="h-5 w-5" />
           Blocks Library
-        </h2>
+        </h2>*/}
         
         <div className="space-y-4">
           {allTemplates.map((template: Template) => (
