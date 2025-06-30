@@ -1,5 +1,5 @@
 import HeroBlock, { heroTemplate } from "./hero/HeroBlock";
-import FeaturesBlock, { featuresTemplate } from "./FeaturesBlock";
+import FeaturesBlock, { featuresBlockTemplate } from "./features/FeaturesBlock";
 import NewsBlock, { newsTemplate } from "./blog/NewsBlock";
 import CtaBlock, { ctaTemplate } from "./cta/CtaBlock";
 import FooterBlock, { footerTemplate } from "./footer/FooterBlock";
@@ -15,10 +15,22 @@ import FooterFourColumns, { footerFourColumnsTemplate } from './footer/FooterFou
 import FooterSocialButtons, { footerSocialButtonsTemplate } from './footer/FooterSocialButtons';
 import BlogArticlesColumnsCards, { blogArticlesColumnsCardsTemplate } from './blog/BlogArticlesColumnsCards';
 import DesignSystemWebinars, { designSystemWebinarsTemplate } from './blog/DesignSystemWebinars';
+import BusinessCardsGallery, { businessCardsGalleryTemplate } from './business/BusinessCardsGallery';
+import CareerSection, { careerSectionTemplate } from './business/CareerSection';
+import BusinessSolutionsGrid, { businessSolutionsGridTemplate } from './business/BusinessSolutionsGrid';
+import PricingSection, { pricingSectionTemplate } from './business/PricingSection';
+import PricingYearSection, { pricingYearSectionTemplate } from './business/PricingYearSection';
+import FAQContentSection, { faqContentSectionTemplate } from './features/FAQContentSection';
+import FeaturesGridMediaCards, { featuresGridMediaCardsTemplate } from './features/FeaturesGridMediaCards';
+import FeaturesSplitCarousel, { featuresSplitCarouselTemplate } from './features/FeaturesSplitCarousel';
+import { featuresSplitLeftMediaTemplate } from './features/FeaturesSplitLeftMedia';
+import { featuresSplitMediaTemplate } from './features/FeaturesSplitMedia';
+import FeaturesThreeColumns, { featuresThreeColumnsTemplate } from './features/FeaturesThreeColumns';
+import FeaturesThreeColumnsIcons, { featuresThreeColumnsIconsTemplate } from './features/FeaturesThreeColumnsIcons';
 
 // Export individual components and templates
 export { HeroBlock, heroTemplate };
-export { FeaturesBlock, featuresTemplate };
+export { FeaturesBlock, featuresBlockTemplate };
 export { NewsBlock, newsTemplate };
 export { CtaBlock, ctaTemplate };
 export { FooterBlock, footerTemplate };
@@ -34,11 +46,21 @@ export { FooterFourColumns, footerFourColumnsTemplate };
 export { FooterSocialButtons, footerSocialButtonsTemplate };
 export { BlogArticlesColumnsCards, blogArticlesColumnsCardsTemplate };
 export { DesignSystemWebinars, designSystemWebinarsTemplate };
+export { BusinessCardsGallery, businessCardsGalleryTemplate };
+export { CareerSection, careerSectionTemplate };
+export { BusinessSolutionsGrid, businessSolutionsGridTemplate };
+export { PricingSection, pricingSectionTemplate };
+export { PricingYearSection, pricingYearSectionTemplate };
+export { FAQContentSection, faqContentSectionTemplate };
+export { FeaturesGridMediaCards, featuresGridMediaCardsTemplate };
+export { FeaturesSplitCarousel, featuresSplitCarouselTemplate };
+export { FeaturesThreeColumns, featuresThreeColumnsTemplate };
+export { FeaturesThreeColumnsIcons, featuresThreeColumnsIconsTemplate };
 
 // Export all templates as an array for easy consumption
 export const allTemplates = [
   heroTemplate,
-  featuresTemplate,
+  featuresBlockTemplate,
   newsTemplate,
   ctaTemplate,
   footerTemplate,
@@ -53,7 +75,19 @@ export const allTemplates = [
   footerFourColumnsTemplate,
   footerSocialButtonsTemplate,
   blogArticlesColumnsCardsTemplate,
-  designSystemWebinarsTemplate
+  designSystemWebinarsTemplate,
+  businessCardsGalleryTemplate,
+  careerSectionTemplate,
+  businessSolutionsGridTemplate,
+  pricingSectionTemplate,
+  pricingYearSectionTemplate,
+  faqContentSectionTemplate,
+  featuresGridMediaCardsTemplate,
+  featuresSplitCarouselTemplate,
+  featuresSplitLeftMediaTemplate,
+  featuresSplitMediaTemplate,
+  featuresThreeColumnsTemplate,
+  featuresThreeColumnsIconsTemplate
 ];
 
 // Export all components as an object for easy lookup
@@ -61,7 +95,7 @@ export const allComponents = {
   hero: HeroBlock,
   heroCenteredSection: HeroCenteredSection,
   heroCenteredWithTopButton: HeroCenteredWithTopButton,
-  features: FeaturesBlock,
+  featuresBlock: FeaturesBlock,
   news: NewsBlock,
   cta: CtaBlock,
   footer: FooterBlock,
@@ -74,5 +108,15 @@ export const allComponents = {
   footerFourColumns: FooterFourColumns,
   footerSocialButtons: FooterSocialButtons,
   blogArticlesColumnsCards: BlogArticlesColumnsCards,
-  designSystemWebinars: DesignSystemWebinars
+  designSystemWebinars: DesignSystemWebinars,
+  businessCardsGallery: BusinessCardsGallery,
+  careerSection: CareerSection,
+  businessSolutionsGrid: BusinessSolutionsGrid,
+  pricingSection: PricingSection,
+  pricingYearSection: PricingYearSection,
+  faqContentSection: FAQContentSection,
+  featuresGridMediaCards: FeaturesGridMediaCards,
+  featuresSplitCarousel: FeaturesSplitCarousel,
+  featuresThreeColumns: FeaturesThreeColumns,
+  featuresThreeColumnsIcons: FeaturesThreeColumnsIcons
 };

@@ -12,18 +12,17 @@ interface BlockNameProps {
   content: {
     // Поля контента
   };
-  isPreview?: boolean;
 }
 
 // 3. Компонент блока (default export)
-export default function BlockName({ content, isPreview = false }: BlockNameProps) {
+export default function BlockName({ content }: BlockNameProps) {
   return (
     // JSX разметка
   );
 }
 
 // 4. Шаблон блока (named export)
-export const blockTemplate = {
+export const blockNameTemplate = {
   id: "blockId",
   name: "Block Name",
   description: "Block description",
@@ -68,7 +67,6 @@ interface BlockProps {
       description: string;
     }>;
   };
-  isPreview?: boolean; // Всегда добавлять
 }
 ```
 

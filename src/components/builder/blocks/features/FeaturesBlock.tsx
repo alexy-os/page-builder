@@ -12,7 +12,6 @@ interface FeaturesBlockProps {
     subtitle: string;
     features: Feature[];
   };
-  isPreview?: boolean;
 }
 
 export default function FeaturesBlock({ content }: FeaturesBlockProps) {
@@ -54,7 +53,7 @@ export default function FeaturesBlock({ content }: FeaturesBlockProps) {
   );
 }
 
-export const featuresTemplate = {
+export const featuresBlockTemplate = {
   id: "features",
   name: "Features Grid",
   description: "Showcase key features",
