@@ -181,7 +181,7 @@ export default function PageBuilder() {
         ${themeCSS}
     </style>
 </head>
-<body>
+<body class="bg-background text-foreground">
 ${blocksHTML}
 
 <!-- THEME TOGGLE - DELETE THIS SECTION IF NOT NEEDED -->

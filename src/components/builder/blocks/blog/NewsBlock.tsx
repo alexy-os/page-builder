@@ -93,14 +93,14 @@ export const newsTemplate = {
       {
         title: "New Features Released",
         excerpt: "We've added amazing new capabilities to help you build better.",
-        date: "2024-01-15",
+        date: "2025-01-15",
         readTime: "5 min read",
         image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop"
       },
       {
         title: "Performance Updates",
         excerpt: "Experience faster loading times and smoother interactions.",
-        date: "2024-01-10",
+        date: "2025-01-10",
         readTime: "3 min read",
         image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop"
       }

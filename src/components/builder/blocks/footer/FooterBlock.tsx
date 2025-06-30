@@ -83,7 +83,7 @@ export default function FooterBlock({ content }: FooterBlockProps) {
         
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © 2024 {content.companyName}. {content.copyright || 'All rights reserved.'}
+            © 2025 {content.companyName}. {content.copyright || 'All rights reserved.'}
           </p>
           <div className="flex gap-6 text-sm text-muted-foreground">
             <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
@@ -102,7 +102,7 @@ export const footerTemplate = {
   description: "Complete footer with links and info",
   component: FooterBlock,
   defaultContent: {
-    companyName: "PageCraft",
+    companyName: "BuildY",
     description: "Professional page builder for modern websites",
     links: [
       { title: "Product", url: "#" },

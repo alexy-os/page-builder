@@ -18,7 +18,7 @@ interface FeaturesBlockProps {
 export default function FeaturesBlock({ content }: FeaturesBlockProps) {
   
   return (
-    <section className="py-20 px-6 bg-muted/30">
+    <section className="py-20 px-6 bg-accent/25">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">

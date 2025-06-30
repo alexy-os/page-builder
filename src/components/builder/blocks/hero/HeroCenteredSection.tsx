@@ -2,7 +2,7 @@ import { Info, Rocket } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-interface HeroCenterBlockProps {
+interface HeroCenteredSectionProps {
   content: {
     badge?: string;
     title: string;
@@ -10,13 +10,12 @@ interface HeroCenterBlockProps {
     primaryButtonText: string;
     secondaryButtonText: string;
   };
-  isPreview?: boolean;
 }
 
-export default function HeroCenterBlock({ content }: HeroCenterBlockProps) {
+export default function HeroCenteredSection({ content }: HeroCenteredSectionProps) {
   return (
-    <section className="w-full py-20 lg:py-32 bg-background">
-      <div className="container mx-auto px-6 max-w-6xl">
+    <section className="w-full py-16 lg:py-32 bg-background">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
         <div className="flex flex-col text-center gap-8 items-center">
           {content.badge && (
             <div className="flex justify-center">
@@ -26,16 +25,16 @@ export default function HeroCenterBlock({ content }: HeroCenterBlockProps) {
             </div>
           )}
           
-          <div className="flex flex-col gap-6">
-            <h1 className="max-w-4xl text-3xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+          <div className="flex flex-col gap-4">
+            <h2 className="max-w-2xl text-3xl md:text-4xl lg:text-6xl font-bold text-foreground">
               {content.title}
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl leading-relaxed">
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl">
               {content.description}
             </p>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col md:flex-row gap-8 justify-center">
             <Button
               size="lg"
               className="text-lg px-8 py-6 h-auto bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
@@ -50,7 +49,7 @@ export default function HeroCenterBlock({ content }: HeroCenterBlockProps) {
               className="text-lg px-8 py-6 h-auto border-border text-foreground hover:bg-muted rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
             >
               <Rocket className="mr-2 h-5 w-5" />
-              {content.secondaryButtonText} 
+              {content.secondaryButtonText}
             </Button>
           </div>
         </div>
@@ -59,15 +58,15 @@ export default function HeroCenterBlock({ content }: HeroCenterBlockProps) {
   );
 }
 
-export const heroCenterTemplate = {
-  id: "heroCenter",
-  name: "Hero Center",
+export const heroCenteredSectionTemplate = {
+  id: "heroCenteredSection",
+  name: "Hero Centered Section",
   description: "Centered hero section with badge and buttons",
-  component: HeroCenterBlock,
+  component: HeroCenteredSection,
   defaultContent: {
     badge: "Start Now",
     title: "Explore Our BuildY!",
-    description: "Simplify your business operations with our cutting-edge solution. Say goodbye to time-consuming manual processes and hello to efficient, streamlined management.",
+    description: "Simplify your business operations with our cutting-edge solution.",
     primaryButtonText: "Learn More",
     secondaryButtonText: "Get Started"
   }
