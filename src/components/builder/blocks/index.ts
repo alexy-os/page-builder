@@ -23,8 +23,8 @@ import PricingYearSection, { pricingYearSectionTemplate } from './business/Prici
 import FAQContentSection, { faqContentSectionTemplate } from './features/FAQContentSection';
 import FeaturesGridMediaCards, { featuresGridMediaCardsTemplate } from './features/FeaturesGridMediaCards';
 import FeaturesSplitCarousel, { featuresSplitCarouselTemplate } from './features/FeaturesSplitCarousel';
-import { featuresSplitLeftMediaTemplate } from './features/FeaturesSplitLeftMedia';
-import { featuresSplitMediaTemplate } from './features/FeaturesSplitMedia';
+import FeaturesSplitLeftMedia, { featuresSplitLeftMediaTemplate } from './features/FeaturesSplitLeftMedia';
+import FeaturesSplitMedia, { featuresSplitMediaTemplate } from './features/FeaturesSplitMedia';
 import FeaturesThreeColumns, { featuresThreeColumnsTemplate } from './features/FeaturesThreeColumns';
 import FeaturesThreeColumnsIcons, { featuresThreeColumnsIconsTemplate } from './features/FeaturesThreeColumnsIcons';
 
@@ -60,34 +60,34 @@ export { FeaturesThreeColumnsIcons, featuresThreeColumnsIconsTemplate };
 // Export all templates as an array for easy consumption
 export const allTemplates = [
   heroTemplate,
-  featuresBlockTemplate,
-  newsTemplate,
-  ctaTemplate,
-  footerTemplate,
   heroCenteredSectionTemplate,
   heroCenteredWithTopButtonTemplate,
   heroSplitWithGalleryTemplate,
   heroSplitWithMediaTemplate,
-  callToActionCenteredSectionTemplate,
-  callToActionSectionTemplate,
-  newsLetterTemplate,
-  newsLetterCopyTemplate,
-  footerFourColumnsTemplate,
-  footerSocialButtonsTemplate,
-  blogArticlesColumnsCardsTemplate,
-  designSystemWebinarsTemplate,
-  businessCardsGalleryTemplate,
-  careerSectionTemplate,
-  businessSolutionsGridTemplate,
-  pricingSectionTemplate,
-  pricingYearSectionTemplate,
-  faqContentSectionTemplate,
+  featuresBlockTemplate,
   featuresGridMediaCardsTemplate,
   featuresSplitCarouselTemplate,
   featuresSplitLeftMediaTemplate,
   featuresSplitMediaTemplate,
   featuresThreeColumnsTemplate,
-  featuresThreeColumnsIconsTemplate
+  featuresThreeColumnsIconsTemplate,
+  faqContentSectionTemplate,
+  newsTemplate,
+  blogArticlesColumnsCardsTemplate,
+  designSystemWebinarsTemplate,
+  businessCardsGalleryTemplate,
+  businessSolutionsGridTemplate,
+  careerSectionTemplate,
+  pricingSectionTemplate,
+  pricingYearSectionTemplate,
+  ctaTemplate,
+  callToActionCenteredSectionTemplate,
+  callToActionSectionTemplate,
+  newsLetterTemplate,
+  newsLetterCopyTemplate,
+  footerTemplate,
+  footerFourColumnsTemplate,
+  footerSocialButtonsTemplate
 ];
 
 // Export all components as an object for easy lookup
@@ -95,28 +95,30 @@ export const allComponents = {
   hero: HeroBlock,
   heroCenteredSection: HeroCenteredSection,
   heroCenteredWithTopButton: HeroCenteredWithTopButton,
-  featuresBlock: FeaturesBlock,
-  news: NewsBlock,
-  cta: CtaBlock,
-  footer: FooterBlock,
   heroSplitWithGallery: HeroSplitWithGallery,
   heroSplitWithMedia: HeroSplitWithMedia,
+  featuresBlock: FeaturesBlock,
+  featuresGridMediaCards: FeaturesGridMediaCards,
+  featuresSplitCarousel: FeaturesSplitCarousel,
+  featuresSplitLeftMedia: FeaturesSplitLeftMedia,
+  featuresSplitMedia: FeaturesSplitMedia,
+  featuresThreeColumns: FeaturesThreeColumns,
+  featuresThreeColumnsIcons: FeaturesThreeColumnsIcons,
+  faqContentSection: FAQContentSection,
+  news: NewsBlock,
+  blogArticlesColumnsCards: BlogArticlesColumnsCards,
+  designSystemWebinars: DesignSystemWebinars,
+  businessCardsGallery: BusinessCardsGallery,
+  businessSolutionsGrid: BusinessSolutionsGrid,
+  careerSection: CareerSection,
+  pricingSection: PricingSection,
+  pricingYearSection: PricingYearSection,
+  cta: CtaBlock,
   callToActionCenteredSection: CallToActionCenteredSection,
   callToActionSection: CallToActionSection,
   newsLetter: NewsLetter,
   newsLetterCopy: NewsLetterCopy,
+  footer: FooterBlock,
   footerFourColumns: FooterFourColumns,
-  footerSocialButtons: FooterSocialButtons,
-  blogArticlesColumnsCards: BlogArticlesColumnsCards,
-  designSystemWebinars: DesignSystemWebinars,
-  businessCardsGallery: BusinessCardsGallery,
-  careerSection: CareerSection,
-  businessSolutionsGrid: BusinessSolutionsGrid,
-  pricingSection: PricingSection,
-  pricingYearSection: PricingYearSection,
-  faqContentSection: FAQContentSection,
-  featuresGridMediaCards: FeaturesGridMediaCards,
-  featuresSplitCarousel: FeaturesSplitCarousel,
-  featuresThreeColumns: FeaturesThreeColumns,
-  featuresThreeColumnsIcons: FeaturesThreeColumnsIcons
+  footerSocialButtons: FooterSocialButtons
 };
