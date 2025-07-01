@@ -1,4 +1,5 @@
-import { Moon, Sun, Download, Upload, Menu, Palette } from "lucide-react";
+import { Moon, Sun, Download, Upload, Menu, Palette, Grid3X3, Hammer, EllipsisVertical } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,10 +16,10 @@ interface NavigationProps {
   themeSelectorKey: number;
   onToggleDarkMode: () => void;
   onThemeChange: (themeId: string) => void;
-  onExport: () => void;
-  onExportHTML: () => void;
-  onImport: () => void;
-  onImportTheme: () => void;
+  onExport?: () => void;
+  onExportHTML?: () => void;
+  onImport?: () => void;
+  onImportTheme?: () => void;
 }
 
 export default function Navigation({
@@ -36,15 +37,40 @@ export default function Navigation({
     <nav className="border-b border-border bg-card/50 backdrop-blur-sm">
       <div className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">
-            BuildY/UI
-          </h1>
+          <Link to="/">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">
+              BuildY/UI
+            </h1>
+          </Link>
           <div className="hidden md:block text-sm text-muted-foreground">
             {projectName}
           </div>
         </div>
         
         <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="mr-2">
+              <EllipsisVertical className="h-4 w-4" />
+                Navigation
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem asChild>
+                <Link to="/builder" className="flex items-center w-full">
+                  <Hammer className="mr-2 h-4 w-4" />
+                  Go to Builder
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/" className="flex items-center w-full">
+                  <Grid3X3 className="mr-2 h-4 w-4" />
+                  Pins Collection
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
           <ThemeSelector 
             forceUpdate={themeSelectorKey}
             onThemeChange={onThemeChange}
@@ -59,32 +85,44 @@ export default function Navigation({
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem onClick={onExport}>
-                <Download className="mr-2 h-4 w-4" />
-                Export Project
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={onExportHTML}>
-                <Download className="mr-2 h-4 w-4" />
-                Export HTML
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={onImport}>
-                <Upload className="mr-2 h-4 w-4" />
-                Import Project
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={onImportTheme}>
-                <Palette className="mr-2 h-4 w-4" />
-                Import Theme
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {(onExport || onImport) && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {onExport && (
+                  <>
+                    <DropdownMenuItem onClick={onExport}>
+                      <Download className="mr-2 h-4 w-4" />
+                      Export Project
+                    </DropdownMenuItem>
+                    {onExportHTML && (
+                      <DropdownMenuItem onClick={onExportHTML}>
+                        <Download className="mr-2 h-4 w-4" />
+                        Export HTML
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+                {onImport && (
+                  <DropdownMenuItem onClick={onImport}>
+                    <Upload className="mr-2 h-4 w-4" />
+                    Import Project
+                  </DropdownMenuItem>
+                )}
+                {onImportTheme && (
+                  <DropdownMenuItem onClick={onImportTheme}>
+                    <Palette className="mr-2 h-4 w-4" />
+                    Import Theme
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
     </nav>
