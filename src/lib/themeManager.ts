@@ -231,7 +231,7 @@ export async function loadThemeCSS(themeId: string): Promise<void> {
   } else {
     // For built-in themes import CSS file
     try {
-      await import(`../styles/${themeId}.css`);
+      await import(`../styles/sky-os.css`);
       
       const link = document.createElement('link');
       link.rel = 'stylesheet';

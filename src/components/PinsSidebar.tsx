@@ -76,44 +76,47 @@ export default function PinsSidebar({ activeCollection, onCollectionChange }: Pi
             <h3 className="text-sm font-medium text-muted-foreground">
               Collections
             </h3>
-            {activeTab === 'user' && (
-              <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-                <DialogTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                    <Plus className="h-3 w-3" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Create New Collection</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <Input
-                      placeholder="Collection name"
-                      value={newCollectionName}
-                      onChange={(e) => setNewCollectionName(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleCreateCollection();
-                        }
-                      }}
-                    />
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => setShowCreateDialog(false)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button onClick={handleCreateCollection}>
-                        Create
-                      </Button>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            )}
           </div>
+          
+          {/* Create Collection Button - more prominent */}
+          {activeTab === 'user' && (
+            <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full mb-3" size="sm">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create New Collection
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Create New Collection</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Input
+                    placeholder="Collection name"
+                    value={newCollectionName}
+                    onChange={(e) => setNewCollectionName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleCreateCollection();
+                      }
+                    }}
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowCreateDialog(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button onClick={handleCreateCollection}>
+                      Create
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
           
           {currentCollections.map((collection) => (
             <Card

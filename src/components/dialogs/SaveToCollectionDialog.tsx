@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { Check, Plus } from "lucide-react";
+import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -27,13 +26,10 @@ export default function SaveToCollectionDialog({
   templateName,
   templateDescription,
 }: SaveToCollectionDialogProps) {
-  const [newCollectionName, setNewCollectionName] = useState('');
-  const [showCreateForm, setShowCreateForm] = useState(false);
   const [savedToCollections, setSavedToCollections] = useState<Set<string>>(new Set());
   
   const { 
     collections, 
-    createCollection, 
     saveBlockToCollection, 
     isTemplateInCollection, 
     removeTemplateFromCollection 
@@ -74,28 +70,9 @@ export default function SaveToCollectionDialog({
     }
   };
 
-  const handleCreateAndSave = async () => {
-    if (newCollectionName.trim()) {
-      try {
-        const newCollection = createCollection(newCollectionName.trim());
-        await saveBlockToCollection(templateId, templateName, templateDescription, newCollection.id);
-        setSavedToCollections(prev => new Set([...prev, newCollection.id]));
-        setNewCollectionName('');
-        setShowCreateForm(false);
-      } catch (error) {
-        console.error('Error creating collection and saving:', error);
-      }
-    }
-  };
-
   const handleClose = () => {
     onOpenChange(false);
-    setShowCreateForm(false);
-    setNewCollectionName('');
     setSavedToCollections(new Set()); // Clear the state when the dialog is closed
-    
-    // Reload the page to update the collections in the sidebar
-    window.location.reload();
   };
 
   return (
@@ -151,7 +128,7 @@ export default function SaveToCollectionDialog({
                         </div>
                       ) : (
                         <div className="flex items-center gap-1 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Plus className="h-4 w-4" />
+                          <Check className="h-4 w-4" />
                           <span className="text-xs">Add</span>
                         </div>
                       )}
@@ -162,57 +139,12 @@ export default function SaveToCollectionDialog({
             })}
           </div>
 
-          {/* Create New Collection */}
-          <div className="border-t pt-4">
-            {!showCreateForm ? (
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => setShowCreateForm(true)}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Create New Collection
-              </Button>
-            ) : (
-              <div className="space-y-3">
-                <Input
-                  placeholder="Collection name"
-                  value={newCollectionName}
-                  onChange={(e) => setNewCollectionName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleCreateAndSave();
-                    } else if (e.key === 'Escape') {
-                      setShowCreateForm(false);
-                      setNewCollectionName('');
-                    }
-                  }}
-                  autoFocus
-                />
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setShowCreateForm(false);
-                      setNewCollectionName('');
-                    }}
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={handleCreateAndSave}
-                    disabled={!newCollectionName.trim()}
-                    className="flex-1"
-                  >
-                    Create & Save
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
+          {collections.length === 0 && (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground text-sm">No collections available</p>
+              <p className="text-muted-foreground text-xs mt-1">Create a collection in the sidebar first</p>
+            </div>
+          )}
 
           {/* Close Button */}
           <div className="flex justify-end pt-2">
