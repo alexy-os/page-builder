@@ -245,6 +245,34 @@ export function useCollections() {
     }
   }, [saveCollections, saveSavedBlocks]);
 
+  // Check if template is in collection
+  const isTemplateInCollection = useCallback((templateId: string, collectionId: string) => {
+    const collectionBlocks = getCollectionBlocks(collectionId);
+    return collectionBlocks.some(block => block.templateId === templateId);
+  }, [getCollectionBlocks]);
+
+  // Remove template from collection
+  const removeTemplateFromCollection = useCallback((templateId: string, collectionId: string) => {
+    const collectionBlocks = getCollectionBlocks(collectionId);
+    const blockToRemove = collectionBlocks.find(block => block.templateId === templateId);
+    
+    if (blockToRemove) {
+      removeBlockFromCollection(blockToRemove.id, collectionId);
+    }
+  }, [getCollectionBlocks, removeBlockFromCollection]);
+
+  // Clear all collections and saved blocks
+  const clearAllCollections = useCallback(() => {
+    try {
+      localStorage.removeItem(COLLECTIONS_STORAGE_KEY);
+      localStorage.removeItem(SAVED_BLOCKS_STORAGE_KEY);
+      // Reload page to reset state
+      window.location.reload();
+    } catch (error) {
+      console.error('Error clearing collections:', error);
+    }
+  }, []);
+
   return {
     collections: getCollectionsWithCounts(),
     savedBlocks,
@@ -253,6 +281,9 @@ export function useCollections() {
     saveBlockToCollection,
     removeBlockFromCollection,
     getCollectionBlocks,
+    isTemplateInCollection,
+    removeTemplateFromCollection,
+    clearAllCollections,
     exportCollections,
     importCollections,
   };

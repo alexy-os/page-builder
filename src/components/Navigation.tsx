@@ -1,4 +1,4 @@
-import { Moon, Sun, Download, Upload, Menu, Palette, Grid3X3, Hammer, EllipsisVertical } from "lucide-react";
+import { Moon, Sun, Download, Upload, Menu, Palette, Grid3X3, Hammer, EllipsisVertical, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +22,7 @@ interface NavigationProps {
   onImportTheme?: () => void;
   onExportCollections?: () => void;
   onImportCollections?: () => void;
+  onClearCollections?: () => void;
 }
 
 export default function Navigation({
@@ -35,7 +36,8 @@ export default function Navigation({
   onImport,
   onImportTheme,
   onExportCollections,
-  onImportCollections
+  onImportCollections,
+  onClearCollections
 }: NavigationProps) {
   return (
     <nav className="border-b border-border bg-card/50 backdrop-blur-sm">
@@ -138,6 +140,18 @@ export default function Navigation({
                         <Upload className="mr-2 h-4 w-4" />
                         Import Collections
                       </DropdownMenuItem>
+                    )}
+                    {onClearCollections && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          onClick={onClearCollections}
+                          className="text-red-600 dark:text-red-400"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Clear All Collections
+                        </DropdownMenuItem>
+                      </>
                     )}
                   </>
                 )}

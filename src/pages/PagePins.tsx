@@ -27,7 +27,7 @@ export default function PagePins() {
     changeTheme
   } = useTheme();
   
-  const { getCollectionBlocks, exportCollections, importCollections } = useCollections();
+  const { getCollectionBlocks, exportCollections, importCollections, clearAllCollections } = useCollections();
   const { toggleFavorite, isFavorite } = useFavorites();
   
   const [columns, setColumns] = useState<2 | 3>(3);
@@ -63,7 +63,16 @@ export default function PagePins() {
 
   // Filter blocks based on active collection and category
   const getFilteredBlocks = () => {
-    // If a collection is active, show saved blocks from that collection
+    // Category has priority - if category is selected, show all blocks from that category regardless of collection
+    if (activeCategory) {
+      return allTemplates.filter(template => {
+        // Match template ID prefix with category
+        return template.id.startsWith(activeCategory) || 
+               template.id.includes(activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1));
+      });
+    }
+    
+    // If a collection is active but no category, show saved blocks from that collection
     if (activeCollection) {
       const collectionBlocks = getCollectionBlocks(activeCollection);
       return collectionBlocks
@@ -71,18 +80,8 @@ export default function PagePins() {
         .filter(Boolean) as Template[];
     }
     
-    // Otherwise filter by category
-    let filtered = allTemplates;
-    
-    if (activeCategory) {
-      filtered = allTemplates.filter(template => {
-        // Match template ID prefix with category
-        return template.id.startsWith(activeCategory) || 
-               template.id.includes(activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1));
-      });
-    }
-    
-    return filtered;
+    // Otherwise show all templates
+    return allTemplates;
   };
 
   const filteredBlocks = getFilteredBlocks();
@@ -92,8 +91,7 @@ export default function PagePins() {
     setSaveDialogOpen(true);
   };
 
-  const handleToggleFavorite = (template: Template, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleToggleFavorite = (template: Template) => {
     toggleFavorite(template.id);
   };
 
@@ -103,8 +101,12 @@ export default function PagePins() {
     return (
       <div className="group relative overflow-hidden bg-white dark:bg-gray-900 rounded-xl border border-border hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-lg">
         {/* Preview */}
-        <div className="relative overflow-hidden bg-background h-48">
-          <div className="transform scale-[0.15] origin-top-left w-[666%] h-[666%] pointer-events-none">
+        <div className="relative overflow-hidden bg-background aspect-video">
+          <div className={`transform pointer-events-none ${
+            columns === 2 
+              ? 'scale-[0.3] origin-top-left w-[500%] h-[500%] absolute left-[-25%] top-0' 
+              : 'scale-[0.2] origin-top-left w-[500%] h-[500%]'
+          }`}>
             <PreviewComponent content={template.defaultContent} isPreview={true} />
           </div>
           
@@ -114,21 +116,29 @@ export default function PagePins() {
           {/* Action buttons */}
           <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2">
             <Button 
+              type="button"
               size="sm"
               variant="ghost"
               className="text-white hover:bg-transparent hover:text-yellow-500 !h-10 !w-10"
               onClick={(e) => {
                 e.stopPropagation();
+                e.preventDefault();
                 handleSaveToCollection(template);
               }}
             >
               <Bookmark className="!h-5 !w-5" />
             </Button>
             <Button 
+              type="button"
               size="sm"
               variant="ghost"
               className="text-white hover:bg-transparent hover:text-red-500 !h-10 !w-10"
-              onClick={(e) => handleToggleFavorite(template, e)}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                handleToggleFavorite(template);
+                return false;
+              }}
             >
               {isFavorite(template.id) ? (
                 <HeartHandshake className="!h-5 !w-5" />
@@ -158,6 +168,7 @@ export default function PagePins() {
         onThemeChange={changeTheme}
         onExportCollections={exportCollections}
         onImportCollections={() => setImportCollectionsDialogOpen(true)}
+        onClearCollections={clearAllCollections}
       />
       
       {/* Main Content Area */}

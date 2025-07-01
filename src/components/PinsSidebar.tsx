@@ -70,15 +70,6 @@ export default function PinsSidebar({ activeCollection, onCollectionChange }: Pi
           </Button>
         </div>
 
-        {/* Show All Button */}
-        <Button
-          variant={activeCollection === null ? 'default' : 'outline'}
-          className="w-full mb-4"
-          onClick={() => onCollectionChange(null)}
-        >
-          Show All Blocks
-        </Button>
-
         {/* Collections */}
         <div className="space-y-2">
           <div className="flex items-center justify-between mb-3">
@@ -160,6 +151,15 @@ export default function PinsSidebar({ activeCollection, onCollectionChange }: Pi
               No collections yet
             </div>
           )}
+
+          
+        <Button
+          variant={activeCollection === null ? 'default' : 'outline'}
+          className="w-full my-4 rounded-full"
+          onClick={() => onCollectionChange(null)}
+        >
+          Show All Blocks
+        </Button>
         </div>
       </div>
     </div>

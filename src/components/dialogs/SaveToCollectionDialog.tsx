@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,22 +31,46 @@ export default function SaveToCollectionDialog({
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [savedToCollections, setSavedToCollections] = useState<Set<string>>(new Set());
   
-  const { collections, createCollection, saveBlockToCollection } = useCollections();
+  const { 
+    collections, 
+    createCollection, 
+    saveBlockToCollection, 
+    isTemplateInCollection, 
+    removeTemplateFromCollection 
+  } = useCollections();
 
-  const handleSaveToCollection = async (collectionId: string) => {
-    try {
-      await saveBlockToCollection(templateId, templateName, templateDescription, collectionId);
-      setSavedToCollections(prev => new Set([...prev, collectionId]));
-      
-      // Auto-close after a short delay if saved to at least one collection
-      setTimeout(() => {
-        if (savedToCollections.size > 0) {
-          onOpenChange(false);
-          setSavedToCollections(new Set());
+  // Initialize saved collections state based on existing data
+  useEffect(() => {
+    if (open) {
+      const initialSavedCollections = new Set<string>();
+      collections.forEach(collection => {
+        if (isTemplateInCollection(templateId, collection.id)) {
+          initialSavedCollections.add(collection.id);
         }
-      }, 1000);
+      });
+      setSavedToCollections(initialSavedCollections);
+    }
+  }, [open, templateId]); // Remove collections and isTemplateInCollection from dependencies
+
+  const handleToggleCollection = async (collectionId: string) => {
+    const isCurrentlySaved = savedToCollections.has(collectionId);
+    
+    try {
+      if (isCurrentlySaved) {
+        // Remove from collection
+        removeTemplateFromCollection(templateId, collectionId);
+        setSavedToCollections(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(collectionId);
+          return newSet;
+        });
+      } else {
+        // Add to collection
+        await saveBlockToCollection(templateId, templateName, templateDescription, collectionId);
+        setSavedToCollections(prev => new Set([...prev, collectionId]));
+      }
     } catch (error) {
-      console.error('Error saving to collection:', error);
+      console.error('Error toggling collection:', error);
     }
   };
 
@@ -58,12 +82,6 @@ export default function SaveToCollectionDialog({
         setSavedToCollections(prev => new Set([...prev, newCollection.id]));
         setNewCollectionName('');
         setShowCreateForm(false);
-        
-        // Auto-close after a short delay
-        setTimeout(() => {
-          onOpenChange(false);
-          setSavedToCollections(new Set());
-        }, 1000);
       } catch (error) {
         console.error('Error creating collection and saving:', error);
       }
@@ -72,14 +90,21 @@ export default function SaveToCollectionDialog({
 
   const handleClose = () => {
     onOpenChange(false);
-    setSavedToCollections(new Set());
     setShowCreateForm(false);
     setNewCollectionName('');
+    setSavedToCollections(new Set()); // Clear the state when the dialog is closed
+    
+    // Reload the page to update the collections in the sidebar
+    window.location.reload();
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={open} onOpenChange={() => {}}>
+      <DialogContent 
+        className="sm:max-w-md"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Save to Collection</DialogTitle>
         </DialogHeader>
@@ -101,10 +126,10 @@ export default function SaveToCollectionDialog({
               return (
                 <Card
                   key={collection.id}
-                  className={`p-3 cursor-pointer transition-all duration-200 hover:shadow-sm ${
+                  className={`group p-3 cursor-pointer transition-all duration-200 hover:shadow-sm ${
                     isSaved ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800' : 'hover:bg-muted/50'
                   }`}
-                  onClick={() => !isSaved && handleSaveToCollection(collection.id)}
+                  onClick={() => handleToggleCollection(collection.id)}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -118,12 +143,19 @@ export default function SaveToCollectionDialog({
                         </Badge>
                       )}
                     </div>
-                    {isSaved && (
-                      <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                        <Check className="h-4 w-4" />
-                        <span className="text-xs">Saved</span>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-1">
+                      {isSaved ? (
+                        <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                          <Check className="h-4 w-4" />
+                          <span className="text-xs">Saved</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Plus className="h-4 w-4" />
+                          <span className="text-xs">Add</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </Card>
               );
