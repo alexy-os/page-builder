@@ -63,7 +63,7 @@ export default function DesignSystemWebinars({ content }: DesignSystemWebinarsPr
 }
 
 export const designSystemWebinarsTemplate = {
-  id: "designSystemWebinars",
+  id: "businessDesignSystemWebinars",
   name: "Design System Webinars",
   description: "Display webinars related to the design system",
   component: DesignSystemWebinars,

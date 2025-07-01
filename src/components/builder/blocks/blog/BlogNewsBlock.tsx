@@ -10,7 +10,7 @@ interface Article {
   readTime: string;
 }
 
-interface NewsBlockProps {
+interface BlogNewsBlockProps {
   content: {
     title: string;
     subtitle: string;
@@ -19,7 +19,7 @@ interface NewsBlockProps {
   isPreview?: boolean;
 }
 
-export default function NewsBlock({ content }: NewsBlockProps) {
+export default function BlogNewsBlock({ content }: BlogNewsBlockProps) {
   
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -81,11 +81,11 @@ export default function NewsBlock({ content }: NewsBlockProps) {
   );
 }
 
-export const newsTemplate = {
-  id: "news",
+export const blogNewsBlockTemplate = {
+  id: "blogNewsBlock",
   name: "News & Updates",
   description: "Latest news and blog posts",
-  component: NewsBlock,
+  component: BlogNewsBlock,
   defaultContent: {
     title: "Latest News",
     subtitle: "Stay updated with our latest announcements",

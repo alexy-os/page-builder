@@ -64,7 +64,7 @@ export default function CtaBlock({ content }: CtaBlockProps) {
 }
 
 export const ctaTemplate = {
-  id: "cta",
+  id: "ctaCtaBlock",
   name: "Call to Action",
   description: "Drive conversions with compelling CTAs",
   component: CtaBlock,

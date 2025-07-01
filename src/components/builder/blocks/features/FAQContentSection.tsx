@@ -63,7 +63,7 @@ export default function FAQContentSection({ content }: FAQContentSectionProps) {
 }
 
 export const faqContentSectionTemplate = {
-  id: "faqContentSection",
+  id: "featuresFAQContentSection",
   name: "FAQ Content Section",
   description: "A section for displaying FAQs",
   component: FAQContentSection,

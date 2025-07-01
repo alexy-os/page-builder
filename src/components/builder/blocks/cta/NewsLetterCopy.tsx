@@ -33,7 +33,7 @@ export default function NewsLetterCopy({ content }: NewsLetterCopyProps) {
 }
 
 export const newsLetterCopyTemplate = {
-  id: "newsLetterCopy",
+  id: "ctaNewsLetterCopy",
   name: "News Letter Copy",
   description: "Alternative newsletter subscription section",
   component: NewsLetterCopy,

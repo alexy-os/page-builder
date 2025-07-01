@@ -54,7 +54,7 @@ export default function FeaturesBlock({ content }: FeaturesBlockProps) {
 }
 
 export const featuresBlockTemplate = {
-  id: "features",
+  id: "featuresFeaturesBlock",
   name: "Features Grid",
   description: "Showcase key features",
   component: FeaturesBlock,

@@ -33,7 +33,7 @@ export default function NewsLetter({ content }: NewsLetterProps) {
 }
 
 export const newsLetterTemplate = {
-  id: "newsLetter",
+  id: "ctaNewsLetter",
   name: "News Letter",
   description: "Newsletter subscription section",
   component: NewsLetter,

@@ -39,7 +39,7 @@ export default function CallToActionCenteredSection({ content }: CallToActionCen
 }
 
 export const callToActionCenteredSectionTemplate = {
-  id: "callToActionCenteredSection",
+  id: "ctaCallToActionCenteredSection",
   name: "Call To Action Centered Section",
   description: "Centered call to action section with buttons",
   component: CallToActionCenteredSection,

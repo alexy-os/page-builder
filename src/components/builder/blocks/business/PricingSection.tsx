@@ -74,7 +74,7 @@ export default function PricingSection({ content }: PricingSectionProps) {
 }
 
 export const pricingSectionTemplate = {
-  id: "pricingSection",
+  id: "businessPricingSection",
   name: "Pricing Section",
   description: "A section for displaying pricing plans",
   component: PricingSection,

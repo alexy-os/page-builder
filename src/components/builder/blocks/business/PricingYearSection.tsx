@@ -84,7 +84,7 @@ export default function PricingYearSection({ content }: PricingYearSectionProps)
 }
 
 export const pricingYearSectionTemplate = {
-  id: "pricingYearSection",
+  id: "businessPricingYearSection",
   name: "Pricing Year Section",
   description: "A section for displaying pricing plans with yearly options",
   component: PricingYearSection,

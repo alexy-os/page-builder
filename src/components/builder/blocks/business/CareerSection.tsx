@@ -33,7 +33,7 @@ export default function CareerSection({ content }: CareerSectionProps) {
 }
 
 export const careerSectionTemplate = {
-  id: "careerSection",
+  id: "businessCareerSection",
   name: "Career Section",
   description: "A section for displaying career opportunities",
   component: CareerSection,

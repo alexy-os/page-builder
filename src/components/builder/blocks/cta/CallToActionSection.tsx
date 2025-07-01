@@ -39,7 +39,7 @@ export default function CallToActionSection({ content }: CallToActionSectionProp
 }
 
 export const callToActionSectionTemplate = {
-  id: "callToActionSection",
+  id: "ctaCallToActionSection",
   name: "Call To Action Section",
   description: "Call to action section with buttons",
   component: CallToActionSection,

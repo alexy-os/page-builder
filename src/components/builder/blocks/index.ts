@@ -1,6 +1,5 @@
 import HeroBlock, { heroTemplate } from "./hero/HeroBlock";
 import FeaturesBlock, { featuresBlockTemplate } from "./features/FeaturesBlock";
-import NewsBlock, { newsTemplate } from "./blog/NewsBlock";
 import CtaBlock, { ctaTemplate } from "./cta/CtaBlock";
 import FooterBlock, { footerTemplate } from "./footer/FooterBlock";
 import HeroCenteredSection, { heroCenteredSectionTemplate } from "./hero/HeroCenteredSection";
@@ -13,8 +12,11 @@ import NewsLetter, { newsLetterTemplate } from './cta/NewsLetter';
 import NewsLetterCopy, { newsLetterCopyTemplate } from './cta/NewsLetterCopy';
 import FooterFourColumns, { footerFourColumnsTemplate } from './footer/FooterFourColumns';
 import FooterSocialButtons, { footerSocialButtonsTemplate } from './footer/FooterSocialButtons';
+import BlogNewsBlock, { blogNewsBlockTemplate } from "./blog/BlogNewsBlock";
 import BlogArticlesColumnsCards, { blogArticlesColumnsCardsTemplate } from './blog/BlogArticlesColumnsCards';
-import DesignSystemWebinars, { designSystemWebinarsTemplate } from './blog/DesignSystemWebinars';
+import BlogCardsSection, { blogCardsSectionTemplate } from './blog/BlogCardsSection';
+import BlogPostsGridSection, { blogPostsGridSectionTemplate } from './blog/BlogPostsGridSection';
+import DesignSystemWebinars, { designSystemWebinarsTemplate } from './business/DesignSystemWebinars';
 import BusinessCardsGallery, { businessCardsGalleryTemplate } from './business/BusinessCardsGallery';
 import CareerSection, { careerSectionTemplate } from './business/CareerSection';
 import BusinessSolutionsGrid, { businessSolutionsGridTemplate } from './business/BusinessSolutionsGrid';
@@ -31,7 +33,7 @@ import FeaturesThreeColumnsIcons, { featuresThreeColumnsIconsTemplate } from './
 // Export individual components and templates
 export { HeroBlock, heroTemplate };
 export { FeaturesBlock, featuresBlockTemplate };
-export { NewsBlock, newsTemplate };
+export { BlogNewsBlock, blogNewsBlockTemplate };
 export { CtaBlock, ctaTemplate };
 export { FooterBlock, footerTemplate };
 export { HeroCenteredSection, heroCenteredSectionTemplate };
@@ -45,6 +47,8 @@ export { NewsLetterCopy, newsLetterCopyTemplate };
 export { FooterFourColumns, footerFourColumnsTemplate };
 export { FooterSocialButtons, footerSocialButtonsTemplate };
 export { BlogArticlesColumnsCards, blogArticlesColumnsCardsTemplate };
+export { BlogCardsSection, blogCardsSectionTemplate };
+export { BlogPostsGridSection, blogPostsGridSectionTemplate };
 export { DesignSystemWebinars, designSystemWebinarsTemplate };
 export { BusinessCardsGallery, businessCardsGalleryTemplate };
 export { CareerSection, careerSectionTemplate };
@@ -72,8 +76,10 @@ export const allTemplates = [
   featuresThreeColumnsTemplate,
   featuresThreeColumnsIconsTemplate,
   faqContentSectionTemplate,
-  newsTemplate,
+  blogNewsBlockTemplate,
   blogArticlesColumnsCardsTemplate,
+  blogCardsSectionTemplate,
+  blogPostsGridSectionTemplate,
   designSystemWebinarsTemplate,
   businessCardsGalleryTemplate,
   businessSolutionsGridTemplate,
@@ -105,8 +111,10 @@ export const allComponents = {
   featuresThreeColumns: FeaturesThreeColumns,
   featuresThreeColumnsIcons: FeaturesThreeColumnsIcons,
   faqContentSection: FAQContentSection,
-  news: NewsBlock,
+  blogNewsBlock: BlogNewsBlock,
   blogArticlesColumnsCards: BlogArticlesColumnsCards,
+  blogCardsSection: BlogCardsSection,
+  blogPostsGridSection: BlogPostsGridSection,
   designSystemWebinars: DesignSystemWebinars,
   businessCardsGallery: BusinessCardsGallery,
   businessSolutionsGrid: BusinessSolutionsGrid,
