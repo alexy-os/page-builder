@@ -1,9 +1,11 @@
 
+import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 import type { Block, Template } from "../../types";
+import { useFavorites } from "../../hooks/useFavorites";
 
 import { allTemplates } from "./blocks/index";
 
@@ -13,6 +15,8 @@ interface BlockSidebarProps {
 }
 
 export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
+  const [activeTab, setActiveTab] = useState<'favorites' | 'all'>('all');
+  const { favorites, hasFavorites } = useFavorites();
 
   const addBlock = (template: Template) => {
     const newBlock: Block = {
@@ -48,21 +52,56 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
     );
   };
 
+  // Get templates based on active tab
+  const getTemplates = () => {
+    if (activeTab === 'favorites') {
+      return allTemplates.filter(template => favorites.includes(template.id));
+    }
+    return allTemplates;
+  };
+
+  const templates = getTemplates();
+
   return (
     <div className="w-80 border-r border-border bg-card/30 backdrop-blur-sm overflow-y-auto">
       <div className="p-6">
-        {/*<h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
-          <Grip className="h-5 w-5" />
-          Blocks Library
-        </h2>*/}
+        {/* Tabs - only show if there are favorites */}
+        {hasFavorites && (
+          <div className="flex mb-6 bg-muted/50 rounded-lg p-1">
+            <Button
+              variant={activeTab === 'favorites' ? 'default' : 'ghost'}
+              size="sm"
+              className="flex-1"
+              onClick={() => setActiveTab('favorites')}
+            >
+              Favorites
+            </Button>
+            <Button
+              variant={activeTab === 'all' ? 'default' : 'ghost'}
+              size="sm"
+              className="flex-1"
+              onClick={() => setActiveTab('all')}
+            >
+              All Blocks
+            </Button>
+          </div>
+        )}
         
         <div className="space-y-4">
-          {allTemplates.map((template: Template) => (
+          {templates.map((template: Template) => (
             <Card key={template.id} className="p-0 overflow-hidden hover:shadow-lg transition-all duration-300">
               <BlockPreview template={template} />
             </Card>
           ))}
         </div>
+
+        {/* Empty state for favorites */}
+        {activeTab === 'favorites' && templates.length === 0 && (
+          <div className="text-center py-8">
+            <p className="text-muted-foreground text-sm">No favorite blocks yet</p>
+            <p className="text-muted-foreground text-xs mt-1">Add blocks to favorites from the Pins page</p>
+          </div>
+        )}
         
         {/* blocks.length > 0 && (
           <div className="mt-8">

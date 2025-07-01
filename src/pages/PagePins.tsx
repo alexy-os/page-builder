@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Grid3X3, Grid2X2, Bookmark, ChevronDown } from "lucide-react";
+import { Grid3X3, Grid2X2, Bookmark, ChevronDown, Heart, HeartHandshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,6 +16,7 @@ import ImportCollectionsDialog from "../components/dialogs/ImportCollectionsDial
 import { allTemplates } from "../components/builder/blocks/index";
 import { useTheme } from "../hooks/useTheme";
 import { useCollections } from "../hooks/useCollections";
+import { useFavorites } from "../hooks/useFavorites";
 import type { Template } from "../types";
 
 export default function PagePins() {
@@ -27,6 +28,7 @@ export default function PagePins() {
   } = useTheme();
   
   const { getCollectionBlocks, exportCollections, importCollections } = useCollections();
+  const { toggleFavorite, isFavorite } = useFavorites();
   
   const [columns, setColumns] = useState<2 | 3>(3);
   const [activeCollection, setActiveCollection] = useState<string | null>(null);
@@ -90,6 +92,11 @@ export default function PagePins() {
     setSaveDialogOpen(true);
   };
 
+  const handleToggleFavorite = (template: Template, e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleFavorite(template.id);
+  };
+
   const PinCard = ({ template }: { template: Template }) => {
     const PreviewComponent = template.component;
     
@@ -104,8 +111,8 @@ export default function PagePins() {
           {/* Overlay on hover */}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
           
-          {/* Action button */}
-          <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          {/* Action buttons */}
+          <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2">
             <Button 
               size="sm"
               variant="ghost"
@@ -116,6 +123,18 @@ export default function PagePins() {
               }}
             >
               <Bookmark className="!h-5 !w-5" />
+            </Button>
+            <Button 
+              size="sm"
+              variant="ghost"
+              className="text-white hover:bg-transparent hover:text-red-500 !h-10 !w-10"
+              onClick={(e) => handleToggleFavorite(template, e)}
+            >
+              {isFavorite(template.id) ? (
+                <HeartHandshake className="!h-5 !w-5" />
+              ) : (
+                <Heart className="!h-5 !w-5" />
+              )}
             </Button>
           </div>
         </div>
