@@ -97,7 +97,7 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
         {activeTab === 'favorites' && templates.length === 0 && (
           <div className="text-center py-8">
             <p className="text-muted-foreground text-sm">No favorite blocks yet</p>
-            <p className="text-muted-foreground text-xs mt-1">Add blocks to favorites from the Pins page</p>
+            <p className="text-muted-foreground text-xs mt-1">Add blocks to favorites from the <a href="/" className="font-bold text-primary">Pins page</a></p>
           </div>
         )}
         
