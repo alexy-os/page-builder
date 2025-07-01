@@ -114,12 +114,12 @@ export default function PagePins() {
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
           
           {/* Action buttons */}
-          <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2">
+          <div className="absolute top-3 right-3 flex flex-col gap-1">
             <Button 
               type="button"
               size="sm"
               variant="ghost"
-              className="text-white hover:bg-transparent hover:text-yellow-500 !h-10 !w-10"
+              className="text-white hover:bg-transparent hover:text-yellow-500 !h-8 !w-8"
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -132,7 +132,7 @@ export default function PagePins() {
               type="button"
               size="sm"
               variant="ghost"
-              className="text-white hover:bg-transparent hover:text-red-500 !h-10 !w-10"
+              className="text-white hover:bg-transparent hover:text-red-500 !h-8 !w-8"
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -212,7 +212,7 @@ export default function PagePins() {
 
               {/* Column toggle */}
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
+                <div className="hidden lg:flex items-center gap-1 bg-muted/50 rounded-lg p-1">
                   <Button
                     variant={columns === 2 ? "default" : "ghost"}
                     size="sm"

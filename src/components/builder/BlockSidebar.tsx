@@ -66,7 +66,6 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
     <div className="w-80 border-r border-border bg-card/30 backdrop-blur-sm overflow-y-auto">
       <div className="p-6">
         {/* Tabs - only show if there are favorites */}
-        {hasFavorites && (
           <div className="flex mb-6 bg-muted/50 rounded-lg p-1">
             <Button
               variant={activeTab === 'favorites' ? 'default' : 'ghost'}
@@ -85,7 +84,6 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
               All Blocks
             </Button>
           </div>
-        )}
         
         <div className="space-y-4">
           {templates.map((template: Template) => (
