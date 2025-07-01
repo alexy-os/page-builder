@@ -139,8 +139,7 @@ export default function BuilderCanvas({ blocks, setBlocks }: BuilderCanvasProps)
                         <div className="relative" data-block-id={block.id}>
                           {BlockComponent && (
                             <BlockComponent 
-                              content={block.content} 
-                              isPreview={false}
+                              content={block.content}
                             />
                           )}
                         </div>

@@ -34,7 +34,7 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
     return (
       <div className="relative overflow-hidden bg-white dark:bg-gray-900 rounded-lg border-2 border-transparent hover:border-blue-500 transition-all duration-300 touch-manipulation h-32">
         <div className="transform scale-[0.2] origin-top-left w-[500%] h-[500%] pointer-events-none">
-          <PreviewComponent content={template.defaultContent} isPreview={true} />
+          <PreviewComponent content={template.defaultContent} />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <div className="absolute bottom-2 left-2 text-white">

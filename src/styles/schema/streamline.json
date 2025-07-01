@@ -1,12 +1,19 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "Sky Bloom Mode",
+  "name": "Streamline",
   "type": "registry:style",
+  "css": {
+    "@layer base": {
+      "body": {
+        "letter-spacing": "var(--tracking-normal)"
+      }
+    }
+  },
   "cssVars": {
     "theme": {
-      "font-sans": "Montserrat, sans-serif",
-      "font-mono": "IBM Plex Mono, monospace",
-      "font-serif": "Inter, sans-serif",
+      "font-sans": "Geist, sans-serif",
+      "font-mono": "Geist Mono, monospace",
+      "font-serif": "Georgia, serif",
       "radius": "1.4rem",
       "tracking-tighter": "calc(var(--tracking-normal) - 0.05em)",
       "tracking-tight": "calc(var(--tracking-normal) - 0.025em)",
@@ -21,7 +28,7 @@
       "card-foreground": "oklch(0 0 0)",
       "popover": "oklch(0.9911 0 0)",
       "popover-foreground": "oklch(0 0 0)",
-      "primary": "oklch(0.6907 0.1243 221.6312)",
+      "primary": "oklch(0.5393 0.2713 286.7462)",
       "primary-foreground": "oklch(1.0000 0 0)",
       "secondary": "oklch(0.9540 0.0063 255.4755)",
       "secondary-foreground": "oklch(0.1344 0 0)",
@@ -34,10 +41,10 @@
       "border": "oklch(0.9300 0.0094 286.2156)",
       "input": "oklch(0.9401 0 0)",
       "ring": "oklch(0 0 0)",
-      "chart-1": "oklch(0.7423 0.1429 156.7423)",
-      "chart-2": "oklch(0.6100 0.1556 295.4706)",
-      "chart-3": "oklch(0.7162 0.1489 53.2752)",
-      "chart-4": "oklch(0.6907 0.1243 221.6312)",
+      "chart-1": "oklch(0.7459 0.1483 156.4499)",
+      "chart-2": "oklch(0.5393 0.2713 286.7462)",
+      "chart-3": "oklch(0.7336 0.1758 50.5517)",
+      "chart-4": "oklch(0.5828 0.1809 259.7276)",
       "chart-5": "oklch(0.5590 0 0)",
       "radius": "1.4rem",
       "sidebar": "oklch(0.9777 0.0051 247.8763)",
@@ -48,9 +55,9 @@
       "sidebar-accent-foreground": "oklch(0 0 0)",
       "sidebar-border": "oklch(0.9401 0 0)",
       "sidebar-ring": "oklch(0 0 0)",
-      "font-sans": "Montserrat, sans-serif",
-      "font-serif": "Inter, sans-serif",
-      "font-mono": "IBM Plex Mono, monospace",
+      "font-sans": "Geist, sans-serif",
+      "font-serif": "Georgia, serif",
+      "font-mono": "Geist Mono, monospace",
       "shadow-color": "hsl(0 0% 0%)",
       "shadow-opacity": "0.16",
       "shadow-blur": "3px",
@@ -76,7 +83,7 @@
       "card-foreground": "oklch(0.9551 0 0)",
       "popover": "oklch(0.2568 0.0076 274.6528)",
       "popover-foreground": "oklch(0.9551 0 0)",
-      "primary": "oklch(0.6907 0.1243 221.6312)",
+      "primary": "oklch(0.6132 0.2294 291.7437)",
       "primary-foreground": "oklch(1.0000 0 0)",
       "secondary": "oklch(0.2940 0.0130 272.9312)",
       "secondary-foreground": "oklch(0.9551 0 0)",
@@ -93,7 +100,7 @@
       "chart-2": "oklch(0.6132 0.2294 291.7437)",
       "chart-3": "oklch(0.8077 0.1035 19.5706)",
       "chart-4": "oklch(0.6691 0.1569 260.1063)",
-      "chart-5": "oklch(0.5411 0.0088 17.4276)",
+      "chart-5": "oklch(0.7058 0 0)",
       "radius": "1.4rem",
       "sidebar": "oklch(0.2011 0.0039 286.0396)",
       "sidebar-foreground": "oklch(0.9551 0 0)",
@@ -103,9 +110,9 @@
       "sidebar-accent-foreground": "oklch(0.6132 0.2294 291.7437)",
       "sidebar-border": "oklch(0.3289 0.0092 268.3843)",
       "sidebar-ring": "oklch(0.6132 0.2294 291.7437)",
-      "font-sans": "Montserrat, sans-serif",
-      "font-serif": "Inter, sans-serif",
-      "font-mono": "IBM Plex Mono, monospace",
+      "font-sans": "Geist, sans-serif",
+      "font-serif": "Georgia, serif",
+      "font-mono": "Geist Mono, monospace",
       "shadow-color": "hsl(0 0% 0%)",
       "shadow-opacity": "0.16",
       "shadow-blur": "3px",
@@ -122,13 +129,6 @@
       "shadow-lg": "0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 4px 6px -1px hsl(0 0% 0% / 0.16)",
       "shadow-xl": "0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 8px 10px -1px hsl(0 0% 0% / 0.16)",
       "shadow-2xl": "0px 2px 3px 0px hsl(0 0% 0% / 0.40)"
-    }
-  },
-  "css": {
-    "@layer base": {
-      "body": {
-        "letter-spacing": "var(--tracking-normal)"
-      }
     }
   }
 }

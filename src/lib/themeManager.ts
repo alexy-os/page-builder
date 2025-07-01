@@ -273,12 +273,16 @@ function isGoogleFont(fontName: string): boolean {
     'Open Sans',
     'Montserrat',
     'Poppins',
+    'Geist',
+    'Geist Mono',
     'Source Sans Pro',
     'Nunito',
     'Raleway',
     'Ubuntu',
+    'Segoe UI',
     'Merriweather',
-    'Playfair Display'
+    'Playfair Display',
+    'Lato',
     // Add new Google Fonts here
   ];
   

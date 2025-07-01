@@ -44,8 +44,8 @@ export default function Navigation({
       <div className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-4">
           <Link to="/">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">
-              BuildY/UI
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/55 bg-clip-text text-transparent">
+              Build<span className="text-primary/55">Y</span>
             </h1>
           </Link>
           <div className="hidden md:block text-sm text-muted-foreground">
