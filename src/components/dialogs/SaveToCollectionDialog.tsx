@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
+  DialogClose
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -79,11 +81,27 @@ export default function SaveToCollectionDialog({
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent 
         className="sm:max-w-md"
+        showCloseButton={false}
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <DialogHeader>
           <DialogTitle>Save to Collection</DialogTitle>
+          <DialogDescription>
+            Choose collections to save this block to, or create a new collection in the sidebar.
+          </DialogDescription>
+          {/* Custom close button */}
+          <DialogClose asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute top-4 right-4 h-6 w-6 p-0 opacity-70 hover:opacity-100"
+              onClick={handleClose}
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </Button>
+          </DialogClose>
         </DialogHeader>
         
         <div className="space-y-4">

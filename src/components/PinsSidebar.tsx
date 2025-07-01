@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -90,6 +91,9 @@ export default function PinsSidebar({ activeCollection, onCollectionChange }: Pi
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle>Create New Collection</DialogTitle>
+                  <DialogDescription>
+                    Create a new collection to save your blocks to.
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <Input
