@@ -16,7 +16,7 @@ interface BlockSidebarProps {
 
 export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
   const [activeTab, setActiveTab] = useState<'favorites' | 'all'>('all');
-  const { favorites, hasFavorites } = useFavorites();
+  const { favorites } = useFavorites();
 
   const addBlock = (template: Template) => {
     const newBlock: Block = {
