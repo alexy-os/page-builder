@@ -20,6 +20,8 @@ interface NavigationProps {
   onExportHTML?: () => void;
   onImport?: () => void;
   onImportTheme?: () => void;
+  onExportCollections?: () => void;
+  onImportCollections?: () => void;
 }
 
 export default function Navigation({
@@ -31,7 +33,9 @@ export default function Navigation({
   onExport,
   onExportHTML,
   onImport,
-  onImportTheme
+  onImportTheme,
+  onExportCollections,
+  onImportCollections
 }: NavigationProps) {
   return (
     <nav className="border-b border-border bg-card/50 backdrop-blur-sm">
@@ -85,7 +89,7 @@ export default function Navigation({
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
           
-          {(onExport || onImport) && (
+          {(onExport || onImport || onExportCollections || onImportCollections) && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -108,17 +112,34 @@ export default function Navigation({
                     <DropdownMenuSeparator />
                   </>
                 )}
-                {onImport && (
-                  <DropdownMenuItem onClick={onImport}>
-                    <Upload className="mr-2 h-4 w-4" />
-                    Import Project
+                {onExportCollections && (
+                  <DropdownMenuItem onClick={onExportCollections}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Export Collections
                   </DropdownMenuItem>
                 )}
-                {onImportTheme && (
-                  <DropdownMenuItem onClick={onImportTheme}>
-                    <Palette className="mr-2 h-4 w-4" />
-                    Import Theme
-                  </DropdownMenuItem>
+                {(onImport || onImportTheme || onImportCollections) && (
+                  <>
+                    {onExportCollections && <DropdownMenuSeparator />}
+                    {onImport && (
+                      <DropdownMenuItem onClick={onImport}>
+                        <Upload className="mr-2 h-4 w-4" />
+                        Import Project
+                      </DropdownMenuItem>
+                    )}
+                    {onImportTheme && (
+                      <DropdownMenuItem onClick={onImportTheme}>
+                        <Palette className="mr-2 h-4 w-4" />
+                        Import Theme
+                      </DropdownMenuItem>
+                    )}
+                    {onImportCollections && (
+                      <DropdownMenuItem onClick={onImportCollections}>
+                        <Upload className="mr-2 h-4 w-4" />
+                        Import Collections
+                      </DropdownMenuItem>
+                    )}
+                  </>
                 )}
               </DropdownMenuContent>
             </DropdownMenu>

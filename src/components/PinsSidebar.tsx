@@ -1,14 +1,17 @@
 import { useState } from "react";
+import { Plus, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
-export interface Collection {
-  id: string;
-  name: string;
-  count: number;
-  type: 'buildy' | 'user';
-}
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useCollections } from "../hooks/useCollections";
 
 interface PinsSidebarProps {
   activeCollection: string | null;
@@ -17,21 +20,32 @@ interface PinsSidebarProps {
 
 export default function PinsSidebar({ activeCollection, onCollectionChange }: PinsSidebarProps) {
   const [activeTab, setActiveTab] = useState<'buildy' | 'user'>('buildy');
+  const [newCollectionName, setNewCollectionName] = useState('');
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  
+  const { collections, createCollection, deleteCollection } = useCollections();
 
-  const buildyCollections: Collection[] = [
-    { id: 'landing', name: 'Landing', count: 12, type: 'buildy' },
-    { id: 'blog', name: 'Blog', count: 8, type: 'buildy' },
-    { id: 'website', name: 'Website', count: 15, type: 'buildy' },
-    { id: 'layouts', name: 'Layouts', count: 6, type: 'buildy' },
-  ];
-
-  const userCollections: Collection[] = [
-    { id: 'business', name: 'Business', count: 5, type: 'user' },
-    { id: 'blog-user', name: 'Blog', count: 3, type: 'user' },
-    { id: 'favorites', name: 'Favorites', count: 7, type: 'user' },
-  ];
-
+  const buildyCollections = collections.filter(c => c.type === 'buildy');
+  const userCollections = collections.filter(c => c.type === 'user');
   const currentCollections = activeTab === 'buildy' ? buildyCollections : userCollections;
+
+  const handleCreateCollection = () => {
+    if (newCollectionName.trim()) {
+      createCollection(newCollectionName.trim());
+      setNewCollectionName('');
+      setShowCreateDialog(false);
+    }
+  };
+
+  const handleDeleteCollection = (collectionId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (confirm('Вы уверены, что хотите удалить эту коллекцию?')) {
+      deleteCollection(collectionId);
+      if (activeCollection === collectionId) {
+        onCollectionChange(null);
+      }
+    }
+  };
 
   return (
     <div className="w-80 border-r border-border bg-card/30 backdrop-blur-sm overflow-y-auto">
@@ -60,23 +74,60 @@ export default function PinsSidebar({ activeCollection, onCollectionChange }: Pi
         <Button
           variant={activeCollection === null ? 'default' : 'outline'}
           className="w-full mb-4"
-          onClick={() => {
-            onCollectionChange(null);
-            window.location.href = '/';
-          }}
+          onClick={() => onCollectionChange(null)}
         >
           Show All Blocks
         </Button>
 
         {/* Collections */}
         <div className="space-y-2">
-          <h3 className="text-sm font-medium text-muted-foreground mb-3">
-            Collections
-          </h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              Collections
+            </h3>
+            {activeTab === 'user' && (
+              <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                    <Plus className="h-3 w-3" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Create New Collection</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <Input
+                      placeholder="Collection name"
+                      value={newCollectionName}
+                      onChange={(e) => setNewCollectionName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleCreateCollection();
+                        }
+                      }}
+                    />
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowCreateDialog(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button onClick={handleCreateCollection}>
+                        Create
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
+          
           {currentCollections.map((collection) => (
             <Card
               key={collection.id}
-              className={`p-3 cursor-pointer transition-all duration-200 hover:shadow-md ${
+              className={`p-3 cursor-pointer transition-all duration-200 hover:shadow-md group ${
                 activeCollection === collection.id
                   ? 'ring-2 ring-primary bg-primary/5'
                   : 'hover:bg-muted/50'
@@ -84,23 +135,32 @@ export default function PinsSidebar({ activeCollection, onCollectionChange }: Pi
               onClick={() => onCollectionChange(collection.id)}
             >
               <div className="flex items-center justify-between">
-                <span className="font-medium text-sm">{collection.name}</span>
-                <Badge variant="secondary" className="text-xs">
-                  {collection.count}
-                </Badge>
+                <div className="flex items-center gap-2 flex-1">
+                  <span className="font-medium text-sm">{collection.name}</span>
+                  <Badge variant="secondary" className="text-xs">
+                    {collection.count}
+                  </Badge>
+                </div>
+                {collection.type === 'user' && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => handleDeleteCollection(collection.id, e)}
+                  >
+                    <Trash2 className="h-3 w-3 text-destructive" />
+                  </Button>
+                )}
               </div>
             </Card>
           ))}
+          
+          {currentCollections.length === 0 && activeTab === 'user' && (
+            <div className="text-center py-4 text-sm text-muted-foreground">
+              No collections yet
+            </div>
+          )}
         </div>
-
-        {/* User Collections Actions */}
-        {activeTab === 'user' && (
-          <div className="mt-6 pt-4 border-t border-border">
-            <Button variant="outline" size="sm" className="w-full">
-              + Create Collection
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );

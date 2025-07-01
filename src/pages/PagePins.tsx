@@ -11,17 +11,22 @@ import { Link } from "react-router-dom";
 
 import PinsSidebar from "../components/PinsSidebar";
 import Navigation from "../components/Navigation";
+import SaveToCollectionDialog from "../components/dialogs/SaveToCollectionDialog";
+import ImportCollectionsDialog from "../components/dialogs/ImportCollectionsDialog";
 import { allTemplates } from "../components/builder/blocks/index";
 import { useTheme } from "../hooks/useTheme";
+import { useCollections } from "../hooks/useCollections";
 import type { Template } from "../types";
 
 export default function PagePins() {
   const { 
-    isDark,
+    isDark, 
     themeSelectorKey, 
     toggleDarkMode, 
     changeTheme
   } = useTheme();
+  
+  const { getCollectionBlocks, exportCollections, importCollections } = useCollections();
   
   const [columns, setColumns] = useState<2 | 3>(3);
   const [activeCollection, setActiveCollection] = useState<string | null>(null);
@@ -29,6 +34,9 @@ export default function PagePins() {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('category');
   });
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+  const [importCollectionsDialogOpen, setImportCollectionsDialogOpen] = useState(false);
 
   // Categories based on block directories
   const categories = [
@@ -53,9 +61,17 @@ export default function PagePins() {
 
   // Filter blocks based on active collection and category
   const getFilteredBlocks = () => {
+    // If a collection is active, show saved blocks from that collection
+    if (activeCollection) {
+      const collectionBlocks = getCollectionBlocks(activeCollection);
+      return collectionBlocks
+        .map(savedBlock => allTemplates.find(template => template.id === savedBlock.templateId))
+        .filter(Boolean) as Template[];
+    }
+    
+    // Otherwise filter by category
     let filtered = allTemplates;
     
-    // Filter by category first
     if (activeCategory) {
       filtered = allTemplates.filter(template => {
         // Match template ID prefix with category
@@ -64,17 +80,15 @@ export default function PagePins() {
       });
     }
     
-    // Then filter by collection if active
-    if (activeCollection) {
-      // Simple filtering logic - in real app you'd have proper collection mapping
-      // For now, just return the already filtered templates
-      return filtered;
-    }
-    
     return filtered;
   };
 
   const filteredBlocks = getFilteredBlocks();
+
+  const handleSaveToCollection = (template: Template) => {
+    setSelectedTemplate(template);
+    setSaveDialogOpen(true);
+  };
 
   const PinCard = ({ template }: { template: Template }) => {
     const PreviewComponent = template.component;
@@ -92,26 +106,17 @@ export default function PagePins() {
           
           {/* Action button */}
           <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size="sm" className="h-8 px-3 bg-white/90 text-gray-900 hover:bg-white">
-                  <Bookmark className="h-3 w-3 mr-1" />
-                  Save
-                  <ChevronDown className="h-3 w-3 ml-1" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  <span className="font-medium">Business</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span className="font-medium">Blog</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span className="font-medium">Favorites</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button 
+              size="sm"
+              variant="ghost"
+              className="text-white hover:bg-transparent hover:text-yellow-500 !h-10 !w-10"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSaveToCollection(template);
+              }}
+            >
+              <Bookmark className="!h-5 !w-5" />
+            </Button>
           </div>
         </div>
         
@@ -132,6 +137,8 @@ export default function PagePins() {
         themeSelectorKey={themeSelectorKey}
         onToggleDarkMode={toggleDarkMode}
         onThemeChange={changeTheme}
+        onExportCollections={exportCollections}
+        onImportCollections={() => setImportCollectionsDialogOpen(true)}
       />
       
       {/* Main Content Area */}
@@ -239,6 +246,24 @@ export default function PagePins() {
           </div>
         </div>
       </div>
+
+      {/* Save to Collection Dialog */}
+      {selectedTemplate && (
+        <SaveToCollectionDialog
+          open={saveDialogOpen}
+          onOpenChange={setSaveDialogOpen}
+          templateId={selectedTemplate.id}
+          templateName={selectedTemplate.name}
+          templateDescription={selectedTemplate.description}
+        />
+      )}
+
+      {/* Import Collections Dialog */}
+      <ImportCollectionsDialog
+        open={importCollectionsDialogOpen}
+        onOpenChange={setImportCollectionsDialogOpen}
+        onImport={importCollections}
+      />
     </div>
   );
 }
