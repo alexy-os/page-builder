@@ -1,0 +1,37 @@
+/* Telekom Theme - CSS Variables and Gradients */
+:root {
+  /* Gradient Design Tokens */
+  --gradient-primary: linear-gradient(96.49deg, #4CD1A8 -3.18%, #1883D6 108.4%);
+  --gradient-animated: linear-gradient(45deg, #4CD1A8 0%, #1883D6 25%, #4CD1A8 50%, #1883D6 75%);
+  --gradient-blocks-1: linear-gradient(108.68deg, #22C7FF 4.05%, #903DFE 102.66%);
+  --gradient-blocks-2: linear-gradient(109.99deg, #8E40F5 3.55%, #6139F6 102.54%);
+  --gradient-blocks-3: linear-gradient(109.5deg, #F99A6D 4.41%, #FF7658 102.63%);
+  --gradient-blocks-4: linear-gradient(106.31deg, #62E2C9 -3.41%, #12ADB7 104.5%);
+  --gradient-blocks-5: linear-gradient(110.98deg, #278EEC -1.42%, #38C0DE 102.11%);
+  --gradient-blocks-6: linear-gradient(107.91deg, #BE81FF 4.14%, #F14997 104.86%);
+  --gradient-alt-1: linear-gradient(231.46deg, #278EEC 3.17%, #38C0DE 70.65%);
+  
+  /* Accent Colors */
+  --accent-blue: #1B96FE;
+  
+  /* Animation Properties */
+  --animation-gradient-shift: button 3s ease-in-out infinite;
+}
+
+/* Utility Classes for Direct Gradient Usage */
+.bg-gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.bg-gradient-blocks-1 { background: var(--gradient-blocks-1); }
+.bg-gradient-blocks-2 { background: var(--gradient-blocks-2); }
+.bg-gradient-blocks-3 { background: var(--gradient-blocks-3); }
+.bg-gradient-blocks-4 { background: var(--gradient-blocks-4); }
+.bg-gradient-blocks-5 { background: var(--gradient-blocks-5); }
+.bg-gradient-blocks-6 { background: var(--gradient-blocks-6); }
+.bg-gradient-alt-1 { background: var(--gradient-alt-1); }
+
+/* Text Utilities */
+.text-accent-blue {
+  color: var(--accent-blue);
+}
