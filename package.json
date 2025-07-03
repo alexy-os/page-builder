@@ -1,5 +1,6 @@
 {
   "name": "page-builder",
+  "description": "Page Builder for React with Tailwind CSS and TypeScript",
   "private": true,
   "version": "0.0.2",
   "type": "module",
