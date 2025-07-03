@@ -1,6 +1,5 @@
 // Import from category-specific index files
 export * from "./hero";
-export * from "./telekom";
 export * from "./features";
 export * from "./blog";
 export * from "./business";
@@ -9,7 +8,6 @@ export * from "./footer";
 
 // Import category collections for combined exports
 import { heroTemplates, heroComponents } from "./hero";
-import { telekomTemplates, telekomComponents } from "./telekom";
 import { featuresTemplates, featuresComponents } from "./features";
 import { blogTemplates, blogComponents } from "./blog";
 import { businessTemplates, businessComponents } from "./business";
@@ -19,7 +17,6 @@ import { footerTemplates, footerComponents } from "./footer";
 // Export all templates as an array for easy consumption
 export const allTemplates = [
   ...heroTemplates,
-  ...telekomTemplates,
   ...featuresTemplates,
   ...blogTemplates,
   ...businessTemplates,
@@ -30,7 +27,6 @@ export const allTemplates = [
 // Export all components as an object for easy lookup
 export const allComponents = {
   ...heroComponents,
-  ...telekomComponents,
   ...featuresComponents,
   ...blogComponents,
   ...businessComponents,
@@ -42,8 +38,6 @@ export const allComponents = {
 export {
   heroTemplates,
   heroComponents,
-  telekomTemplates,
-  telekomComponents,
   featuresTemplates,
   featuresComponents,
   blogTemplates,

@@ -99,7 +99,7 @@ export default function PagePins() {
     const PreviewComponent = template.component;
     
     return (
-      <div className="group relative overflow-hidden bg-white dark:bg-gray-900 rounded-xl border border-border hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-lg">
+      <div className="group relative overflow-hidden bg-secondary/50 text-accent-foreground rounded-lg border border-border hover:border-accent/50 transition-all duration-300 shadow-sm hover:shadow-lg">
         {/* Preview */}
         <div className="relative overflow-hidden bg-background aspect-video">
           <div className={`transform pointer-events-none ${

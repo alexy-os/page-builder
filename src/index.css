@@ -1,8 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "./styles/sky-os.css";
-
-@import "./styles/telekom.css";
+/*@import "./styles/sky-os.css";*/
 
 @custom-variant dark (&:is(.dark *));
 
