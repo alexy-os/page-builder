@@ -44,6 +44,16 @@
   --shadow-xl: 0 2 10 0 hsl(0 0% 0% / 0.05), 0 8px 10px -1px hsl(0 0% 0% / 0.05);
   --shadow-2xl: 0 2 10 0 hsl(0 0% 0% / 0.13);
   --tracking-normal: normal;
+  /* Light Mode Colors */
+  --defcon-background: #f4f4f5;
+  --defcon-foreground: #18181b;
+  --defcon-border: #e4e4e7;
+  --defcon-muted-foreground: #71717a;
+  --defcon-primary: #3b82f6;
+  --defcon-primary-foreground: #ffffff;
+  --defcon-secondary: #f4f4f5;
+  --defcon-card-background: #ffffff;
+  --defcon-card-foreground: #18181b;
 }
 
 .dark {
@@ -91,6 +101,16 @@
   --shadow-lg: 0 2 10 0 hsl(0 0% 0% / 0.30), 0 4px 6px -1px hsl(0 0% 0% / 0.30);
   --shadow-xl: 0 2 10 0 hsl(0 0% 0% / 0.30), 0 8px 10px -1px hsl(0 0% 0% / 0.30);
   --shadow-2xl: 0 2 10 0 hsl(0 0% 0% / 0.75);
+  /* Dark Mode Colors */
+  --defcon-background: #09090b;
+  --defcon-foreground: #fafafa;
+  --defcon-border: #27272a;
+  --defcon-muted-foreground: #a1a1aa;
+  --defcon-primary: #2563eb;
+  --defcon-primary-foreground: #ffffff;
+  --defcon-secondary: #18181b;
+  --defcon-card-background: #18181b;
+  --defcon-card-foreground: #fafafa;
 }
 
 @theme inline {
@@ -155,4 +175,42 @@
 
 body {
   letter-spacing: var(--tracking-normal);
+}
+
+/* Tailwind-like utility classes for DEFCON blocks */
+.bg-defcon-background {
+  background-color: var(--defcon-background);
+}
+
+.text-defcon-foreground {
+  color: var(--defcon-foreground);
+}
+
+.border-defcon-border {
+  border-color: var(--defcon-border);
+}
+
+.text-defcon-muted-foreground {
+  color: var(--defcon-muted-foreground);
+}
+
+.bg-defcon-primary {
+  background-color: var(--defcon-primary);
+}
+
+.text-defcon-primary {
+  color: var(--defcon-primary);
+}
+
+.bg-defcon-card {
+  background-color: var(--defcon-card-background);
+}
+
+.text-defcon-card-foreground {
+  color: var(--defcon-card-foreground);
+}
+
+/* Optional: Add transition for smooth color changes */
+.defcon-block {
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
