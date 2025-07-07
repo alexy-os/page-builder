@@ -46,13 +46,14 @@ export function exportToHTML(blocks: any[], projectName: string, themeId: string
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${projectName} - Drag & Drop Page Builder</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzN2I5ZjMiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1zcXVpcmNsZS1pY29uIGx1Y2lkZS1zcXVpcmNsZSI+PHBhdGggZD0iTTEyIDNjNy4yIDAgOSAxLjggOSA5cy0xLjggOS05IDktOS0xLjgtOS05IDEuOC05IDktOSIvPjwvc3ZnPg==" />
     ${fontsURL ? `<link href="${fontsURL}" rel="stylesheet">` : ''}
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style type="text/tailwindcss">
-        ${themeCSS}
+        ${themeCSS} * { @apply border-border outline-ring/50; } button, .button { @apply cursor-pointer; }
     </style>
 </head>
-<body class="bg-background text-foreground">
+<body class="bg-background text-foreground antialiased">
 ${blocksHTML}
 
 <!-- THEME TOGGLE - DELETE THIS SECTION IF NOT NEEDED -->
