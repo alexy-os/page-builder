@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ThemeSelector } from "@/components/theme-selector";
+import { ThemeSelector } from "@/components/ThemeSelector";
 
 interface NavigationProps {
   projectName: string;
@@ -23,6 +23,7 @@ interface NavigationProps {
   onExportCollections?: () => void;
   onImportCollections?: () => void;
   onClearCollections?: () => void;
+  onClearProject?: () => void;
 }
 
 export default function Navigation({
@@ -37,7 +38,8 @@ export default function Navigation({
   onImportTheme,
   onExportCollections,
   onImportCollections,
-  onClearCollections
+  onClearCollections,
+  onClearProject
 }: NavigationProps) {
   return (
     <nav className="border-b border-border bg-card/50 backdrop-blur-sm">
@@ -91,7 +93,7 @@ export default function Navigation({
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
           
-          {(onExport || onImport || onExportCollections || onImportCollections) && (
+          {(onExport || onImport || onExportCollections || onImportCollections || onClearCollections || onClearProject) && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -141,16 +143,27 @@ export default function Navigation({
                         Import Collections
                       </DropdownMenuItem>
                     )}
-                    {onClearCollections && (
+                    {(onClearCollections || onClearProject) && (
                       <>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem 
-                          onClick={onClearCollections}
-                          className="text-red-600 dark:text-red-400"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Clear All Collections
-                        </DropdownMenuItem>
+                        {onClearCollections && (
+                          <DropdownMenuItem 
+                            onClick={onClearCollections}
+                            className="text-red-600 dark:text-red-400"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Clear All Collections
+                          </DropdownMenuItem>
+                        )}
+                        {onClearProject && (
+                          <DropdownMenuItem 
+                            onClick={onClearProject}
+                            className="text-red-600 dark:text-red-400"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Clear Project
+                          </DropdownMenuItem>
+                        )}
                       </>
                     )}
                   </>

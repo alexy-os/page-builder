@@ -64,6 +64,17 @@ export function useProject() {
     return false;
   };
 
+  // Clear project from localStorage and reset state
+  const clearProject = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      setBlocks([]);
+      setProjectName("Buildy Project");
+    } catch (error) {
+      console.error('Error clearing project:', error);
+    }
+  };
+
   return {
     blocks,
     projectName,
@@ -71,6 +82,7 @@ export function useProject() {
     setProjectName,
     saveProject,
     exportProject,
-    importProject
+    importProject,
+    clearProject
   };
 } 

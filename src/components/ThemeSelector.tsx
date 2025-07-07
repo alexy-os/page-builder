@@ -65,7 +65,7 @@ export function ThemeSelector({ onThemeChange, forceUpdate }: ThemeSelectorProps
       onThemeChange?.(themeId);
       
       // Update import in main.tsx
-      updateMainTsxImport(themeId);
+      // updateMainTsxImport(themeId);
       
     } catch (error) {
       console.error('Error switching theme:', error);
@@ -92,14 +92,14 @@ export function ThemeSelector({ onThemeChange, forceUpdate }: ThemeSelectorProps
   };
 
   // Update import in main.tsx (for production builds)
-  const updateMainTsxImport = (themeId: string) => {
+  /*const updateMainTsxImport = (themeId: string) => {
     // This function will only work in development mode
     // In production themes should be pre-built
     if (import.meta.env.DEV) {
       console.log(`Switching to theme: ${themeId}`);
       // In a real application, here you could use the HMR API
     }
-  };
+  };*/
 
   const currentThemeData = themes.find(theme => theme.id === currentTheme);
 

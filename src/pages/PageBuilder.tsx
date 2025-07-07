@@ -8,7 +8,6 @@ import ImportThemeDialog from "../components/dialogs/ImportThemeDialog";
 
 import { useTheme } from "../hooks/useTheme";
 import { useProject } from "../hooks/useProject";
-import { useCollections } from "../hooks/useCollections";
 import { exportToHTML } from "../utils/htmlExporter";
 
 export default function PageBuilder() {
@@ -27,10 +26,9 @@ export default function PageBuilder() {
     setBlocks, 
     saveProject, 
     exportProject, 
-    importProject 
+    importProject,
+    clearProject 
   } = useProject();
-  
-  const { clearAllCollections } = useCollections();
   
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [showImportThemeDialog, setShowImportThemeDialog] = useState(false);
@@ -69,7 +67,7 @@ export default function PageBuilder() {
         onExportHTML={handleExportHTML}
         onImport={() => setShowImportDialog(true)}
         onImportTheme={() => setShowImportThemeDialog(true)}
-        onClearCollections={clearAllCollections}
+        onClearProject={clearProject}
       />
 
       {/* Main Builder Interface */}

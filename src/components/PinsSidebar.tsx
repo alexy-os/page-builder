@@ -40,7 +40,7 @@ export default function PinsSidebar({ activeCollection, onCollectionChange }: Pi
 
   const handleDeleteCollection = (collectionId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (confirm('Вы уверены, что хотите удалить эту коллекцию?')) {
+    if (confirm('Are you sure you want to delete this collection?')) {
       deleteCollection(collectionId);
       if (activeCollection === collectionId) {
         onCollectionChange(null);

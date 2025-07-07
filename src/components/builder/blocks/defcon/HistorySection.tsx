@@ -1,3 +1,4 @@
+import React from "react";
 import { Archive } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -67,15 +68,15 @@ export default function HistorySection({ content }: HistorySectionProps) {
           <div className="mb-6 sm:mb-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-3 sm:gap-4 text-xs text-muted-foreground">
               {timeline.periods.map((period, index) => (
-                <>
-                  <div key={period.year} className="flex items-center gap-2">
+                <React.Fragment key={period.year}>
+                  <div className="flex items-center gap-2">
                     <div className={`w-3 h-3 ${getColorClasses(period.color)} rounded-full flex-shrink-0 defcon-theme-transition`}></div>
                     <span className="font-mono">{period.year}</span>
                   </div>
                   {index < timeline.periods.length - 1 && (
                     <div className="hidden sm:block w-8 h-px bg-border"></div>
                   )}
-                </>
+                </React.Fragment>
               ))}
             </div>
           </div>
