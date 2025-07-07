@@ -2,7 +2,7 @@
 
 A modern, fully customizable drag-and-drop page builder built with React, Vite, and shadcn/ui. Create beautiful landing pages with a simple interface, export them as HTML, and customize themes to match your brand.
 
-![BuildY/UI Screenshot](./src/assets/images/buildy.png)
+![BuildY/UI Screenshot](./src/assets/images/buildy-pins.png)
 
 ## ✨ Features
 
@@ -14,6 +14,9 @@ A modern, fully customizable drag-and-drop page builder built with React, Vite, 
 - **HTML Export**: Generate static HTML files ready for deployment
 - **Responsive Design**: All components are fully responsive
 - **Modern UI Components**: Built with shadcn/ui for a consistent look and feel
+
+
+![BuildY/UI Screenshot](./src/assets/images/buildy-dnd.png)
 
 ## 🚀 Getting Started
 
