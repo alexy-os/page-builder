@@ -107,7 +107,7 @@ export default function PagePins() {
               ? 'scale-[0.3] origin-top-left w-[500%] h-[500%] absolute left-[-25%] top-0' 
               : 'scale-[0.2] origin-top-left w-[500%] h-[500%]'
           }`}>
-            <PreviewComponent content={template.defaultContent} isPreview={true} />
+            <PreviewComponent content={template.defaultContent} />
           </div>
           
           {/* Overlay on hover */}

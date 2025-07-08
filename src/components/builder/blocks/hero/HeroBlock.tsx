@@ -8,10 +8,9 @@ interface HeroBlockProps {
     buttonText: string;
     backgroundImage: string;
   };
-  isPreview?: boolean;
 }
 
-export default function HeroBlock({ content, isPreview = false }: HeroBlockProps) {
+export default function HeroBlock({ content }: HeroBlockProps) {
   
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
@@ -50,15 +49,6 @@ export default function HeroBlock({ content, isPreview = false }: HeroBlockProps
           </Button>
         </div>
       </div>
-      
-      {/* Scroll Indicator */}
-      {!isPreview && (
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-          <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white/70 rounded-full mt-2 animate-pulse" />
-          </div>
-        </div>
-      )}
     </section>
   );
 }

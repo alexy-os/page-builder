@@ -17,8 +17,7 @@ export function exportToHTML(blocks: any[], projectName: string, themeId: string
       // Render component to static HTML
       return renderToStaticMarkup(
           React.createElement(BlockComponent as any, { 
-            content: block.content, 
-            isPreview: false
+            content: block.content
           })
       );
     }).join('\n');

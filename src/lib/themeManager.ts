@@ -230,13 +230,13 @@ export async function loadThemeCSS(themeId: string): Promise<void> {
     document.head.appendChild(style);
   } else {
     // For built-in themes import CSS file
-    // src/styles/themes/sky-os/tw4-oklch/index.css
+    // src/styles/themes/sky-os.css
     try {
-      await import(`../styles/themes/sky-os/tw4-oklch/index.css`);
+      await import(`../styles/themes/sky-os.css`);
       
       const link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = `/src/styles/themes/${themeId}/tw4-oklch/index.css`;
+      link.href = `/src/styles/themes/${themeId}.css`;
       link.setAttribute('data-theme-css', themeId);
       document.head.appendChild(link);
     } catch (error) {

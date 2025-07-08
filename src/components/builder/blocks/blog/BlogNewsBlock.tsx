@@ -16,7 +16,6 @@ interface BlogNewsBlockProps {
     subtitle: string;
     articles: Article[];
   };
-  isPreview?: boolean;
 }
 
 export default function BlogNewsBlock({ content }: BlogNewsBlockProps) {

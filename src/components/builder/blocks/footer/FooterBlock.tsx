@@ -19,7 +19,6 @@ interface FooterBlockProps {
     links?: FooterLink[];
     copyright?: string;
   };
-  isPreview?: boolean;
 }
 
 export default function FooterBlock({ content }: FooterBlockProps) {
