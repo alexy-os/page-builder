@@ -18,6 +18,13 @@ export default defineConfig(async () => {
     server: {
       port: 3000,
     },
+    build: {
+      rollupOptions: {
+        input: tailwindVersion === 'tw3-hsl' 
+          ? path.resolve(__dirname, 'index-tw3.html')
+          : path.resolve(__dirname, 'index.html')
+      }
+    }
   }
 
   if (tailwindVersion === 'tw3-hsl') {

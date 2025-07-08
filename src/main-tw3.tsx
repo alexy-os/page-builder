@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { loadThemeCSS, getCurrentTheme } from './lib/themeManager'
 
 import App from './App.tsx'
-import './styles/index.css'
+import './styles/tailwind-v3.css'
 
 // Initialize theme on app load
 async function initializeTheme() {
@@ -33,4 +33,4 @@ async function initializeApp() {
   }
 }
 
-initializeApp();
+initializeApp(); 

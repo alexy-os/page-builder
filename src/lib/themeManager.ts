@@ -251,7 +251,14 @@ export async function loadThemeCSS(themeId: string): Promise<void> {
     const tailwindVersion = import.meta.env.VITE_TAILWIND_VERSION || 'tw4-oklch';
     
     try {
-      if (tailwindVersion === 'tw4-oklch') {
+      if (tailwindVersion === 'tw3-hsl') {
+        // For Tailwind 3, use link element
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = `/src/styles/tailwind-v3.css`;
+        link.setAttribute('data-theme-css', themeId);
+        document.head.appendChild(link);
+      } else {
         // For Tailwind 4, load CSS content as text to avoid PostCSS processing
         const response = await fetch(`/src/styles/index.css`);
         const cssContent = await response.text();
@@ -260,13 +267,6 @@ export async function loadThemeCSS(themeId: string): Promise<void> {
         style.setAttribute('data-theme-css', themeId);
         style.textContent = cssContent;
         document.head.appendChild(style);
-      } else {
-        // For Tailwind 3, use link element as before
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = `/src/styles/tailwind-v3.css`;
-        link.setAttribute('data-theme-css', themeId);
-        document.head.appendChild(link);
       }
     } catch (error) {
       console.warn(`Failed to load CSS file for theme ${themeId} with version ${tailwindVersion}:`, error);
