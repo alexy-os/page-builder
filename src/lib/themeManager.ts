@@ -2,7 +2,7 @@ export interface ThemeSchema {
   $schema: string;
   name: string;
   type: string;
-  cssVars: {
+  cssVarsV4: {
     theme: Record<string, string>;
     light: Record<string, string>;
     dark: Record<string, string>;
@@ -106,7 +106,7 @@ export function getThemeById(themeId: string): Theme | null {
 
 // Generate CSS variables from theme schema
 export function generateCSSVariables(schema: ThemeSchema): string {
-  const { theme, light, dark } = schema.cssVars;
+  const { theme, light, dark } = schema.cssVarsV4;
   
   let css = ':root {\n';
   
@@ -134,7 +134,7 @@ export function generateCSSVariables(schema: ThemeSchema): string {
 
 // Generate CSS for HTML export with @theme directive for Tailwind v4
 export function generateTailwindThemeCSS(schema: ThemeSchema): string {
-  const { theme, light, dark } = schema.cssVars;
+  const { theme, light, dark } = schema.cssVarsV4;
   
   let css = '@custom-variant dark (&:is(.dark *));\n\n';
   
@@ -296,7 +296,7 @@ export function getGoogleFontsFromTheme(themeId: string): Set<string> {
   if (!theme) return new Set();
   
   const fonts = new Set<string>();
-  const { theme: themeVars, light, dark } = theme.schema.cssVars;
+  const { theme: themeVars, light, dark } = theme.schema.cssVarsV4;
   
   [themeVars, light, dark].forEach(vars => {
     Object.entries(vars).forEach(([key, value]) => {

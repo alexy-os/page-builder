@@ -75,7 +75,7 @@ export default function ImportThemeDialog({
               }}
               className="flex-1 min-h-[300px] p-3 font-mono border border-input text-xs resize-none focus:outline-none focus:ring-1 focus:ring-ring text-secondary-foreground bg-muted/25"
               placeholder={`{
-  "cssVars": {
+  "cssVarsV4": {
     "theme": {
       "background": "oklch(0.9707 0.0027 286.3504)",
       "foreground": "oklch(0.2316 0.0038 286.0989)",

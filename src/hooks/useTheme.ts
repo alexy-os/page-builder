@@ -11,7 +11,7 @@ function applyThemeVariables(themeId: string, isDarkMode: boolean = false) {
   const theme = getThemeById(themeId);
   if (!theme) return;
   
-  const { theme: themeVars, light, dark } = theme.schema.cssVars;
+  const { theme: themeVars, light, dark } = theme.schema.cssVarsV4;
   const root = document.documentElement;
   
   // Apply theme variables
@@ -71,7 +71,7 @@ export function useTheme() {
 
   const importCustomTheme = (themeData: any) => {
     // Validate theme structure
-    if (!themeData.cssVars || !themeData.cssVars.theme || !themeData.cssVars.light || !themeData.cssVars.dark) {
+    if (!themeData.cssVarsV4 || !themeData.cssVarsV4.theme || !themeData.cssVarsV4.light || !themeData.cssVarsV4.dark) {
       throw new Error("Invalid theme format. Please check the schema structure.");
     }
 

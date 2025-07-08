@@ -73,6 +73,13 @@ function processTheme(themeName, themePath) {
     "cssVarsV4": {
       "light": {},
       "dark": {}
+    },
+    "css": {
+      "@layer base": {
+        "body": {
+          "letter-spacing": "var(--tracking-normal)"
+        }
+      }
     }
   };
 
