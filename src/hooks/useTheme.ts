@@ -4,21 +4,8 @@ import {
   getThemeById, 
   setCurrentTheme,
   saveCustomTheme,
-  type ThemeSchema
+  getCSSVars
 } from "@/lib/themeManager";
-
-// Get CSS variables based on Tailwind version from environment
-function getCSSVars(schema: ThemeSchema) {
-  const tailwindVersion = import.meta.env.VITE_TAILWIND_VERSION || 'tw4-oklch';
-  
-  if (tailwindVersion === 'tw3-hsl') {
-    return schema.cssVars;
-  } else if (tailwindVersion === 'tw4-oklch') {
-    return schema.cssVarsV4 || schema.cssVars; // fallback to cssVars if V4 not available
-  }
-  
-  return schema.cssVars; // default fallback
-}
 
 // Apply CSS variables directly in runtime
 function applyThemeVariables(themeId: string, isDarkMode: boolean = false) {

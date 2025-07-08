@@ -28,6 +28,19 @@ const themeSchemas = import.meta.glob('../styles/schema/*.json', {
   eager: true 
 }) as Record<string, { default: ThemeSchema }>;
 
+// Get CSS variables based on Tailwind version from environment
+export function getCSSVars(schema: ThemeSchema) {
+  const tailwindVersion = import.meta.env.VITE_TAILWIND_VERSION || 'tw4-oklch';
+  
+  if (tailwindVersion === 'tw3-hsl') {
+    return schema.cssVars || schema.cssVarsV4;
+  } else if (tailwindVersion === 'tw4-oklch') {
+    return schema.cssVarsV4; // fallback to cssVars if V4 not available
+  }
+  
+  return schema.cssVarsV4; // default fallback
+}
+
 // Get all available themes (including custom)
 export function getAvailableThemes(): Theme[] {
   const themes: Theme[] = [];
@@ -111,7 +124,7 @@ export function getThemeById(themeId: string): Theme | null {
 
 // Generate CSS variables from theme schema
 export function generateCSSVariables(schema: ThemeSchema): string {
-  const { theme = {}, light, dark } = schema.cssVars;
+  const { theme = {}, light, dark } = getCSSVars(schema);
   
   let css = ':root {\n';
   
@@ -139,7 +152,7 @@ export function generateCSSVariables(schema: ThemeSchema): string {
 
 // Generate CSS for HTML export with @theme directive for Tailwind v4
 export function generateTailwindThemeCSS(schema: ThemeSchema): string {
-  const { theme = {}, light, dark } = schema.cssVars;
+  const { theme = {}, light, dark } = getCSSVars(schema);
   
   let css = '@custom-variant dark (&:is(.dark *));\n\n';
   
@@ -312,7 +325,7 @@ export function getGoogleFontsFromTheme(themeId: string): Set<string> {
   if (!theme) return new Set();
   
   const fonts = new Set<string>();
-  const { theme: themeVars = {}, light, dark } = theme.schema.cssVars;
+  const { theme: themeVars = {}, light, dark } = getCSSVars(theme.schema);
   
   [themeVars, light, dark].forEach(vars => {
     Object.entries(vars).forEach(([key, value]) => {
