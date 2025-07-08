@@ -1,0 +1,4 @@
+/* Tailwind CSS v3 with HSL support */
+@import "tailwindcss3/base";
+@import "tailwindcss3/components";
+@import "tailwindcss3/utilities";

@@ -3,29 +3,46 @@ import {
   getCurrentTheme, 
   getThemeById, 
   setCurrentTheme,
-  saveCustomTheme
+  saveCustomTheme,
+  type ThemeSchema
 } from "@/lib/themeManager";
+
+// Get CSS variables based on Tailwind version from environment
+function getCSSVars(schema: ThemeSchema) {
+  const tailwindVersion = import.meta.env.VITE_TAILWIND_VERSION || 'tw4-oklch';
+  
+  if (tailwindVersion === 'tw3-hsl') {
+    return schema.cssVars;
+  } else if (tailwindVersion === 'tw4-oklch') {
+    return schema.cssVarsV4 || schema.cssVars; // fallback to cssVars if V4 not available
+  }
+  
+  return schema.cssVars; // default fallback
+}
 
 // Apply CSS variables directly in runtime
 function applyThemeVariables(themeId: string, isDarkMode: boolean = false) {
   const theme = getThemeById(themeId);
   if (!theme) return;
   
-  const { theme: themeVars, light, dark } = theme.schema.cssVarsV4;
+  const cssVars = getCSSVars(theme.schema);
+  const { theme: themeVars, light, dark } = cssVars;
   const root = document.documentElement;
   
   // Apply theme variables
-  Object.entries(themeVars).forEach(([key, value]) => {
-    root.style.setProperty(`--${key}`, value);
-  });
+  if (themeVars) {
+    Object.entries(themeVars).forEach(([key, value]) => {
+      root.style.setProperty(`--${key}`, value);
+    });
+  }
   
   // Apply variables depending on mode
-  if (isDarkMode) {
+  if (isDarkMode && dark) {
     // Dark mode - apply dark variables
     Object.entries(dark).forEach(([key, value]) => {
       root.style.setProperty(`--${key}`, value);
     });
-  } else {
+  } else if (!isDarkMode && light) {
     // Light mode - apply light variables
     Object.entries(light).forEach(([key, value]) => {
       root.style.setProperty(`--${key}`, value);
@@ -70,9 +87,12 @@ export function useTheme() {
   };
 
   const importCustomTheme = (themeData: any) => {
-    // Validate theme structure
-    if (!themeData.cssVarsV4 || !themeData.cssVarsV4.theme || !themeData.cssVarsV4.light || !themeData.cssVarsV4.dark) {
-      throw new Error("Invalid theme format. Please check the schema structure.");
+    // Validate theme structure - check for both versions
+    const hasV3 = themeData.cssVars && themeData.cssVars.light && themeData.cssVars.dark;
+    const hasV4 = themeData.cssVarsV4 && themeData.cssVarsV4.light && themeData.cssVarsV4.dark;
+    
+    if (!hasV3 && !hasV4) {
+      throw new Error("Invalid theme format. Theme must have either cssVars or cssVarsV4 structure.");
     }
 
     // Create unique ID for custom theme

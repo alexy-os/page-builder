@@ -2,8 +2,13 @@ export interface ThemeSchema {
   $schema: string;
   name: string;
   type: string;
+  cssVars: {
+    theme?: Record<string, string>;
+    light: Record<string, string>;
+    dark: Record<string, string>;
+  };
   cssVarsV4: {
-    theme: Record<string, string>;
+    theme?: Record<string, string>;
     light: Record<string, string>;
     dark: Record<string, string>;
   };
@@ -106,7 +111,7 @@ export function getThemeById(themeId: string): Theme | null {
 
 // Generate CSS variables from theme schema
 export function generateCSSVariables(schema: ThemeSchema): string {
-  const { theme, light, dark } = schema.cssVarsV4;
+  const { theme = {}, light, dark } = schema.cssVars;
   
   let css = ':root {\n';
   
@@ -134,7 +139,7 @@ export function generateCSSVariables(schema: ThemeSchema): string {
 
 // Generate CSS for HTML export with @theme directive for Tailwind v4
 export function generateTailwindThemeCSS(schema: ThemeSchema): string {
-  const { theme, light, dark } = schema.cssVarsV4;
+  const { theme = {}, light, dark } = schema.cssVars;
   
   let css = '@custom-variant dark (&:is(.dark *));\n\n';
   
@@ -229,18 +234,29 @@ export async function loadThemeCSS(themeId: string): Promise<void> {
     style.textContent = generateCSSVariables(theme.schema);
     document.head.appendChild(style);
   } else {
-    // For built-in themes import CSS file
-    // src/styles/themes/sky-os/tw4-oklch/index.css
+    // For built-in themes import CSS file based on environment
+    const tailwindVersion = import.meta.env.VITE_TAILWIND_VERSION || 'tw4-oklch';
+    
     try {
-      await import(`../styles/themes/sky-os/tw4-oklch/index.css`);
-      
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = `/src/styles/themes/${themeId}/tw4-oklch/index.css`;
-      link.setAttribute('data-theme-css', themeId);
-      document.head.appendChild(link);
+      if (tailwindVersion === 'tw4-oklch') {
+        // For Tailwind 4, load CSS content as text to avoid PostCSS processing
+        const response = await fetch(`/src/styles/index.css`);
+        const cssContent = await response.text();
+        
+        const style = document.createElement('style');
+        style.setAttribute('data-theme-css', themeId);
+        style.textContent = cssContent;
+        document.head.appendChild(style);
+      } else {
+        // For Tailwind 3, use link element as before
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = `/src/styles/tailwind-v3.css`;
+        link.setAttribute('data-theme-css', themeId);
+        document.head.appendChild(link);
+      }
     } catch (error) {
-      console.warn(`Failed to load CSS file for theme ${themeId}:`, error);
+      console.warn(`Failed to load CSS file for theme ${themeId} with version ${tailwindVersion}:`, error);
     }
   }
 }
@@ -296,7 +312,7 @@ export function getGoogleFontsFromTheme(themeId: string): Set<string> {
   if (!theme) return new Set();
   
   const fonts = new Set<string>();
-  const { theme: themeVars, light, dark } = theme.schema.cssVarsV4;
+  const { theme: themeVars = {}, light, dark } = theme.schema.cssVars;
   
   [themeVars, light, dark].forEach(vars => {
     Object.entries(vars).forEach(([key, value]) => {
