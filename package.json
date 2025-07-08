@@ -5,15 +5,15 @@
   "version": "0.0.3-alpha.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "cross-env VITE_TAILWIND_VERSION=tw3-hsl vite",
     "dev:tw3": "cross-env VITE_TAILWIND_VERSION=tw3-hsl vite",
     "dev:tw4": "cross-env VITE_TAILWIND_VERSION=tw4-oklch vite",
-    "build": "tsc -b && vite build",
+    "build": "cross-env VITE_TAILWIND_VERSION=tw3-hsl tsc -b && cross-env VITE_TAILWIND_VERSION=tw3-hsl vite build",
     "build:tw3": "cross-env VITE_TAILWIND_VERSION=tw3-hsl tsc -b && cross-env VITE_TAILWIND_VERSION=tw3-hsl vite build",
     "build:tw4": "cross-env VITE_TAILWIND_VERSION=tw4-oklch tsc -b && cross-env VITE_TAILWIND_VERSION=tw4-oklch vite build",
     "generate:schemas": "node scripts/theme-schema-generator.js",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "cross-env VITE_TAILWIND_VERSION=tw3-hsl vite preview",
     "test": "vitest",
     "test:run": "vitest run",
     "test:ui": "vitest --ui"
