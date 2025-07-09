@@ -43,11 +43,8 @@ export default function BlogPostsGridSection({ content }: BlogPostsGridSectionPr
         </header>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {content.posts.map((post, index) => (
-            <a
-              key={index}
-              href={post.href}
-              className="flex flex-col rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all duration-300 bg-card"
-            >
+            <a href={post.href} className="flex flex-col rounded-lg border border-border overflow-hidden hover:shadow-lg transition-all duration-300 bg-card group"
+              key={index}>
               <img
                 src={post.image}
                 alt={post.title}
@@ -60,7 +57,7 @@ export default function BlogPostsGridSection({ content }: BlogPostsGridSectionPr
                 <p className="text-sm text-muted-foreground">
                   {post.summary}
                 </p>
-                <p className="flex items-center text-sm font-medium text-primary hover:underline">
+                <p className="flex items-center text-sm font-medium text-primary group-hover:underline">
                   Read more <ArrowRight className="ml-2 w-4 h-4" />
                 </p>
               </div>

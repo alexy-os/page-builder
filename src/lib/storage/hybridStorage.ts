@@ -78,7 +78,7 @@ export class HybridStorage {
   private syncInterval: number = 5000; // 5 seconds
   private lastActivity: number = Date.now();
   private syncTimer: NodeJS.Timeout | null = null;
-  private useSessionOnly: boolean = false;
+  private useSessionOnly: boolean = true; // Default: session mode for sandbox experience
 
   private constructor() {
     this.memoryCache = {
@@ -103,30 +103,46 @@ export class HybridStorage {
   // Initialize storage
   private initializeStorage(): void {
     try {
-      // Clear session storage on startup
-      this.clearSessionStorage();
-      
-      // Check session
+      // Check session config first to determine mode
       const sessionConfig = this.getSessionConfig();
       if (sessionConfig) {
         this.useSessionOnly = sessionConfig.useSessionOnly;
       }
       
+      // Only clear session storage if we're NOT in session mode
+      // or if this is a fresh browser session (no existing session data)
+      if (!this.useSessionOnly) {
+        // If we're in localStorage mode, clear any old session data
+        sessionStorage.clear();
+        // console.log('SessionStorage cleared (localStorage mode)');
+      } else {
+        // We're in session mode - check if we have existing session data
+        const existingSessionData = sessionStorage.getItem(PROJECT_STORAGE_KEY);
+        if (!existingSessionData) {
+          console.log('Session mode: No existing session data found, starting fresh session');
+        } else {
+          console.log('Session mode: Existing session data found, continuing session');
+        }
+      }
+      
       // Load data
       this.loadFromStorage();
       
-      console.log('HybridStorage initialized');
+      {/* // console.log('HybridStorage initialized', { 
+        useSessionOnly: this.useSessionOnly,
+        hasSessionData: !!sessionStorage.getItem(PROJECT_STORAGE_KEY)
+      }); */}
     } catch (error) {
       console.error('Error initializing HybridStorage:', error);
       this.resetToDefaults();
     }
   }
 
-  // Clear sessionStorage on startup
+  // Clear sessionStorage only when switching modes
   private clearSessionStorage(): void {
     try {
       sessionStorage.clear();
-      console.log('SessionStorage cleared on startup');
+      // console.log('SessionStorage cleared');
     } catch (error) {
       console.error('Error clearing sessionStorage:', error);
     }
@@ -135,23 +151,50 @@ export class HybridStorage {
   // Load data from storage
   private loadFromStorage(): void {
     try {
-      // Load dark mode
+      // Load dark mode (always from localStorage)
       const darkModeStr = localStorage.getItem(DARK_MODE_STORAGE_KEY);
       this.memoryCache.darkMode = darkModeStr ? JSON.parse(darkModeStr) : false;
 
-      // Load project
+      // Load project based on current mode
       const storage = this.useSessionOnly ? sessionStorage : localStorage;
       const projectStr = storage.getItem(PROJECT_STORAGE_KEY);
       
       if (projectStr) {
         this.memoryCache.project = JSON.parse(projectStr);
+        // console.log(`Project loaded from ${this.useSessionOnly ? 'session' : 'local'} storage`);
       } else {
-        this.memoryCache.project = createDefaultProjectState();
-        this.saveProject(this.memoryCache.project);
+        // No existing project data
+        if (this.useSessionOnly) {
+          // In session mode, check if we can copy from localStorage
+          const localProjectStr = localStorage.getItem(PROJECT_STORAGE_KEY);
+          if (localProjectStr) {
+            this.memoryCache.project = JSON.parse(localProjectStr);
+            console.log('Project copied from localStorage to session');
+            // Save to session storage immediately
+            sessionStorage.setItem(PROJECT_STORAGE_KEY, localProjectStr);
+          } else {
+            // Create fresh project for session
+            this.memoryCache.project = createDefaultProjectState();
+            // console.log('New project created for session mode');
+          }
+        } else {
+          // In localStorage mode, create default project
+          this.memoryCache.project = createDefaultProjectState();
+          console.log('New project created for localStorage mode');
+        }
+        
+                 // Save the new/copied project
+        if (this.memoryCache.project) {
+          this.saveProject(this.memoryCache.project);
+        }
       }
 
       this.memoryCache.lastSync = Date.now();
-      console.log('Data loaded from storage', { useSessionOnly: this.useSessionOnly });
+      {/*} console.log('Data loading completed', { 
+        useSessionOnly: this.useSessionOnly,
+        projectName: this.memoryCache.project?.name,
+        blocksCount: this.memoryCache.project?.blocks.length || 0
+      });*/}
     } catch (error) {
       console.error('Error loading from storage:', error);
       this.resetToDefaults();
@@ -201,7 +244,7 @@ export class HybridStorage {
 
       this.memoryCache.lastSync = Date.now();
       this.memoryCache.isDirty = false;
-      console.log('Data synced to storage', { useSessionOnly: this.useSessionOnly });
+      // console.log('Data synced to storage', { useSessionOnly: this.useSessionOnly });
     } catch (error) {
       console.error('Error syncing to storage:', error);
     }
@@ -223,24 +266,40 @@ export class HybridStorage {
       startedAt: new Date().toISOString(),
     };
     
+    // Save current state before switching
+    if (!this.useSessionOnly && this.memoryCache.project) {
+      // We're switching from localStorage to session mode
+      // Copy current project data to session
+      sessionStorage.setItem(PROJECT_STORAGE_KEY, JSON.stringify(this.memoryCache.project));
+      // console.log('Project data copied to session storage');
+    }
+    
     this.useSessionOnly = true;
     this.memoryCache.sessionConfig = sessionConfig;
+    
+    // Save session config to localStorage so it persists across refreshes
+    localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify(sessionConfig));
+    
     this.updateActivity();
-    this.syncToStorage();
     
     console.log('Session mode enabled');
   }
 
   disableSessionMode(): void {
+    // Save current session data to localStorage before clearing
+    if (this.useSessionOnly && this.memoryCache.project) {
+      localStorage.setItem(PROJECT_STORAGE_KEY, JSON.stringify(this.memoryCache.project));
+      console.log('Session data migrated to localStorage');
+    }
+    
     this.useSessionOnly = false;
     this.memoryCache.sessionConfig = null;
     localStorage.removeItem(SESSION_CONFIG_KEY);
-    sessionStorage.clear();
     
-    // Save data to localStorage
-    this.syncToStorage();
+    // Clear session storage after migration
+    this.clearSessionStorage();
     
-    console.log('Session mode disabled');
+    console.log('Session mode disabled, data migrated to localStorage');
   }
 
   isSessionMode(): boolean {
@@ -401,6 +460,8 @@ export class HybridStorage {
     if (this.memoryCache.project && !this.memoryCache.project.favorites.includes(templateId)) {
       this.memoryCache.project.favorites.push(templateId);
       this.updateActivity();
+      // Immediate sync for critical UI operations
+      this.syncToStorage();
     }
   }
 
@@ -409,6 +470,8 @@ export class HybridStorage {
       this.memoryCache.project.favorites = 
         this.memoryCache.project.favorites.filter(id => id !== templateId);
       this.updateActivity();
+      // Immediate sync for critical UI operations
+      this.syncToStorage();
     }
   }
 

@@ -1,14 +1,32 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import PageBuilder from "./pages/PageBuilder";
-import PagePins from "./pages/PagePins";
+import { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Provider as JotaiProvider } from 'jotai';
 
-export default function App() {
+import PagePins from "./pages/PagePins";
+import PageBuilder from "./pages/PageBuilder";
+import { useThemeStore, useProjectStore } from "./store";
+
+function App() {
+  // Initialize stores
+  const { initialize: initializeTheme } = useThemeStore();
+  const { initializeProject } = useProjectStore();
+
+  useEffect(() => {
+    // Initialize stores on app mount
+    initializeTheme();
+    initializeProject();
+  }, [initializeTheme, initializeProject]);
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<PagePins />} />
-        <Route path="/builder" element={<PageBuilder />} />
-      </Routes>
-    </BrowserRouter>
+    <JotaiProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<PagePins />} />
+          <Route path="/builder" element={<PageBuilder />} />
+        </Routes>
+      </Router>
+    </JotaiProvider>
   );
-} 
+}
+
+export default App; 

@@ -1,11 +1,12 @@
 
-import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useAtom } from 'jotai';
 
 import type { Block, Template } from "../../types";
-import { useFavorites } from "../../hooks/useFavorites";
+import { useProjectStore } from "@/store";
+import { builderActiveTabAtom } from "@/atoms";
 
 import { allTemplates } from "./blocks/index";
 
@@ -15,8 +16,14 @@ interface BlockSidebarProps {
 }
 
 export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
-  const [activeTab, setActiveTab] = useState<'favorites' | 'all'>('all');
-  const { favorites } = useFavorites();
+  // Zustand store for favorites
+  const { getFavorites } = useProjectStore();
+  
+  // Jotai atom for local tab state
+  const [activeTab, setActiveTab] = useAtom(builderActiveTabAtom);
+  
+  // Get favorites data
+  const favorites = getFavorites();
 
   const addBlock = (template: Template) => {
     const newBlock: Block = {
@@ -52,7 +59,7 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
     );
   };
 
-  // Get templates based on active tab
+  // Get templates based on active tab - now using Zustand data
   const getTemplates = () => {
     if (activeTab === 'favorites') {
       return allTemplates.filter(template => favorites.includes(template.id));
@@ -61,11 +68,13 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
   };
 
   const templates = getTemplates();
+  const hasFavorites = favorites.length > 0;
 
   return (
     <div className="w-80 border-r border-border bg-card/30 backdrop-blur-sm overflow-y-auto">
       <div className="p-6">
         {/* Tabs - only show if there are favorites */}
+        {hasFavorites && (
           <div className="flex mb-6 bg-muted/50 rounded-lg p-1">
             <Button
               variant={activeTab === 'favorites' ? 'default' : 'ghost'}
@@ -73,7 +82,7 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
               className="flex-1"
               onClick={() => setActiveTab('favorites')}
             >
-              Favorites
+              Favorites ({favorites.length})
             </Button>
             <Button
               variant={activeTab === 'all' ? 'default' : 'ghost'}
@@ -84,6 +93,7 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
               All Blocks
             </Button>
           </div>
+        )}
         
         <div className="space-y-4">
           {templates.map((template: Template) => (
@@ -100,26 +110,14 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
             <p className="text-muted-foreground text-xs mt-1">Add blocks to favorites from the <a href="/" className="font-bold text-primary">Pins page</a></p>
           </div>
         )}
-        
-        {/* blocks.length > 0 && (
-          <div className="mt-8">
-            <h3 className="text-sm font-medium text-muted-foreground mb-4">
-              Current Page ({blocks.length} blocks)
-            </h3>
-            <div className="space-y-2">
-              {blocks.map((block: Block, index: number) => (
-                <div
-                  key={block.id}
-                  className="flex items-center gap-2 p-2 bg-muted/50 rounded-lg text-sm"
-                >
-                  <Grip className="h-4 w-4 text-muted-foreground" />
-                  <span className="flex-1 capitalize">{block.type}</span>
-                  <span className="text-muted-foreground">#{index + 1}</span>
-                </div>
-              ))}
-            </div>
+
+        {/* Empty state when no favorites exist */}
+        {!hasFavorites && (
+          <div className="text-center py-8 border border-dashed border-border rounded-lg">
+            <p className="text-muted-foreground text-sm mb-2">No favorites yet</p>
+            <p className="text-muted-foreground text-xs">Visit the <a href="/" className="text-primary hover:underline">Pins page</a> to add blocks to favorites</p>
           </div>
-        )*/}
+        )}
       </div>
     </div>
   );

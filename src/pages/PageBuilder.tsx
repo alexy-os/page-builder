@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 import BlockSidebar from "../components/builder/BlockSidebar";
 import BuilderCanvas from "../components/builder/BuilderCanvas";
@@ -6,51 +6,64 @@ import Navigation from "../components/Navigation";
 import ImportProjectDialog from "../components/dialogs/ImportProjectDialog";
 import ImportThemeDialog from "../components/dialogs/ImportThemeDialog";
 
-import { useTheme } from "../hooks/useTheme";
-import { useProject } from "../hooks/useProject";
+import { useProjectStore, useUIStore, useThemeStore } from "@/store";
 import { useHybridStorage } from "../hooks/useHybridStorage";
 import { exportToHTML } from "../utils/htmlExporter";
 
 export default function PageBuilder() {
+  // Zustand stores
   const { 
     isDark, 
     currentThemeId, 
     themeSelectorKey, 
     toggleDarkMode, 
     changeTheme, 
-    importCustomTheme 
-  } = useTheme();
+    importCustomTheme,
+    initialize: initializeTheme 
+  } = useThemeStore();
   
   const { 
-    blocks, 
-    projectName, 
-    setBlocks, 
-    saveProject, 
-    exportProject, 
-    importProject
-  } = useProject();
+    project,
+    updateProjectBlocks,
+    exportProject,
+    importProject,
+    initializeProject
+  } = useProjectStore();
   
-  // Новая архитектура HybridStorage
   const {
+    showImportDialog,
+    showImportThemeDialog,
+    setShowImportDialog,
+    setShowImportThemeDialog,
     enableSessionMode,
     disableSessionMode,
-    isSessionMode,
+    isSessionMode
+  } = useUIStore();
+  
+  // Legacy hook for storage operations
+  const {
     clearProjectBlocks,
     fullReset,
     stats
   } = useHybridStorage();
-  
-  const [showImportDialog, setShowImportDialog] = useState(false);
-  const [showImportThemeDialog, setShowImportThemeDialog] = useState(false);
 
-  // Auto-save project when data changes
+  // Initialize stores on mount
   useEffect(() => {
-    saveProject(currentThemeId);
-  }, [blocks, projectName, currentThemeId, saveProject]);
+    initializeTheme();
+    initializeProject();
+  }, [initializeTheme, initializeProject]);
+
+  // Get project data
+  const blocks = project?.blocks || [];
+  const projectName = project?.name || "Buildy Project";
 
   // Event handlers
   const handleExport = () => {
-    exportProject(currentThemeId);
+    try {
+      exportProject();
+    } catch (error) {
+      console.error('Error exporting project:', error);
+    }
   };
 
   const handleExportHTML = () => {
@@ -58,14 +71,17 @@ export default function PageBuilder() {
   };
 
   const handleImport = (jsonData: string) => {
-    importProject(jsonData, changeTheme);
+    const success = importProject(jsonData);
+    if (success && project) {
+      changeTheme(project.theme.currentThemeId);
+    }
+    return success;
   };
 
   const handleImportTheme = (themeData: any) => {
     return importCustomTheme(themeData);
   };
 
-  // Новые обработчики для HybridStorage
   const handleClearProject = () => {
     if (confirm('Are you sure you want to clear the current project? This will remove all blocks from the canvas.')) {
       clearProjectBlocks();
@@ -106,18 +122,18 @@ export default function PageBuilder() {
         onEnableSessionMode={handleEnableSessionMode}
         onDisableSessionMode={handleDisableSessionMode}
         onFullReset={handleFullReset}
-        isSessionMode={isSessionMode()}
+        isSessionMode={isSessionMode}
       />
 
       {/* Main Builder Interface */}
       <div className="flex-1 flex overflow-hidden">
         <BlockSidebar 
           blocks={blocks}
-          setBlocks={setBlocks}
+          setBlocks={updateProjectBlocks}
         />
         <BuilderCanvas 
           blocks={blocks}
-          setBlocks={setBlocks}
+          setBlocks={updateProjectBlocks}
         />
       </div>
 
