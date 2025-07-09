@@ -1,10 +1,13 @@
+// Simplified hook for working with themes through HybridStorage
+
 import { useState, useEffect } from "react";
+import { HybridStorage } from '@/lib/storage';
 import { 
-  getCurrentTheme, 
   getThemeById, 
-  setCurrentTheme,
   saveCustomTheme
 } from "@/lib/themeManager";
+
+const storage = HybridStorage.getInstance();
 
 // Apply CSS variables directly in runtime
 function applyThemeVariables(themeId: string, isDarkMode: boolean = false) {
@@ -34,20 +37,13 @@ function applyThemeVariables(themeId: string, isDarkMode: boolean = false) {
 }
 
 export function useTheme() {
-  const [isDark, setIsDark] = useState(() => {
-    const saved = localStorage.getItem("darkMode");
-    return saved ? JSON.parse(saved) : false;
-  });
-
-  const [currentThemeId, setCurrentThemeId] = useState(() => {
-    return getCurrentTheme();
-  });
-
+  const [isDark, setIsDark] = useState(() => storage.getDarkMode());
+  const [currentThemeId, setCurrentThemeId] = useState(() => storage.getCurrentTheme());
   const [themeSelectorKey, setThemeSelectorKey] = useState(0);
 
   // Apply dark mode
   useEffect(() => {
-    localStorage.setItem("darkMode", JSON.stringify(isDark));
+    storage.setDarkMode(isDark);
     if (isDark) {
       document.documentElement.classList.add("dark");
     } else {
@@ -66,7 +62,7 @@ export function useTheme() {
 
   const changeTheme = (themeId: string) => {
     setCurrentThemeId(themeId);
-    setCurrentTheme(themeId);
+    storage.setCurrentTheme(themeId);
   };
 
   const importCustomTheme = (themeData: any) => {
@@ -79,12 +75,19 @@ export function useTheme() {
     const customThemeId = `custom-${Date.now()}`;
     const customThemeName = themeData.name || "Custom Theme";
     
-    // Save custom theme to localStorage
+    // Save custom theme to HybridStorage
+    storage.addCustomTheme({
+      id: customThemeId,
+      name: customThemeName,
+      schema: themeData
+    });
+    
+    // Also save to themeManager for compatibility
     saveCustomTheme(customThemeId, customThemeName, themeData);
     
     // Switch to new theme
     setCurrentThemeId(customThemeId);
-    setCurrentTheme(customThemeId);
+    storage.setCurrentTheme(customThemeId);
     
     // Force update ThemeSelector
     setThemeSelectorKey(prev => prev + 1);

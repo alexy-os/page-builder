@@ -1,27 +1,95 @@
-// Hybrid Storage System - hybrid storage system with localStorage
+// Centralized project state management
 
-import { ProjectStorage, CollectionStorage } from './index';
+import type { ProjectState, SessionConfig, Collection, SavedBlock, CustomTheme } from '@/types';
+
+const PROJECT_STORAGE_KEY = 'project';
+const DARK_MODE_STORAGE_KEY = 'darkMode';
+const SESSION_CONFIG_KEY = 'sessionConfig';
+
+// Default collections for BuildY
+const DEFAULT_COLLECTIONS: Collection[] = [
+  {
+    id: 'landing',
+    name: 'Landing',
+    type: 'buildy',
+    blockIds: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'blog',
+    name: 'Blog',
+    type: 'buildy',
+    blockIds: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'website',
+    name: 'Website',
+    type: 'buildy',
+    blockIds: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'layouts',
+    name: 'Layouts',
+    type: 'buildy',
+    blockIds: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
+
+// Default project state
+function createDefaultProjectState(): ProjectState {
+  return {
+    name: 'Buildy Project',
+    id: `project-${Date.now()}`,
+    version: '1.0.0',
+    blocks: [],
+    theme: {
+      currentThemeId: 'sky-os',
+      customThemes: [],
+    },
+    collections: DEFAULT_COLLECTIONS,
+    savedBlocks: [],
+    favorites: [],
+    metadata: {
+      createdAt: new Date().toISOString(),
+      lastModified: new Date().toISOString(),
+      version: '1.0.0',
+    },
+  };
+}
 
 interface MemoryCache {
-  projects: Map<string, any>;
-  collections: Map<string, any>;
+  project: ProjectState | null;
+  darkMode: boolean;
+  sessionConfig: SessionConfig | null;
   lastSync: number;
+  isDirty: boolean;
 }
 
 export class HybridStorage {
   private static instance: HybridStorage;
   private memoryCache: MemoryCache;
-  private syncInterval: number = 8000; // 8 seconds
+  private syncInterval: number = 5000; // 5 seconds
   private lastActivity: number = Date.now();
+  private syncTimer: NodeJS.Timeout | null = null;
+  private useSessionOnly: boolean = false;
 
   private constructor() {
     this.memoryCache = {
-      projects: new Map(),
-      collections: new Map(),
-      lastSync: Date.now()
+      project: null,
+      darkMode: false,
+      sessionConfig: null,
+      lastSync: Date.now(),
+      isDirty: false,
     };
     
-    this.initializeMemoryCache();
+    this.initializeStorage();
     this.startSyncTimer();
   }
 
@@ -32,313 +100,410 @@ export class HybridStorage {
     return HybridStorage.instance;
   }
 
-  private async initializeMemoryCache(): Promise<void> {
+  // Initialize storage
+  private initializeStorage(): void {
     try {
-      // Load data from localStorage to memory
-      const currentProject = ProjectStorage.getProject();
-      if (currentProject) {
-        this.memoryCache.projects.set('current', currentProject);
+      // Clear session storage on startup
+      this.clearSessionStorage();
+      
+      // Check session
+      const sessionConfig = this.getSessionConfig();
+      if (sessionConfig) {
+        this.useSessionOnly = sessionConfig.useSessionOnly;
       }
-
-      const favorites = ProjectStorage.getFavorites();
-      favorites.forEach((fav, index) => {
-        this.memoryCache.projects.set(`favorite_${index}`, fav);
-      });
-
-      const collections = CollectionStorage.getCollections();
-      collections.forEach(collection => {
-        this.memoryCache.collections.set(collection.id, collection);
-      });
-
-      const savedBlocks = CollectionStorage.getSavedBlocks();
-      savedBlocks.forEach(block => {
-        this.memoryCache.collections.set(`block_${block.id}`, block);
-      });
-
-      console.log('Memory cache initialized with localStorage data');
+      
+      // Load data
+      this.loadFromStorage();
+      
+      console.log('HybridStorage initialized');
     } catch (error) {
-      console.error('Error initializing memory cache:', error);
+      console.error('Error initializing HybridStorage:', error);
+      this.resetToDefaults();
     }
   }
 
+  // Clear sessionStorage on startup
+  private clearSessionStorage(): void {
+    try {
+      sessionStorage.clear();
+      console.log('SessionStorage cleared on startup');
+    } catch (error) {
+      console.error('Error clearing sessionStorage:', error);
+    }
+  }
+
+  // Load data from storage
+  private loadFromStorage(): void {
+    try {
+      // Load dark mode
+      const darkModeStr = localStorage.getItem(DARK_MODE_STORAGE_KEY);
+      this.memoryCache.darkMode = darkModeStr ? JSON.parse(darkModeStr) : false;
+
+      // Load project
+      const storage = this.useSessionOnly ? sessionStorage : localStorage;
+      const projectStr = storage.getItem(PROJECT_STORAGE_KEY);
+      
+      if (projectStr) {
+        this.memoryCache.project = JSON.parse(projectStr);
+      } else {
+        this.memoryCache.project = createDefaultProjectState();
+        this.saveProject(this.memoryCache.project);
+      }
+
+      this.memoryCache.lastSync = Date.now();
+      console.log('Data loaded from storage', { useSessionOnly: this.useSessionOnly });
+    } catch (error) {
+      console.error('Error loading from storage:', error);
+      this.resetToDefaults();
+    }
+  }
+
+  // Reset to default values
+  private resetToDefaults(): void {
+    this.memoryCache.project = createDefaultProjectState();
+    this.memoryCache.darkMode = false;
+    this.memoryCache.sessionConfig = null;
+    this.memoryCache.isDirty = true;
+    this.syncToStorage();
+  }
+
+  // Start sync timer
   private startSyncTimer(): void {
-    setInterval(() => {
+    if (this.syncTimer) {
+      clearInterval(this.syncTimer);
+    }
+
+    this.syncTimer = setInterval(() => {
       const now = Date.now();
-      // Synchronize only if there was activity in the last 30 seconds
-      if (now - this.lastActivity < 30000) {
-        this.syncToLocalStorage();
+      // Sync only if there was activity and data changed
+      if (now - this.lastActivity < 30000 && this.memoryCache.isDirty) {
+        this.syncToStorage();
       }
     }, this.syncInterval);
   }
 
-  private async syncToLocalStorage(): Promise<void> {
+  // Sync to storage
+  private syncToStorage(): void {
     try {
-      const now = Date.now();
-      
-      // Save projects
-      for (const [key, projectData] of this.memoryCache.projects) {
-        if (key === 'current') {
-          const currentProject = ProjectStorage.getProject();
-          if (!currentProject || JSON.stringify(currentProject) !== JSON.stringify(projectData)) {
-            ProjectStorage.saveProject(projectData);
-          }
-        }
+      // Save dark mode to localStorage
+      localStorage.setItem(DARK_MODE_STORAGE_KEY, JSON.stringify(this.memoryCache.darkMode));
+
+      // Save project
+      if (this.memoryCache.project) {
+        const storage = this.useSessionOnly ? sessionStorage : localStorage;
+        storage.setItem(PROJECT_STORAGE_KEY, JSON.stringify(this.memoryCache.project));
       }
 
-      // Save collections
-      const collectionsToSave = Array.from(this.memoryCache.collections.values())
-        .filter(item => item.type && (item.type === 'buildy' || item.type === 'user'));
-      
-      if (collectionsToSave.length > 0) {
-        CollectionStorage.saveCollections(collectionsToSave);
+      // Save session config
+      if (this.memoryCache.sessionConfig) {
+        localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify(this.memoryCache.sessionConfig));
       }
 
-      const blocksToSave = Array.from(this.memoryCache.collections.values())
-        .filter(item => item.templateId); // This is blocks, not collections
-      
-      if (blocksToSave.length > 0) {
-        CollectionStorage.saveSavedBlocks(blocksToSave);
-      }
-
-      this.memoryCache.lastSync = now;
-      console.log('Memory cache synced to localStorage');
+      this.memoryCache.lastSync = Date.now();
+      this.memoryCache.isDirty = false;
+      console.log('Data synced to storage', { useSessionOnly: this.useSessionOnly });
     } catch (error) {
-      console.error('Error syncing memory cache to localStorage:', error);
+      console.error('Error syncing to storage:', error);
     }
   }
 
-  // Projects
-  async saveProject(projectData: any): Promise<void> {
+  // Update activity
+  private updateActivity(): void {
     this.lastActivity = Date.now();
+    this.memoryCache.isDirty = true;
+  }
+
+  // === PUBLIC API ===
+
+  // Session mode management
+  enableSessionMode(): void {
+    const sessionConfig: SessionConfig = {
+      useSessionOnly: true,
+      sessionId: `session-${Date.now()}`,
+      startedAt: new Date().toISOString(),
+    };
     
-    try {
-      // Save to memory
-      this.memoryCache.projects.set('current', projectData);
-      
-      // Save to localStorage
-      ProjectStorage.saveProject(projectData);
-      
-      console.log('Project saved to hybrid storage');
-    } catch (error) {
-      console.error('Error saving project to hybrid storage:', error);
-    }
-  }
-
-  async loadProject(): Promise<any | null> {
-    try {
-      // First check memory
-      const memoryProject = this.memoryCache.projects.get('current');
-      if (memoryProject) {
-        return memoryProject;
-      }
-
-      // If not in memory, load from localStorage
-      const storageProject = ProjectStorage.getProject();
-      if (storageProject) {
-        this.memoryCache.projects.set('current', storageProject);
-        return storageProject;
-      }
-
-      return null;
-    } catch (error) {
-      console.error('Error loading project from hybrid storage:', error);
-      return null;
-    }
-  }
-
-  async updateProjectBlocks(blocks: any[]): Promise<void> {
-    this.lastActivity = Date.now();
+    this.useSessionOnly = true;
+    this.memoryCache.sessionConfig = sessionConfig;
+    this.updateActivity();
+    this.syncToStorage();
     
-    try {
-      const currentProject = await this.loadProject();
-      if (currentProject) {
-        const updatedProject = { ...currentProject, blocks };
-        await this.saveProject(updatedProject);
-      }
-    } catch (error) {
-      console.error('Error updating project blocks in hybrid storage:', error);
-    }
+    console.log('Session mode enabled');
   }
 
-  // Collections
-  async saveCollection(collection: any): Promise<void> {
-    this.lastActivity = Date.now();
+  disableSessionMode(): void {
+    this.useSessionOnly = false;
+    this.memoryCache.sessionConfig = null;
+    localStorage.removeItem(SESSION_CONFIG_KEY);
+    sessionStorage.clear();
     
-    try {
-      // Save to memory
-      this.memoryCache.collections.set(collection.id, collection);
-      
-      // Save to localStorage
-      const existingCollections = CollectionStorage.getCollections();
-      const updatedCollections = existingCollections.filter(c => c.id !== collection.id);
-      updatedCollections.push(collection);
-      CollectionStorage.saveCollections(updatedCollections);
-      
-      console.log(`Collection ${collection.name} saved to hybrid storage`);
-    } catch (error) {
-      console.error('Error saving collection to hybrid storage:', error);
-    }
-  }
-
-  async loadCollection(collectionId: string): Promise<any | null> {
-    try {
-      // First check memory
-      const memoryCollection = this.memoryCache.collections.get(collectionId);
-      if (memoryCollection) {
-        return memoryCollection;
-      }
-
-      // If not in memory, load from localStorage
-      const storageCollection = CollectionStorage.getCollectionById(collectionId);
-      if (storageCollection) {
-        this.memoryCache.collections.set(collectionId, storageCollection);
-        return storageCollection;
-      }
-
-      return null;
-    } catch (error) {
-      console.error('Error loading collection from hybrid storage:', error);
-      return null;
-    }
-  }
-
-  async saveBlock(block: any): Promise<void> {
-    this.lastActivity = Date.now();
+    // Save data to localStorage
+    this.syncToStorage();
     
-    try {
-      // Save to memory
-      this.memoryCache.collections.set(`block_${block.id}`, block);
-      
-      // Save to localStorage
-      const existingBlocks = CollectionStorage.getSavedBlocks();
-      const updatedBlocks = existingBlocks.filter(b => b.id !== block.id);
-      updatedBlocks.push(block);
-      CollectionStorage.saveSavedBlocks(updatedBlocks);
-      
-      console.log(`Block ${block.name} saved to hybrid storage`);
-    } catch (error) {
-      console.error('Error saving block to hybrid storage:', error);
-    }
+    console.log('Session mode disabled');
   }
 
-  async loadBlock(blockId: string): Promise<any | null> {
+  isSessionMode(): boolean {
+    return this.useSessionOnly;
+  }
+
+  getSessionConfig(): SessionConfig | null {
     try {
-      // First check memory
-      const memoryBlock = this.memoryCache.collections.get(`block_${blockId}`);
-      if (memoryBlock) {
-        return memoryBlock;
-      }
-
-      // If not in memory, load from localStorage
-      const storageBlock = CollectionStorage.getSavedBlockById(blockId);
-      if (storageBlock) {
-        this.memoryCache.collections.set(`block_${blockId}`, storageBlock);
-        return storageBlock;
-      }
-
-      return null;
+      const configStr = localStorage.getItem(SESSION_CONFIG_KEY);
+      return configStr ? JSON.parse(configStr) : null;
     } catch (error) {
-      console.error('Error loading block from hybrid storage:', error);
+      console.error('Error getting session config:', error);
       return null;
     }
   }
 
-  // Quick search in memory
-  async searchInMemory(query: string): Promise<{
-    projects: any[];
-    collections: any[];
-    blocks: any[];
-  }> {
-    const results: {
-      projects: any[];
-      collections: any[];
-      blocks: any[];
-    } = {
-      projects: [],
-      collections: [],
-      blocks: []
+  // Project management
+  getProject(): ProjectState | null {
+    return this.memoryCache.project;
+  }
+
+  saveProject(project: ProjectState): void {
+    this.memoryCache.project = {
+      ...project,
+      metadata: {
+        ...project.metadata,
+        lastModified: new Date().toISOString(),
+      },
+    };
+    this.updateActivity();
+  }
+
+  updateProjectName(name: string): void {
+    if (this.memoryCache.project) {
+      this.memoryCache.project.name = name;
+      this.updateActivity();
+    }
+  }
+
+  updateProjectBlocks(blocks: any[]): void {
+    if (this.memoryCache.project) {
+      this.memoryCache.project.blocks = blocks;
+      this.updateActivity();
+    }
+  }
+
+  clearProjectBlocks(): void {
+    if (this.memoryCache.project) {
+      this.memoryCache.project.blocks = [];
+      this.updateActivity();
+    }
+  }
+
+  // Theme management
+  getDarkMode(): boolean {
+    return this.memoryCache.darkMode;
+  }
+
+  setDarkMode(isDark: boolean): void {
+    this.memoryCache.darkMode = isDark;
+    this.updateActivity();
+  }
+
+  getCurrentTheme(): string {
+    return this.memoryCache.project?.theme.currentThemeId || 'sky-os';
+  }
+
+  setCurrentTheme(themeId: string): void {
+    if (this.memoryCache.project) {
+      this.memoryCache.project.theme.currentThemeId = themeId;
+      this.updateActivity();
+    }
+  }
+
+  getCustomThemes(): CustomTheme[] {
+    return this.memoryCache.project?.theme.customThemes || [];
+  }
+
+  addCustomTheme(theme: CustomTheme): void {
+    if (this.memoryCache.project) {
+      this.memoryCache.project.theme.customThemes.push(theme);
+      this.updateActivity();
+    }
+  }
+
+  removeCustomTheme(themeId: string): void {
+    if (this.memoryCache.project) {
+      this.memoryCache.project.theme.customThemes = 
+        this.memoryCache.project.theme.customThemes.filter(t => t.id !== themeId);
+      this.updateActivity();
+    }
+  }
+
+  // Collection management
+  getCollections(): Collection[] {
+    return this.memoryCache.project?.collections || [];
+  }
+
+  saveCollection(collection: Collection): void {
+    if (this.memoryCache.project) {
+      const index = this.memoryCache.project.collections.findIndex(c => c.id === collection.id);
+      if (index >= 0) {
+        this.memoryCache.project.collections[index] = collection;
+      } else {
+        this.memoryCache.project.collections.push(collection);
+      }
+      this.updateActivity();
+    }
+  }
+
+  deleteCollection(collectionId: string): void {
+    if (this.memoryCache.project) {
+      this.memoryCache.project.collections = 
+        this.memoryCache.project.collections.filter(c => c.id !== collectionId);
+      this.updateActivity();
+    }
+  }
+
+  clearCollections(): void {
+    if (this.memoryCache.project) {
+      this.memoryCache.project.collections = DEFAULT_COLLECTIONS;
+      this.memoryCache.project.savedBlocks = [];
+      this.updateActivity();
+    }
+  }
+
+  // Saved blocks management
+  getSavedBlocks(): SavedBlock[] {
+    return this.memoryCache.project?.savedBlocks || [];
+  }
+
+  saveBlock(block: SavedBlock): void {
+    if (this.memoryCache.project) {
+      const index = this.memoryCache.project.savedBlocks.findIndex(b => b.id === block.id);
+      if (index >= 0) {
+        this.memoryCache.project.savedBlocks[index] = block;
+      } else {
+        this.memoryCache.project.savedBlocks.push(block);
+      }
+      this.updateActivity();
+    }
+  }
+
+  deleteBlock(blockId: string): void {
+    if (this.memoryCache.project) {
+      this.memoryCache.project.savedBlocks = 
+        this.memoryCache.project.savedBlocks.filter(b => b.id !== blockId);
+      this.updateActivity();
+    }
+  }
+
+  // Favorites management
+  getFavorites(): string[] {
+    return this.memoryCache.project?.favorites || [];
+  }
+
+  addToFavorites(templateId: string): void {
+    if (this.memoryCache.project && !this.memoryCache.project.favorites.includes(templateId)) {
+      this.memoryCache.project.favorites.push(templateId);
+      this.updateActivity();
+    }
+  }
+
+  removeFromFavorites(templateId: string): void {
+    if (this.memoryCache.project) {
+      this.memoryCache.project.favorites = 
+        this.memoryCache.project.favorites.filter(id => id !== templateId);
+      this.updateActivity();
+    }
+  }
+
+  isFavorite(templateId: string): boolean {
+    return this.memoryCache.project?.favorites.includes(templateId) || false;
+  }
+
+  // Utilities
+  forceSync(): void {
+    this.syncToStorage();
+  }
+
+  clearAll(): void {
+    this.resetToDefaults();
+    localStorage.clear();
+    sessionStorage.clear();
+    console.log('All storage cleared');
+  }
+
+  // Full reset with reload
+  fullReset(): void {
+    this.clearAll();
+    window.location.reload();
+  }
+
+  // Export/import
+  exportProject(): string {
+    if (!this.memoryCache.project) {
+      throw new Error('No project to export');
+    }
+
+    const exportData = {
+      project: this.memoryCache.project,
+      exportedAt: new Date().toISOString(),
+      version: '1.0.0',
     };
 
-    const queryLower = query.toLowerCase();
+    return JSON.stringify(exportData, null, 2);
+  }
 
+  importProject(jsonData: string): boolean {
     try {
-      // Search in projects
-      for (const [key, project] of this.memoryCache.projects) {
-        if (project.name?.toLowerCase().includes(queryLower)) {
-          results.projects.push({ id: key, ...project });
-        }
+      const data = JSON.parse(jsonData);
+      if (data.project && typeof data.project === 'object') {
+        this.memoryCache.project = data.project;
+        this.updateActivity();
+        return true;
       }
-
-      // Search in collections and blocks
-      for (const [key, item] of this.memoryCache.collections) {
-        if (item.name?.toLowerCase().includes(queryLower)) {
-          if (item.type) {
-            results.collections.push({ id: key, ...item });
-          } else if (item.templateId) {
-            results.blocks.push({ id: key, ...item });
-          }
-        }
-      }
-
-      return results;
+      return false;
     } catch (error) {
-      console.error('Error searching in memory:', error);
-      return results;
+      console.error('Error importing project:', error);
+      return false;
     }
   }
 
   // Statistics
-  getMemoryStats(): {
-    projectsCount: number;
-    collectionsCount: number;
+  getStats(): {
+    projectName: string;
     blocksCount: number;
+    collectionsCount: number;
+    savedBlocksCount: number;
+    favoritesCount: number;
+    customThemesCount: number;
+    useSessionOnly: boolean;
     lastSync: string;
     memoryUsage: number;
   } {
-    const collectionsCount = Array.from(this.memoryCache.collections.values())
-      .filter(item => item.type).length;
-    
-    const blocksCount = Array.from(this.memoryCache.collections.values())
-      .filter(item => item.templateId).length;
-
+    const project = this.memoryCache.project;
     return {
-      projectsCount: this.memoryCache.projects.size,
-      collectionsCount,
-      blocksCount,
+      projectName: project?.name || 'No Project',
+      blocksCount: project?.blocks.length || 0,
+      collectionsCount: project?.collections.length || 0,
+      savedBlocksCount: project?.savedBlocks.length || 0,
+      favoritesCount: project?.favorites.length || 0,
+      customThemesCount: project?.theme.customThemes.length || 0,
+      useSessionOnly: this.useSessionOnly,
       lastSync: new Date(this.memoryCache.lastSync).toLocaleString(),
-      memoryUsage: this.estimateMemoryUsage()
+      memoryUsage: this.estimateMemoryUsage(),
     };
   }
 
   private estimateMemoryUsage(): number {
     try {
-      const dataStr = JSON.stringify({
-        projects: Array.from(this.memoryCache.projects.entries()),
-        collections: Array.from(this.memoryCache.collections.entries())
-      });
+      const dataStr = JSON.stringify(this.memoryCache);
       return new Blob([dataStr]).size;
     } catch (error) {
       return 0;
     }
   }
 
-  // Clear
-  async clearMemoryCache(): Promise<void> {
-    this.memoryCache.projects.clear();
-    this.memoryCache.collections.clear();
-    this.memoryCache.lastSync = Date.now();
-    console.log('Memory cache cleared');
-  }
-
-  async clearAll(): Promise<void> {
-    await this.clearMemoryCache();
-    ProjectStorage.clearAll();
-    CollectionStorage.clearAll();
-    console.log('All hybrid storage data cleared');
-  }
-
-  // Force synchronization
-  async forceSync(): Promise<void> {
-    await this.syncToLocalStorage();
+  // Cleanup on destruction
+  destroy(): void {
+    if (this.syncTimer) {
+      clearInterval(this.syncTimer);
+    }
+    this.syncToStorage();
   }
 }

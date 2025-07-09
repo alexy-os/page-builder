@@ -25,3 +25,64 @@ export interface Project {
   lastModified?: string;
   exportedAt?: string;
 } 
+
+// Centralized project structure
+export interface ProjectState {
+  name: string;
+  id: string;
+  version: string;
+  
+  blocks: any[];
+  
+  theme: {
+    currentThemeId: string;
+    customThemes: CustomTheme[];
+  };
+
+  collections: Collection[];
+  
+  savedBlocks: SavedBlock[];
+  
+  favorites: string[];
+  
+  metadata: {
+    createdAt: string;
+    lastModified: string;
+    version: string;
+  };
+}
+
+export interface Collection {
+  id: string;
+  name: string;
+  type: 'buildy' | 'user';
+  blockIds: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SavedBlock {
+  id: string;
+  templateId: string;
+  name: string;
+  description: string;
+  savedAt: string;
+}
+
+export interface CustomTheme {
+  id: string;
+  name: string;
+  schema: any;
+}
+
+export interface SessionConfig {
+  useSessionOnly: boolean;
+  sessionId: string;
+  startedAt: string;
+}
+
+export interface ProjectExportData {
+  project: ProjectState;
+  exportedAt: string;
+  version: string;
+} 

@@ -1,111 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
+// Simplified hook for working with collections through HybridStorage
 
-export interface Collection {
-  id: string;
-  name: string;
-  type: 'buildy' | 'user';
-  blockIds: string[];
-  createdAt: string;
-  updatedAt: string;
-}
+import { HybridStorage } from '@/lib/storage';
+import type { Collection, SavedBlock } from '@/types';
 
-export interface SavedBlock {
-  id: string;
-  templateId: string;
-  name: string;
-  description: string;
-  savedAt: string;
-}
-
-const COLLECTIONS_STORAGE_KEY = 'buildy-collections';
-const SAVED_BLOCKS_STORAGE_KEY = 'buildy-saved-blocks';
-
-// Default BuildY collections
-const defaultCollections: Collection[] = [
-  {
-    id: 'landing',
-    name: 'Landing',
-    type: 'buildy',
-    blockIds: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 'blog',
-    name: 'Blog',
-    type: 'buildy',
-    blockIds: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 'website',
-    name: 'Website',
-    type: 'buildy',
-    blockIds: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 'layouts',
-    name: 'Layouts',
-    type: 'buildy',
-    blockIds: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
+const storage = HybridStorage.getInstance();
 
 export function useCollections() {
-  const [collections, setCollections] = useState<Collection[]>([]);
-  const [savedBlocks, setSavedBlocks] = useState<SavedBlock[]>([]);
-
-  // Load collections and saved blocks from localStorage
-  useEffect(() => {
-    try {
-      const storedCollections = localStorage.getItem(COLLECTIONS_STORAGE_KEY);
-      const storedBlocks = localStorage.getItem(SAVED_BLOCKS_STORAGE_KEY);
-
-      if (storedCollections) {
-        const parsed = JSON.parse(storedCollections);
-        setCollections(parsed);
-      } else {
-        // Initialize with default collections
-        setCollections(defaultCollections);
-        localStorage.setItem(COLLECTIONS_STORAGE_KEY, JSON.stringify(defaultCollections));
-      }
-
-      if (storedBlocks) {
-        setSavedBlocks(JSON.parse(storedBlocks));
-      }
-    } catch (error) {
-      console.error('Error loading collections from localStorage:', error);
-      setCollections(defaultCollections);
-    }
-  }, []);
-
-  // Save collections to localStorage
-  const saveCollections = useCallback((newCollections: Collection[]) => {
-    try {
-      localStorage.setItem(COLLECTIONS_STORAGE_KEY, JSON.stringify(newCollections));
-      setCollections(newCollections);
-    } catch (error) {
-      console.error('Error saving collections to localStorage:', error);
-    }
-  }, []);
-
-  // Save blocks to localStorage
-  const saveSavedBlocks = useCallback((newSavedBlocks: SavedBlock[]) => {
-    try {
-      localStorage.setItem(SAVED_BLOCKS_STORAGE_KEY, JSON.stringify(newSavedBlocks));
-      setSavedBlocks(newSavedBlocks);
-    } catch (error) {
-      console.error('Error saving blocks to localStorage:', error);
-    }
-  }, []);
+  const collections = storage.getCollections();
+  const savedBlocks = storage.getSavedBlocks();
 
   // Create a new collection
-  const createCollection = useCallback((name: string) => {
+  const createCollection = (name: string): Collection => {
     const newCollection: Collection = {
       id: `user-${Date.now()}`,
       name,
@@ -115,19 +20,17 @@ export function useCollections() {
       updatedAt: new Date().toISOString(),
     };
 
-    const newCollections = [...collections, newCollection];
-    saveCollections(newCollections);
+    storage.saveCollection(newCollection);
     return newCollection;
-  }, [collections, saveCollections]);
+  };
 
   // Delete a collection
-  const deleteCollection = useCallback((collectionId: string) => {
-    const newCollections = collections.filter(c => c.id !== collectionId);
-    saveCollections(newCollections);
-  }, [collections, saveCollections]);
+  const deleteCollection = (collectionId: string) => {
+    storage.deleteCollection(collectionId);
+  };
 
   // Save a block to a collection
-  const saveBlockToCollection = useCallback((templateId: string, templateName: string, templateDescription: string, collectionId: string) => {
+  const saveBlockToCollection = (templateId: string, templateName: string, templateDescription: string, collectionId: string): SavedBlock => {
     const blockId = `block-${templateId}-${Date.now()}`;
     
     // Create saved block record
@@ -139,73 +42,66 @@ export function useCollections() {
       savedAt: new Date().toISOString(),
     };
 
-    // Add to saved blocks
-    const newSavedBlocks = [...savedBlocks, savedBlock];
-    saveSavedBlocks(newSavedBlocks);
+    // Save the block
+    storage.saveBlock(savedBlock);
 
     // Add block ID to collection
-    const newCollections = collections.map(collection => {
-      if (collection.id === collectionId) {
-        return {
-          ...collection,
-          blockIds: [...collection.blockIds, blockId],
-          updatedAt: new Date().toISOString(),
-        };
-      }
-      return collection;
-    });
+    const collection = collections.find(c => c.id === collectionId);
+    if (collection) {
+      const updatedCollection = {
+        ...collection,
+        blockIds: [...collection.blockIds, blockId],
+        updatedAt: new Date().toISOString(),
+      };
+      storage.saveCollection(updatedCollection);
+    }
 
-    saveCollections(newCollections);
     return savedBlock;
-  }, [collections, savedBlocks, saveCollections, saveSavedBlocks]);
+  };
 
   // Remove a block from a collection
-  const removeBlockFromCollection = useCallback((blockId: string, collectionId: string) => {
-    // Remove from collection
-    const newCollections = collections.map(collection => {
-      if (collection.id === collectionId) {
-        return {
-          ...collection,
-          blockIds: collection.blockIds.filter(id => id !== blockId),
-          updatedAt: new Date().toISOString(),
-        };
+  const removeBlockFromCollection = (blockId: string, collectionId: string) => {
+    const collection = collections.find(c => c.id === collectionId);
+    if (collection) {
+      const updatedCollection = {
+        ...collection,
+        blockIds: collection.blockIds.filter(id => id !== blockId),
+        updatedAt: new Date().toISOString(),
+      };
+      storage.saveCollection(updatedCollection);
+
+      // Check if block is used in other collections
+      const isUsedInOtherCollections = collections.some(c => 
+        c.id !== collectionId && c.blockIds.includes(blockId)
+      );
+
+      // If not used elsewhere, delete the block
+      if (!isUsedInOtherCollections) {
+        storage.deleteBlock(blockId);
       }
-      return collection;
-    });
-
-    saveCollections(newCollections);
-
-    // Remove from saved blocks if not used in any other collection
-    const isUsedInOtherCollections = newCollections.some(collection => 
-      collection.id !== collectionId && collection.blockIds.includes(blockId)
-    );
-
-    if (!isUsedInOtherCollections) {
-      const newSavedBlocks = savedBlocks.filter(block => block.id !== blockId);
-      saveSavedBlocks(newSavedBlocks);
     }
-  }, [collections, savedBlocks, saveCollections, saveSavedBlocks]);
+  };
 
   // Get blocks for a specific collection
-  const getCollectionBlocks = useCallback((collectionId: string) => {
+  const getCollectionBlocks = (collectionId: string): SavedBlock[] => {
     const collection = collections.find(c => c.id === collectionId);
     if (!collection) return [];
 
     return collection.blockIds
       .map(blockId => savedBlocks.find(block => block.id === blockId))
       .filter(Boolean) as SavedBlock[];
-  }, [collections, savedBlocks]);
+  };
 
   // Get collection with block count
-  const getCollectionsWithCounts = useCallback(() => {
+  const getCollectionsWithCounts = () => {
     return collections.map(collection => ({
       ...collection,
       count: collection.blockIds.length,
     }));
-  }, [collections]);
+  };
 
   // Export collections data
-  const exportCollections = useCallback(() => {
+  const exportCollections = () => {
     const data = {
       collections,
       savedBlocks,
@@ -223,19 +119,23 @@ export function useCollections() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  }, [collections, savedBlocks]);
+  };
 
   // Import collections data
-  const importCollections = useCallback((jsonData: string) => {
+  const importCollections = (jsonData: string): boolean => {
     try {
       const data = JSON.parse(jsonData);
       
       if (data.collections && Array.isArray(data.collections)) {
-        saveCollections(data.collections);
+        data.collections.forEach((collection: Collection) => {
+          storage.saveCollection(collection);
+        });
       }
       
       if (data.savedBlocks && Array.isArray(data.savedBlocks)) {
-        saveSavedBlocks(data.savedBlocks);
+        data.savedBlocks.forEach((block: SavedBlock) => {
+          storage.saveBlock(block);
+        });
       }
 
       return true;
@@ -243,35 +143,34 @@ export function useCollections() {
       console.error('Error importing collections:', error);
       return false;
     }
-  }, [saveCollections, saveSavedBlocks]);
+  };
 
   // Check if template is in collection
-  const isTemplateInCollection = useCallback((templateId: string, collectionId: string) => {
+  const isTemplateInCollection = (templateId: string, collectionId: string): boolean => {
     const collectionBlocks = getCollectionBlocks(collectionId);
     return collectionBlocks.some(block => block.templateId === templateId);
-  }, [getCollectionBlocks]);
+  };
 
   // Remove template from collection
-  const removeTemplateFromCollection = useCallback((templateId: string, collectionId: string) => {
+  const removeTemplateFromCollection = (templateId: string, collectionId: string) => {
     const collectionBlocks = getCollectionBlocks(collectionId);
     const blockToRemove = collectionBlocks.find(block => block.templateId === templateId);
     
     if (blockToRemove) {
       removeBlockFromCollection(blockToRemove.id, collectionId);
     }
-  }, [getCollectionBlocks, removeBlockFromCollection]);
+  };
 
   // Clear all collections and saved blocks
-  const clearAllCollections = useCallback(() => {
+  const clearAllCollections = () => {
     try {
-      localStorage.removeItem(COLLECTIONS_STORAGE_KEY);
-      localStorage.removeItem(SAVED_BLOCKS_STORAGE_KEY);
+      storage.clearCollections();
       // Reload page to reset state
       window.location.reload();
     } catch (error) {
       console.error('Error clearing collections:', error);
     }
-  }, []);
+  };
 
   return {
     collections: getCollectionsWithCounts(),

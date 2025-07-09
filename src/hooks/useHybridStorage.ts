@@ -1,62 +1,70 @@
-// Hook for working with hybrid storage (memory + localStorage)
+// Hook for working with the new centralized architecture of HybridStorage
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { HybridStorage } from '@/lib/storage';
+import type { ProjectState, Collection, SavedBlock, CustomTheme } from '@/types';
 
-interface HybridStorageStats {
-  projectsCount: number;
-  collectionsCount: number;
+interface StorageStats {
+  projectName: string;
   blocksCount: number;
+  collectionsCount: number;
+  savedBlocksCount: number;
+  favoritesCount: number;
+  customThemesCount: number;
+  useSessionOnly: boolean;
   lastSync: string;
   memoryUsage: number;
 }
 
 export function useHybridStorage() {
-  const [hybridStorage] = useState(() => HybridStorage.getInstance());
-  const [stats, setStats] = useState<HybridStorageStats>({
-    projectsCount: 0,
-    collectionsCount: 0,
+  const [storage] = useState(() => HybridStorage.getInstance());
+  const [stats, setStats] = useState<StorageStats>({
+    projectName: 'No Project',
     blocksCount: 0,
+    collectionsCount: 0,
+    savedBlocksCount: 0,
+    favoritesCount: 0,
+    customThemesCount: 0,
+    useSessionOnly: false,
     lastSync: '',
-    memoryUsage: 0
+    memoryUsage: 0,
   });
   const [isLoading, setIsLoading] = useState(false);
-
-  // Initialize when component loads
-  useEffect(() => {
-    const initializeStorage = async () => {
-      try {
-        setIsLoading(true);
-        // Hybrid storage is automatically initialized
-        await new Promise(resolve => setTimeout(resolve, 100)); // Small delay for initialization
-        updateStats();
-      } catch (error) {
-        console.error('Error initializing hybrid storage:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    initializeStorage();
-  }, []);
+  const statsUpdateRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // Update statistics
   const updateStats = useCallback(() => {
-    const newStats = hybridStorage.getMemoryStats();
-    setStats(newStats);
-  }, [hybridStorage]);
+    try {
+      const newStats = storage.getStats();
+      setStats(newStats);
+    } catch (error) {
+      console.error('Error updating storage stats:', error);
+    }
+  }, [storage]);
 
-  // Periodic update of statistics
+  // Initialize and periodic update of statistics
   useEffect(() => {
-    const interval = setInterval(updateStats, 5000);
-    return () => clearInterval(interval);
+    updateStats();
+
+    statsUpdateRef.current = setInterval(updateStats, 3000);
+
+    return () => {
+      if (statsUpdateRef.current) {
+        clearInterval(statsUpdateRef.current);
+        statsUpdateRef.current = undefined;
+      }
+    };
   }, [updateStats]);
 
-  // Methods for working with projects
-  const saveProject = useCallback(async (projectData: any) => {
+  // === PROJECT ===
+  const getProject = useCallback(() => {
+    return storage.getProject();
+  }, [storage]);
+
+  const saveProject = useCallback(async (project: ProjectState) => {
     try {
       setIsLoading(true);
-      await hybridStorage.saveProject(projectData);
+      storage.saveProject(project);
       updateStats();
       return true;
     } catch (error) {
@@ -65,114 +73,207 @@ export function useHybridStorage() {
     } finally {
       setIsLoading(false);
     }
-  }, [hybridStorage, updateStats]);
+  }, [storage, updateStats]);
 
-  const loadProject = useCallback(async () => {
+  const updateProjectName = useCallback((name: string) => {
     try {
-      setIsLoading(true);
-      const project = await hybridStorage.loadProject();
+      storage.updateProjectName(name);
       updateStats();
-      return project;
     } catch (error) {
-      console.error('Error loading project:', error);
-      return null;
-    } finally {
-      setIsLoading(false);
+      console.error('Error updating project name:', error);
     }
-  }, [hybridStorage, updateStats]);
+  }, [storage, updateStats]);
 
-  const updateProjectBlocks = useCallback(async (blocks: any[]) => {
+  const updateProjectBlocks = useCallback((blocks: any[]) => {
     try {
-      setIsLoading(true);
-      await hybridStorage.updateProjectBlocks(blocks);
+      storage.updateProjectBlocks(blocks);
       updateStats();
-      return true;
     } catch (error) {
       console.error('Error updating project blocks:', error);
-      return false;
-    } finally {
-      setIsLoading(false);
     }
-  }, [hybridStorage, updateStats]);
+  }, [storage, updateStats]);
 
-  // Methods for working with collections
-  const saveCollection = useCallback(async (collection: any) => {
+  const clearProjectBlocks = useCallback(() => {
     try {
-      setIsLoading(true);
-      await hybridStorage.saveCollection(collection);
+      storage.clearProjectBlocks();
       updateStats();
-      return true;
+    } catch (error) {
+      console.error('Error clearing project blocks:', error);
+    }
+  }, [storage, updateStats]);
+
+  // === THEMES ===
+  const getDarkMode = useCallback(() => {
+    return storage.getDarkMode();
+  }, [storage]);
+
+  const setDarkMode = useCallback((isDark: boolean) => {
+    try {
+      storage.setDarkMode(isDark);
+      updateStats();
+    } catch (error) {
+      console.error('Error setting dark mode:', error);
+    }
+  }, [storage, updateStats]);
+
+  const getCurrentTheme = useCallback(() => {
+    return storage.getCurrentTheme();
+  }, [storage]);
+
+  const setCurrentTheme = useCallback((themeId: string) => {
+    try {
+      storage.setCurrentTheme(themeId);
+      updateStats();
+    } catch (error) {
+      console.error('Error setting current theme:', error);
+    }
+  }, [storage, updateStats]);
+
+  const getCustomThemes = useCallback(() => {
+    return storage.getCustomThemes();
+  }, [storage]);
+
+  const addCustomTheme = useCallback((theme: CustomTheme) => {
+    try {
+      storage.addCustomTheme(theme);
+      updateStats();
+    } catch (error) {
+      console.error('Error adding custom theme:', error);
+    }
+  }, [storage, updateStats]);
+
+  const removeCustomTheme = useCallback((themeId: string) => {
+    try {
+      storage.removeCustomTheme(themeId);
+      updateStats();
+    } catch (error) {
+      console.error('Error removing custom theme:', error);
+    }
+  }, [storage, updateStats]);
+
+  // === COLLECTIONS ===
+  const getCollections = useCallback(() => {
+    return storage.getCollections();
+  }, [storage]);
+
+  const saveCollection = useCallback((collection: Collection) => {
+    try {
+      storage.saveCollection(collection);
+      updateStats();
     } catch (error) {
       console.error('Error saving collection:', error);
-      return false;
-    } finally {
-      setIsLoading(false);
     }
-  }, [hybridStorage, updateStats]);
+  }, [storage, updateStats]);
 
-  const loadCollection = useCallback(async (collectionId: string) => {
+  const deleteCollection = useCallback((collectionId: string) => {
     try {
-      setIsLoading(true);
-      const collection = await hybridStorage.loadCollection(collectionId);
+      storage.deleteCollection(collectionId);
       updateStats();
-      return collection;
     } catch (error) {
-      console.error('Error loading collection:', error);
-      return null;
-    } finally {
-      setIsLoading(false);
+      console.error('Error deleting collection:', error);
     }
-  }, [hybridStorage, updateStats]);
+  }, [storage, updateStats]);
 
-  // Methods for working with blocks
-  const saveBlock = useCallback(async (block: any) => {
+  const clearCollections = useCallback(() => {
     try {
-      setIsLoading(true);
-      await hybridStorage.saveBlock(block);
+      storage.clearCollections();
       updateStats();
-      return true;
+    } catch (error) {
+      console.error('Error clearing collections:', error);
+    }
+  }, [storage, updateStats]);
+
+  // === SAVED BLOCKS ===
+  const getSavedBlocks = useCallback(() => {
+    return storage.getSavedBlocks();
+  }, [storage]);
+
+  const saveBlock = useCallback((block: SavedBlock) => {
+    try {
+      storage.saveBlock(block);
+      updateStats();
     } catch (error) {
       console.error('Error saving block:', error);
-      return false;
-    } finally {
-      setIsLoading(false);
     }
-  }, [hybridStorage, updateStats]);
+  }, [storage, updateStats]);
 
-  const loadBlock = useCallback(async (blockId: string) => {
+  const deleteBlock = useCallback((blockId: string) => {
     try {
-      setIsLoading(true);
-      const block = await hybridStorage.loadBlock(blockId);
+      storage.deleteBlock(blockId);
       updateStats();
-      return block;
     } catch (error) {
-      console.error('Error loading block:', error);
-      return null;
-    } finally {
-      setIsLoading(false);
+      console.error('Error deleting block:', error);
     }
-  }, [hybridStorage, updateStats]);
+  }, [storage, updateStats]);
 
-  // Search in memory
-  const searchInMemory = useCallback(async (query: string) => {
+  // === FAVORITES ===
+  const getFavorites = useCallback(() => {
+    return storage.getFavorites();
+  }, [storage]);
+
+  const addToFavorites = useCallback((templateId: string) => {
     try {
-      setIsLoading(true);
-      const results = await hybridStorage.searchInMemory(query);
+      storage.addToFavorites(templateId);
       updateStats();
-      return results;
     } catch (error) {
-      console.error('Error searching in memory:', error);
-      return { projects: [], collections: [], blocks: [] };
-    } finally {
-      setIsLoading(false);
+      console.error('Error adding to favorites:', error);
     }
-  }, [hybridStorage, updateStats]);
+  }, [storage, updateStats]);
 
-  // Force synchronization
+  const removeFromFavorites = useCallback((templateId: string) => {
+    try {
+      storage.removeFromFavorites(templateId);
+      updateStats();
+    } catch (error) {
+      console.error('Error removing from favorites:', error);
+    }
+  }, [storage, updateStats]);
+
+  const isFavorite = useCallback((templateId: string) => {
+    return storage.isFavorite(templateId);
+  }, [storage]);
+
+  const toggleFavorite = useCallback((templateId: string) => {
+    try {
+      if (storage.isFavorite(templateId)) {
+        storage.removeFromFavorites(templateId);
+      } else {
+        storage.addToFavorites(templateId);
+      }
+      updateStats();
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
+  }, [storage, updateStats]);
+
+  // === SESSION ===
+  const enableSessionMode = useCallback(() => {
+    try {
+      storage.enableSessionMode();
+      updateStats();
+    } catch (error) {
+      console.error('Error enabling session mode:', error);
+    }
+  }, [storage, updateStats]);
+
+  const disableSessionMode = useCallback(() => {
+    try {
+      storage.disableSessionMode();
+      updateStats();
+    } catch (error) {
+      console.error('Error disabling session mode:', error);
+    }
+  }, [storage, updateStats]);
+
+  const isSessionMode = useCallback(() => {
+    return storage.isSessionMode();
+  }, [storage]);
+
+  // === UTILITIES ===
   const forceSync = useCallback(async () => {
     try {
       setIsLoading(true);
-      await hybridStorage.forceSync();
+      storage.forceSync();
       updateStats();
       return true;
     } catch (error) {
@@ -181,64 +282,101 @@ export function useHybridStorage() {
     } finally {
       setIsLoading(false);
     }
-  }, [hybridStorage, updateStats]);
+  }, [storage, updateStats]);
 
-  // Clear cache
-  const clearMemoryCache = useCallback(async () => {
+  const clearAll = useCallback(() => {
     try {
-      setIsLoading(true);
-      await hybridStorage.clearMemoryCache();
+      storage.clearAll();
       updateStats();
-      return true;
-    } catch (error) {
-      console.error('Error clearing memory cache:', error);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [hybridStorage, updateStats]);
-
-  // Clear all data
-  const clearAll = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      await hybridStorage.clearAll();
-      updateStats();
-      return true;
     } catch (error) {
       console.error('Error clearing all data:', error);
-      return false;
-    } finally {
-      setIsLoading(false);
     }
-  }, [hybridStorage, updateStats]);
+  }, [storage, updateStats]);
+
+  const fullReset = useCallback(() => {
+    try {
+      storage.fullReset();
+    } catch (error) {
+      console.error('Error performing full reset:', error);
+    }
+  }, [storage]);
+
+    // === EXPORT/IMPORT ===
+  const exportProject = useCallback(() => {
+    try {
+      return storage.exportProject();
+    } catch (error) {
+      console.error('Error exporting project:', error);
+      throw error;
+    }
+  }, [storage]);
+
+  const importProject = useCallback((jsonData: string) => {
+    try {
+      const result = storage.importProject(jsonData);
+      if (result) {
+        updateStats();
+      }
+      return result;
+    } catch (error) {
+      console.error('Error importing project:', error);
+      return false;
+    }
+  }, [storage, updateStats]);
 
   return {
     // State
     stats,
     isLoading,
     
-    // Projects methods
+    // Project
+    getProject,
     saveProject,
-    loadProject,
+    updateProjectName,
     updateProjectBlocks,
+    clearProjectBlocks,
     
-    // Collections methods
+    // Themes
+    getDarkMode,
+    setDarkMode,
+    getCurrentTheme,
+    setCurrentTheme,
+    getCustomThemes,
+    addCustomTheme,
+    removeCustomTheme,
+    
+    // Collections
+    getCollections,
     saveCollection,
-    loadCollection,
+    deleteCollection,
+    clearCollections,
     
-    // Blocks methods
+    // Saved blocks
+    getSavedBlocks,
     saveBlock,
-    loadBlock,
+    deleteBlock,
     
-    // Search and utilities
-    searchInMemory,
+    // Favorites
+    getFavorites,
+    addToFavorites,
+    removeFromFavorites,
+    isFavorite,
+    toggleFavorite,
+    
+    // Session
+    enableSessionMode,
+    disableSessionMode,
+    isSessionMode,
+    
+    // Utilities
     forceSync,
-    clearMemoryCache,
     clearAll,
+    fullReset,
+    exportProject,
+    importProject,
     updateStats,
     
-    // Direct access to storage (for advanced usage)
-    storage: hybridStorage
+    // Direct access to storage
+    storage,
   };
 }

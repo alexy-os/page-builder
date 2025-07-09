@@ -247,12 +247,12 @@ export async function loadThemeCSS(themeId: string): Promise<void> {
 
 // Get current theme from localStorage
 export function getCurrentTheme(): string {
-  return localStorage.getItem('current-theme') || 'sky-os';
+  return localStorage.getItem('currentTheme') || 'sky-os';
 }
 
 // Save current theme to localStorage
 export function setCurrentTheme(themeId: string): void {
-  localStorage.setItem('current-theme', themeId);
+  localStorage.setItem('currentTheme', themeId);
 }
 
 // Parse fonts from CSS values

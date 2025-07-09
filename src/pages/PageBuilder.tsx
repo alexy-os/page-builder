@@ -8,6 +8,7 @@ import ImportThemeDialog from "../components/dialogs/ImportThemeDialog";
 
 import { useTheme } from "../hooks/useTheme";
 import { useProject } from "../hooks/useProject";
+import { useHybridStorage } from "../hooks/useHybridStorage";
 import { exportToHTML } from "../utils/htmlExporter";
 
 export default function PageBuilder() {
@@ -26,9 +27,18 @@ export default function PageBuilder() {
     setBlocks, 
     saveProject, 
     exportProject, 
-    importProject,
-    clearProject 
+    importProject
   } = useProject();
+  
+  // Новая архитектура HybridStorage
+  const {
+    enableSessionMode,
+    disableSessionMode,
+    isSessionMode,
+    clearProjectBlocks,
+    fullReset,
+    stats
+  } = useHybridStorage();
   
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [showImportThemeDialog, setShowImportThemeDialog] = useState(false);
@@ -55,6 +65,31 @@ export default function PageBuilder() {
     return importCustomTheme(themeData);
   };
 
+  // Новые обработчики для HybridStorage
+  const handleClearProject = () => {
+    if (confirm('Are you sure you want to clear the current project? This will remove all blocks from the canvas.')) {
+      clearProjectBlocks();
+    }
+  };
+
+  const handleFullReset = () => {
+    if (confirm('Are you sure you want to perform a full reset? This will clear ALL data (projects, collections, themes) and reload the application.')) {
+      fullReset();
+    }
+  };
+
+  const handleEnableSessionMode = () => {
+    if (confirm('Enable Session Mode? Your data will only be stored for this browser session and will be lost when you close the browser.')) {
+      enableSessionMode();
+    }
+  };
+
+  const handleDisableSessionMode = () => {
+    if (confirm('Disable Session Mode? Your current session data will be saved to permanent storage.')) {
+      disableSessionMode();
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col bg-background text-foreground">
       <Navigation
@@ -67,7 +102,11 @@ export default function PageBuilder() {
         onExportHTML={handleExportHTML}
         onImport={() => setShowImportDialog(true)}
         onImportTheme={() => setShowImportThemeDialog(true)}
-        onClearProject={clearProject}
+        onClearProject={handleClearProject}
+        onEnableSessionMode={handleEnableSessionMode}
+        onDisableSessionMode={handleDisableSessionMode}
+        onFullReset={handleFullReset}
+        isSessionMode={isSessionMode()}
       />
 
       {/* Main Builder Interface */}
@@ -81,6 +120,15 @@ export default function PageBuilder() {
           setBlocks={setBlocks}
         />
       </div>
+
+      {/* Storage Stats (for development/debugging) */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="bg-muted/50 px-4 py-2 text-xs text-muted-foreground border-t">
+          Project: {stats.projectName} | Blocks: {stats.blocksCount} | Collections: {stats.collectionsCount} | 
+          Favorites: {stats.favoritesCount} | Storage: {stats.useSessionOnly ? 'Session' : 'LocalStorage'} | 
+          Memory: {(stats.memoryUsage / 1024).toFixed(1)}KB | Last Sync: {stats.lastSync}
+        </div>
+      )}
 
       {/* Dialogs */}
       <ImportProjectDialog

@@ -1,59 +1,31 @@
-import { useState, useEffect, useCallback } from 'react';
+// Simplified hook for working with favorites through HybridStorage
 
-const FAVORITES_STORAGE_KEY = 'buildy-favorites';
+import { HybridStorage } from '@/lib/storage';
+
+const storage = HybridStorage.getInstance();
 
 export function useFavorites() {
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const favorites = storage.getFavorites();
 
-  // Load favorites from localStorage
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(FAVORITES_STORAGE_KEY);
-      if (stored) {
-        setFavorites(JSON.parse(stored));
-      }
-    } catch (error) {
-      console.error('Error loading favorites from localStorage:', error);
-    }
-  }, []);
+  const addToFavorites = (templateId: string) => {
+    storage.addToFavorites(templateId);
+  };
 
-  // Save favorites to localStorage
-  const saveFavorites = useCallback((newFavorites: string[]) => {
-    try {
-      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(newFavorites));
-      setFavorites(newFavorites);
-    } catch (error) {
-      console.error('Error saving favorites to localStorage:', error);
-    }
-  }, []);
+  const removeFromFavorites = (templateId: string) => {
+    storage.removeFromFavorites(templateId);
+  };
 
-  // Add template to favorites
-  const addToFavorites = useCallback((templateId: string) => {
-    if (!favorites.includes(templateId)) {
-      const newFavorites = [...favorites, templateId];
-      saveFavorites(newFavorites);
-    }
-  }, [favorites, saveFavorites]);
-
-  // Remove template from favorites
-  const removeFromFavorites = useCallback((templateId: string) => {
-    const newFavorites = favorites.filter(id => id !== templateId);
-    saveFavorites(newFavorites);
-  }, [favorites, saveFavorites]);
-
-  // Toggle favorite status
-  const toggleFavorite = useCallback((templateId: string) => {
-    if (favorites.includes(templateId)) {
-      removeFromFavorites(templateId);
+  const toggleFavorite = (templateId: string) => {
+    if (storage.isFavorite(templateId)) {
+      storage.removeFromFavorites(templateId);
     } else {
-      addToFavorites(templateId);
+      storage.addToFavorites(templateId);
     }
-  }, [favorites, addToFavorites, removeFromFavorites]);
+  };
 
-  // Check if template is favorited
-  const isFavorite = useCallback((templateId: string) => {
-    return favorites.includes(templateId);
-  }, [favorites]);
+  const isFavorite = (templateId: string) => {
+    return storage.isFavorite(templateId);
+  };
 
   return {
     favorites,
