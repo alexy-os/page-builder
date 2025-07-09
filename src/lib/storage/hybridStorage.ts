@@ -148,30 +148,154 @@ export class HybridStorage {
     }
   }
 
+  // Safe JSON parsing utility
+  private safeJSONParse<T>(data: string | null, fallback: T): T {
+    if (!data) return fallback;
+    
+    try {
+      const parsed = JSON.parse(data);
+      return parsed !== null && parsed !== undefined ? parsed : fallback;
+    } catch (error) {
+      console.error('JSON parse error:', error);
+      return fallback;
+    }
+  }
+
+  // Safe JSON stringify utility
+  private safeJSONStringify(data: any): string | null {
+    try {
+      return JSON.stringify(data);
+    } catch (error) {
+      console.error('JSON stringify error:', error);
+      return null;
+    }
+  }
+
+  // Validate project state structure
+  private validateProjectState(project: any): boolean {
+    if (!project || typeof project !== 'object') return false;
+    
+    // Check required fields
+    if (!project.name || typeof project.name !== 'string') return false;
+    if (!project.id || typeof project.id !== 'string') return false;
+    if (!Array.isArray(project.blocks)) return false;
+    
+    // Validate theme structure
+    if (!project.theme || typeof project.theme !== 'object') return false;
+    if (!project.theme.currentThemeId || typeof project.theme.currentThemeId !== 'string') return false;
+    if (!Array.isArray(project.theme.customThemes)) return false;
+    
+    // Validate collections
+    if (!Array.isArray(project.collections)) return false;
+    
+    // Validate other arrays
+    if (!Array.isArray(project.savedBlocks)) return false;
+    if (!Array.isArray(project.favorites)) return false;
+    
+    // Validate metadata
+    if (!project.metadata || typeof project.metadata !== 'object') return false;
+    
+    return true;
+  }
+
+  // Clean and repair corrupted project data
+  private repairProjectState(project: any): ProjectState {
+    const defaultProject = createDefaultProjectState();
+    
+    if (!project || typeof project !== 'object') {
+      return defaultProject;
+    }
+    
+    try {
+      return {
+        name: typeof project.name === 'string' ? project.name : defaultProject.name,
+        id: typeof project.id === 'string' ? project.id : defaultProject.id,
+        version: typeof project.version === 'string' ? project.version : defaultProject.version,
+        
+        blocks: Array.isArray(project.blocks) ? project.blocks.filter((block: any) => 
+          block && 
+          typeof block === 'object' && 
+          typeof block.id === 'string' && 
+          typeof block.type === 'string'
+        ) : defaultProject.blocks,
+        
+        theme: {
+          currentThemeId: project.theme?.currentThemeId || defaultProject.theme.currentThemeId,
+          customThemes: Array.isArray(project.theme?.customThemes) ? project.theme.customThemes : defaultProject.theme.customThemes,
+        },
+        
+        collections: Array.isArray(project.collections) ? project.collections.filter((collection: any) =>
+          collection &&
+          typeof collection === 'object' &&
+          typeof collection.id === 'string' &&
+          typeof collection.name === 'string'
+        ) : defaultProject.collections,
+        
+        savedBlocks: Array.isArray(project.savedBlocks) ? project.savedBlocks.filter((block: any) =>
+          block &&
+          typeof block === 'object' &&
+          typeof block.id === 'string'
+        ) : defaultProject.savedBlocks,
+        
+        favorites: Array.isArray(project.favorites) ? project.favorites.filter((fav: any) =>
+          typeof fav === 'string'
+        ) : defaultProject.favorites,
+        
+        metadata: {
+          createdAt: project.metadata?.createdAt || defaultProject.metadata.createdAt,
+          lastModified: project.metadata?.lastModified || defaultProject.metadata.lastModified,
+          version: project.metadata?.version || defaultProject.metadata.version,
+        },
+      };
+    } catch (error) {
+      console.error('Error repairing project state:', error);
+      return defaultProject;
+    }
+  }
+
   // Load data from storage
   private loadFromStorage(): void {
     try {
       // Load dark mode (always from localStorage)
       const darkModeStr = localStorage.getItem(DARK_MODE_STORAGE_KEY);
-      this.memoryCache.darkMode = darkModeStr ? JSON.parse(darkModeStr) : false;
+      this.memoryCache.darkMode = this.safeJSONParse(darkModeStr, false);
 
       // Load project based on current mode
       const storage = this.useSessionOnly ? sessionStorage : localStorage;
       const projectStr = storage.getItem(PROJECT_STORAGE_KEY);
       
       if (projectStr) {
-        this.memoryCache.project = JSON.parse(projectStr);
-        // console.log(`Project loaded from ${this.useSessionOnly ? 'session' : 'local'} storage`);
+        const parsedProject = this.safeJSONParse(projectStr, null);
+        
+        if (parsedProject && this.validateProjectState(parsedProject)) {
+          this.memoryCache.project = parsedProject;
+          // console.log(`Project loaded from ${this.useSessionOnly ? 'session' : 'local'} storage`);
+        } else {
+          // Attempt to repair corrupted data
+          console.warn('Corrupted project data detected, attempting repair...');
+          this.memoryCache.project = this.repairProjectState(parsedProject);
+          // Save repaired data immediately
+          this.saveProject(this.memoryCache.project);
+        }
       } else {
         // No existing project data
         if (this.useSessionOnly) {
           // In session mode, check if we can copy from localStorage
           const localProjectStr = localStorage.getItem(PROJECT_STORAGE_KEY);
-          if (localProjectStr) {
-            this.memoryCache.project = JSON.parse(localProjectStr);
-            console.log('Project copied from localStorage to session');
+          const localProject = this.safeJSONParse(localProjectStr, null);
+          
+          if (localProject && this.validateProjectState(localProject)) {
+            this.memoryCache.project = localProject;
+            // console.log('Project copied from localStorage to session');
             // Save to session storage immediately
-            sessionStorage.setItem(PROJECT_STORAGE_KEY, localProjectStr);
+            const projectData = this.safeJSONStringify(localProject);
+            if (projectData) {
+              sessionStorage.setItem(PROJECT_STORAGE_KEY, projectData);
+            }
+          } else if (localProject) {
+            // Repair corrupted local data and use it
+            this.memoryCache.project = this.repairProjectState(localProject);
+            // console.log('Corrupted local project repaired and copied to session');
           } else {
             // Create fresh project for session
             this.memoryCache.project = createDefaultProjectState();
@@ -180,10 +304,10 @@ export class HybridStorage {
         } else {
           // In localStorage mode, create default project
           this.memoryCache.project = createDefaultProjectState();
-          console.log('New project created for localStorage mode');
+          // console.log('New project created for localStorage mode');
         }
         
-                 // Save the new/copied project
+        // Save the new/copied project
         if (this.memoryCache.project) {
           this.saveProject(this.memoryCache.project);
         }
@@ -225,21 +349,35 @@ export class HybridStorage {
     }, this.syncInterval);
   }
 
-  // Sync to storage
+  // Sync to storage with safe JSON handling
   private syncToStorage(): void {
     try {
       // Save dark mode to localStorage
-      localStorage.setItem(DARK_MODE_STORAGE_KEY, JSON.stringify(this.memoryCache.darkMode));
+      const darkModeData = this.safeJSONStringify(this.memoryCache.darkMode);
+      if (darkModeData !== null) {
+        localStorage.setItem(DARK_MODE_STORAGE_KEY, darkModeData);
+      }
 
       // Save project
       if (this.memoryCache.project) {
-        const storage = this.useSessionOnly ? sessionStorage : localStorage;
-        storage.setItem(PROJECT_STORAGE_KEY, JSON.stringify(this.memoryCache.project));
+        // Validate before saving
+        if (this.validateProjectState(this.memoryCache.project)) {
+          const storage = this.useSessionOnly ? sessionStorage : localStorage;
+          const projectData = this.safeJSONStringify(this.memoryCache.project);
+          if (projectData !== null) {
+            storage.setItem(PROJECT_STORAGE_KEY, projectData);
+          }
+        } else {
+          console.warn('Invalid project state detected, skipping save');
+        }
       }
 
       // Save session config
       if (this.memoryCache.sessionConfig) {
-        localStorage.setItem(SESSION_CONFIG_KEY, JSON.stringify(this.memoryCache.sessionConfig));
+        const configData = this.safeJSONStringify(this.memoryCache.sessionConfig);
+        if (configData !== null) {
+          localStorage.setItem(SESSION_CONFIG_KEY, configData);
+        }
       }
 
       this.memoryCache.lastSync = Date.now();
@@ -247,6 +385,7 @@ export class HybridStorage {
       // console.log('Data synced to storage', { useSessionOnly: this.useSessionOnly });
     } catch (error) {
       console.error('Error syncing to storage:', error);
+      // Don't throw - continue operation
     }
   }
 
@@ -306,10 +445,11 @@ export class HybridStorage {
     return this.useSessionOnly;
   }
 
+  // Get session config with safe parsing
   getSessionConfig(): SessionConfig | null {
     try {
       const configStr = localStorage.getItem(SESSION_CONFIG_KEY);
-      return configStr ? JSON.parse(configStr) : null;
+      return this.safeJSONParse(configStr, null);
     } catch (error) {
       console.error('Error getting session config:', error);
       return null;
@@ -497,10 +637,15 @@ export class HybridStorage {
     window.location.reload();
   }
 
-  // Export/import
+  // Export project with validation
   exportProject(): string {
     if (!this.memoryCache.project) {
       throw new Error('No project to export');
+    }
+
+    // Validate before export
+    if (!this.validateProjectState(this.memoryCache.project)) {
+      throw new Error('Project data is corrupted and cannot be exported');
     }
 
     const exportData = {
@@ -509,18 +654,28 @@ export class HybridStorage {
       version: '1.0.0',
     };
 
-    return JSON.stringify(exportData, null, 2);
+    const jsonData = this.safeJSONStringify(exportData);
+    if (jsonData === null) {
+      throw new Error('Failed to serialize project data for export');
+    }
+
+    return jsonData;
   }
 
+  // Import project with validation
   importProject(jsonData: string): boolean {
     try {
-      const data = JSON.parse(jsonData);
-      if (data.project && typeof data.project === 'object') {
-        this.memoryCache.project = data.project;
-        this.updateActivity();
-        return true;
+      const data: any = this.safeJSONParse(jsonData, null);
+      
+      if (!data || !data.project || !this.validateProjectState(data.project)) {
+        console.error('Invalid project data format');
+        return false;
       }
-      return false;
+      
+      // Additional repair step for imported data
+      this.memoryCache.project = this.repairProjectState(data.project);
+      this.updateActivity();
+      return true;
     } catch (error) {
       console.error('Error importing project:', error);
       return false;

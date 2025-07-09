@@ -22,4 +22,16 @@ export const projectNameInputAtom = atom<string>('');
 export const optimisticFavoritesAtom = atom<Set<string>>(new Set<string>());
 
 // Stats display
-export const showStatsAtom = atom<boolean>(false); 
+export const showStatsAtom = atom<boolean>(false);
+
+// PageBuilder initialization states
+export const initializationErrorAtom = atom<string | null>(null);
+export const isInitializedAtom = atom<boolean>(false);
+
+// Block editor states
+export const editingBlockAtom = atom<any | null>(null);
+export const blockErrorsAtom = atom<Set<string>>(new Set<string>());
+
+// Theme loading states
+export const themeLoadingAtom = atom<boolean>(false);
+export const themeErrorAtom = atom<string | null>(null); 

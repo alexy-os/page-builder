@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { Grid3X3, Grid2X2, Bookmark, ChevronDown, Heart, HeartHandshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +17,7 @@ import { allTemplates } from "../components/builder/blocks/index";
 import { useProjectStore, useUIStore, useThemeStore } from "@/store";
 import { selectedTemplateAtom, pinsColumnsAtom } from "@/atoms";
 import type { Template } from "../types";
+import { useHybridStorage } from "@/hooks/useHybridStorage";
 
 export default function PagePins() {
   // Zustand stores
@@ -44,8 +45,16 @@ export default function PagePins() {
     setActiveCollection,
     setActiveCategory,
     setShowImportCollectionsDialog,
-    setSaveDialogOpen
+    setSaveDialogOpen,
+    enableSessionMode,
+    disableSessionMode,
+    isSessionMode
   } = useUIStore();
+  
+  // Legacy hook for storage operations
+  const {
+    fullReset
+  } = useHybridStorage();
   
   // Jotai atoms
   const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom);
@@ -123,6 +132,39 @@ export default function PagePins() {
     return importProject(jsonData);
   };
 
+  const handleFullReset = useCallback(() => {
+    if (confirm('Are you sure you want to perform a full reset? This will clear ALL data (projects, collections, themes) and reload the application.')) {
+      try {
+        fullReset();
+      } catch (error) {
+        console.error('Error performing full reset:', error);
+        alert('Error performing reset. Please refresh the page manually.');
+      }
+    }
+  }, [fullReset]);
+
+  const handleEnableSessionMode = useCallback(() => {
+    if (confirm('Enable Session Mode? Your data will only be stored for this browser session and will be lost when you close the browser.')) {
+      try {
+        enableSessionMode();
+      } catch (error) {
+        console.error('Error enabling session mode:', error);
+        alert('Error enabling session mode. Please try again.');
+      }
+    }
+  }, [enableSessionMode]);
+
+  const handleDisableSessionMode = useCallback(() => {
+    if (confirm('Disable Session Mode? Your current session data will be saved to permanent storage.')) {
+      try {
+        disableSessionMode();
+      } catch (error) {
+        console.error('Error disabling session mode:', error);
+        alert('Error disabling session mode. Please try again.');
+      }
+    }
+  }, [disableSessionMode]);
+
   const PinCard = ({ template }: { template: Template }) => {
     const PreviewComponent = template.component;
     
@@ -191,6 +233,10 @@ export default function PagePins() {
         onExportCollections={handleExportCollections}
         onImportCollections={() => setShowImportCollectionsDialog(true)}
         onClearCollections={clearCollections}
+        onEnableSessionMode={handleEnableSessionMode}
+        onDisableSessionMode={handleDisableSessionMode}
+        onFullReset={handleFullReset}
+        isSessionMode={isSessionMode}
       />
       
       {/* Main Content Area */}

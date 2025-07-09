@@ -69,6 +69,39 @@ export default function Navigation({
         </div>
         
         <div className="flex items-center gap-2">
+          
+          {/* Session Mode Controls */}
+          {(onEnableSessionMode || onDisableSessionMode) && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" title="Session Mode">
+                  <Database className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                {!isSessionMode && onEnableSessionMode && (
+                  <DropdownMenuItem onClick={onEnableSessionMode}>
+                    <Database className="mr-2 h-4 w-4" />
+                    Enable Session Mode
+                  </DropdownMenuItem>
+                )}
+                {isSessionMode && onDisableSessionMode && (
+                  <DropdownMenuItem onClick={onDisableSessionMode}>
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Disable Session Mode
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <div className="px-2 py-1 text-xs text-muted-foreground">
+                  {isSessionMode 
+                    ? "Data stored in session only" 
+                    : "Data stored in localStorage"
+                  }
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="mr-2">
@@ -105,38 +138,6 @@ export default function Navigation({
           >
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
-          
-          {/* Session Mode Controls */}
-          {(onEnableSessionMode || onDisableSessionMode) && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" title="Session Mode">
-                  <Database className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                {!isSessionMode && onEnableSessionMode && (
-                  <DropdownMenuItem onClick={onEnableSessionMode}>
-                    <Database className="mr-2 h-4 w-4" />
-                    Enable Session Mode
-                  </DropdownMenuItem>
-                )}
-                {isSessionMode && onDisableSessionMode && (
-                  <DropdownMenuItem onClick={onDisableSessionMode}>
-                    <RefreshCw className="mr-2 h-4 w-4" />
-                    Disable Session Mode
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuSeparator />
-                <div className="px-2 py-1 text-xs text-muted-foreground">
-                  {isSessionMode 
-                    ? "Data stored in session only" 
-                    : "Data stored in localStorage"
-                  }
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
           
           {/* Main Menu */}
           {(onExport || onImport || onExportCollections || onImportCollections || onClearCollections || onClearProject || onFullReset) && (
