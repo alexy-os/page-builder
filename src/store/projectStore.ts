@@ -1,7 +1,7 @@
-// Project state management with Zustand
+// Project state management with Zustand (Simplified)
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { HybridStorage } from '@/lib/storage';
+import { SimpleStorage } from '@/lib/storage/simpleStorage';
 import type { ProjectState, Collection, SavedBlock } from '@/types';
 
 interface ProjectStore {
@@ -34,12 +34,11 @@ interface ProjectStore {
   isFavorite: (templateId: string) => boolean;
   
   // Utils
-  forceSync: () => void;
   exportProject: () => string;
   importProject: (jsonData: string) => boolean;
 }
 
-const storage = HybridStorage.getInstance();
+const storage = SimpleStorage.getInstance();
 
 export const useProjectStore = create<ProjectStore>()(
   devtools(
@@ -149,10 +148,6 @@ export const useProjectStore = create<ProjectStore>()(
       },
       
       // Utils
-      forceSync: () => {
-        storage.forceSync();
-      },
-      
       exportProject: () => {
         return storage.exportProject();
       },

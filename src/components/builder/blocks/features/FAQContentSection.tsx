@@ -16,7 +16,6 @@ interface FAQContentSectionProps {
     button: {
       text: string;
       variant: 'default' | 'destructive' | 'ghost' | 'link' | 'outline' | 'secondary';
-      icon: React.ReactNode;
     };
     faqs: Array<{
       id: string;
@@ -45,7 +44,7 @@ export default function FAQContentSection({ content }: FAQContentSectionProps) {
               </p>
             </header>
             <Button variant={button.variant} className="gap-4 w-fit">
-              {button.text} {button.icon}
+              {button.text} <Send className="w-4 h-4" />
             </Button>
           </div>
           <Accordion type="single" collapsible className="w-full">
@@ -73,8 +72,7 @@ export const faqContentSectionTemplate = {
     description: "Discover the reasons why shadcn/ui is the ideal choice.",
     button: {
       text: "Any questions?",
-      variant: "default",
-      icon: <Send className="w-4 h-4" />
+      variant: "default"
     },
     faqs: [
       {

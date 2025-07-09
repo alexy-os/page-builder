@@ -1,7 +1,7 @@
-// Theme state management with Zustand
+// Theme state management with Zustand (Simplified)
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { HybridStorage } from '@/lib/storage';
+import { SimpleStorage } from '@/lib/storage/simpleStorage';
 import { 
   getThemeById, 
   saveCustomTheme
@@ -53,7 +53,7 @@ function applyThemeVariables(themeId: string, isDarkMode: boolean = false) {
   }
 }
 
-const storage = HybridStorage.getInstance();
+const storage = SimpleStorage.getInstance();
 
 export const useThemeStore = create<ThemeStore>()(
   devtools(
@@ -151,7 +151,7 @@ export const useThemeStore = create<ThemeStore>()(
         const customThemeId = `custom-${Date.now()}`;
         const customThemeName = themeData.name || "Custom Theme";
         
-        // Save custom theme to HybridStorage
+        // Save custom theme to SimpleStorage
         const theme: CustomTheme = {
           id: customThemeId,
           name: customThemeName,

@@ -17,7 +17,7 @@ import { allTemplates } from "../components/builder/blocks/index";
 import { useProjectStore, useUIStore, useThemeStore } from "@/store";
 import { selectedTemplateAtom, pinsColumnsAtom } from "@/atoms";
 import type { Template } from "../types";
-import { useHybridStorage } from "@/hooks/useHybridStorage";
+import { useSimpleStorage } from "@/hooks/useSimpleStorage";
 
 export default function PagePins() {
   // Zustand stores
@@ -31,6 +31,7 @@ export default function PagePins() {
   
   const { 
     getCollections,
+    getSavedBlocks,
     importProject,
     clearCollections,
     toggleFavorite, 
@@ -45,16 +46,13 @@ export default function PagePins() {
     setActiveCollection,
     setActiveCategory,
     setShowImportCollectionsDialog,
-    setSaveDialogOpen,
-    enableSessionMode,
-    disableSessionMode,
-    isSessionMode
+    setSaveDialogOpen
   } = useUIStore();
   
-  // Legacy hook for storage operations
+  // Simplified storage operations
   const {
     fullReset
-  } = useHybridStorage();
+  } = useSimpleStorage();
   
   // Jotai atoms
   const [selectedTemplate, setSelectedTemplate] = useAtom(selectedTemplateAtom);
@@ -85,9 +83,24 @@ export default function PagePins() {
     }
     
     if (activeCollection) {
-      // Note: This would need to be implemented with collections data
-      // For now, return all templates
-      return allTemplates;
+      // Get the selected collection
+      const collections = getCollections();
+      const collection = collections.find(c => c.id === activeCollection);
+      
+      if (!collection) {
+        console.warn(`Collection with id "${activeCollection}" not found`);
+        return [];
+      }
+      
+      // Get saved blocks for this collection
+      const savedBlocks = getSavedBlocks();
+      const collectionBlocks = collection.blockIds
+        .map(blockId => savedBlocks.find(block => block.id === blockId))
+        .filter(Boolean) as NonNullable<typeof savedBlocks[0]>[];
+      
+      // Find corresponding templates
+      const templateIds = collectionBlocks.map(block => block.templateId);
+      return allTemplates.filter(template => templateIds.includes(template.id));
     }
     
     return allTemplates;
@@ -143,27 +156,7 @@ export default function PagePins() {
     }
   }, [fullReset]);
 
-  const handleEnableSessionMode = useCallback(() => {
-    if (confirm('Enable Session Mode? Your data will only be stored for this browser session and will be lost when you close the browser.')) {
-      try {
-        enableSessionMode();
-      } catch (error) {
-        console.error('Error enabling session mode:', error);
-        alert('Error enabling session mode. Please try again.');
-      }
-    }
-  }, [enableSessionMode]);
-
-  const handleDisableSessionMode = useCallback(() => {
-    if (confirm('Disable Session Mode? Your current session data will be saved to permanent storage.')) {
-      try {
-        disableSessionMode();
-      } catch (error) {
-        console.error('Error disabling session mode:', error);
-        alert('Error disabling session mode. Please try again.');
-      }
-    }
-  }, [disableSessionMode]);
+  // Session mode removed - only using sessionStorage now
 
   const PinCard = ({ template }: { template: Template }) => {
     const PreviewComponent = template.component;
@@ -233,10 +226,7 @@ export default function PagePins() {
         onExportCollections={handleExportCollections}
         onImportCollections={() => setShowImportCollectionsDialog(true)}
         onClearCollections={clearCollections}
-        onEnableSessionMode={handleEnableSessionMode}
-        onDisableSessionMode={handleDisableSessionMode}
         onFullReset={handleFullReset}
-        isSessionMode={isSessionMode}
       />
       
       {/* Main Content Area */}
@@ -304,9 +294,9 @@ export default function PagePins() {
                 <div className="mb-6">
                   <h2 className="text-lg font-semibold">
                     {activeCollection && activeCategory ? 
-                      `${activeCollection} Collection - ${categories.find(c => c.id === activeCategory)?.name}` :
+                      `${getCollections().find(c => c.id === activeCollection)?.name || activeCollection} Collection - ${categories.find(c => c.id === activeCategory)?.name}` :
                       activeCollection ? 
-                        `${activeCollection} Collection` :
+                        `${getCollections().find(c => c.id === activeCollection)?.name || activeCollection} Collection` :
                         `${categories.find(c => c.id === activeCategory)?.name} Blocks`
                     }
                   </h2>

@@ -6,7 +6,6 @@ interface BlogCardsSectionProps {
     title: string;
     button?: {
       text?: string;
-      icon?: React.ReactNode;
     };
     articles: Array<{
       title: string;
@@ -26,7 +25,7 @@ export default function BlogCardsSection({ content }: BlogCardsSectionProps) {
           </h2>
           {content.button && (
             <Button className="gap-4 bg-primary text-primary-foreground hover:bg-primary/90">
-              {content.button.text} {content.button.icon}
+              {content.button.text} <MoveRight className="w-4 h-4" />
             </Button>
           )}
         </header>
@@ -56,8 +55,7 @@ export const blogCardsSectionTemplate = {
   defaultContent: {
     title: "Latest articles",
     button: {
-      text: "View all articles",
-      icon: <MoveRight className="w-4 h-4" />
+      text: "View all articles"
     },
     articles: [
       {

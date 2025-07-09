@@ -1,8 +1,8 @@
-// Simplified hook for working with favorites through HybridStorage
+// Simplified hook for working with favorites through SimpleStorage
 
-import { HybridStorage } from '@/lib/storage';
+import { SimpleStorage } from '@/lib/storage/simpleStorage';
 
-const storage = HybridStorage.getInstance();
+const storage = SimpleStorage.getInstance();
 
 export function useFavorites() {
   const favorites = storage.getFavorites();

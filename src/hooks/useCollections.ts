@@ -1,9 +1,9 @@
-// Simplified hook for working with collections through HybridStorage
+// Simplified hook for working with collections through SimpleStorage
 
-import { HybridStorage } from '@/lib/storage';
+import { SimpleStorage } from '@/lib/storage/simpleStorage';
 import type { Collection, SavedBlock } from '@/types';
 
-const storage = HybridStorage.getInstance();
+const storage = SimpleStorage.getInstance();
 
 export function useCollections() {
   const collections = storage.getCollections();

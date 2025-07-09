@@ -1,13 +1,13 @@
-// Simplified hook for working with themes through HybridStorage
+// Simplified hook for working with themes through SimpleStorage
 
 import { useState, useEffect } from "react";
-import { HybridStorage } from '@/lib/storage';
+import { SimpleStorage } from '@/lib/storage/simpleStorage';
 import { 
   getThemeById, 
   saveCustomTheme
 } from "@/lib/themeManager";
 
-const storage = HybridStorage.getInstance();
+const storage = SimpleStorage.getInstance();
 
 // Apply CSS variables directly in runtime
 function applyThemeVariables(themeId: string, isDarkMode: boolean = false) {
@@ -75,7 +75,7 @@ export function useTheme() {
     const customThemeId = `custom-${Date.now()}`;
     const customThemeName = themeData.name || "Custom Theme";
     
-    // Save custom theme to HybridStorage
+    // Save custom theme to SimpleStorage
     storage.addCustomTheme({
       id: customThemeId,
       name: customThemeName,

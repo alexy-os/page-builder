@@ -9,7 +9,6 @@ interface BlogPostsGridSectionProps {
     button: {
       name: string;
       variant: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
-      icon: React.ReactNode;
     };
     posts: Array<{
       title: string;
@@ -38,7 +37,7 @@ export default function BlogPostsGridSection({ content }: BlogPostsGridSectionPr
             {content.description}
           </p>
           <Button variant={content.button.variant} className="gap-2 self-center bg-primary text-primary-foreground hover:bg-primary/90">
-            {content.button.name} {content.button.icon}
+            {content.button.name} <ArrowRight className="w-4 h-4" />
           </Button>
         </header>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -80,8 +79,7 @@ export const blogPostsGridSectionTemplate = {
     description: "Stay updated with the latest trends, tips, and best practices in UI/UX design. Explore how Buildy/UI empowers developers and businesses alike.",
     button: {
       name: "All Posts",
-      variant: "link",
-      icon: <ArrowRight className="w-4 h-4" />
+      variant: "link"
     },
     posts: [
       {

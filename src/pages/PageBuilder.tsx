@@ -8,7 +8,7 @@ import ImportProjectDialog from "../components/dialogs/ImportProjectDialog";
 import ImportThemeDialog from "../components/dialogs/ImportThemeDialog";
 
 import { useProjectStore, useUIStore, useThemeStore } from "@/store";
-import { useHybridStorage } from "../hooks/useHybridStorage";
+import { useSimpleStorage } from "../hooks/useSimpleStorage";
 import { exportToHTML } from "../utils/htmlExporter";
 import { initializationErrorAtom, isInitializedAtom } from "@/atoms";
 
@@ -35,26 +35,21 @@ export default function PageBuilder() {
     updateProjectBlocks,
     exportProject,
     importProject,
-    initializeProject
+    initializeProject,
+    clearProjectBlocks
   } = useProjectStore();
   
   const {
     showImportDialog,
     showImportThemeDialog,
     setShowImportDialog,
-    setShowImportThemeDialog,
-    enableSessionMode,
-    disableSessionMode,
-    isSessionMode
+    setShowImportThemeDialog
   } = useUIStore();
   
-  // Legacy hook for storage operations
+  // Simplified storage operations
   const {
-    clearProjectBlocks,
-    fullReset,
-    stats,
-    forceSync
-  } = useHybridStorage();
+    fullReset
+  } = useSimpleStorage();
 
   // Safe initialization with error handling
   const safeInitialize = useCallback(async () => {
@@ -86,15 +81,7 @@ export default function PageBuilder() {
         throw new Error('No project loaded');
       }
       
-      // Force sync to ensure all data is saved
-      try {
-        if (forceSync) {
-          forceSync();
-          console.log('Forced sync completed');
-        }
-      } catch (syncError) {
-        console.warn('Sync before export failed:', syncError);
-      }
+      // No sync needed - SimpleStorage saves immediately
       
       const jsonData = exportProject();
       console.log('Export data received:', jsonData ? 'Success' : 'Failed');
@@ -132,7 +119,7 @@ export default function PageBuilder() {
       console.error('Error exporting project:', error);
       alert(`Error exporting project: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-  }, [exportProject, project, forceSync]);
+  }, [exportProject, project]);
 
   const handleExportHTML = useCallback(() => {
     try {
@@ -192,28 +179,6 @@ export default function PageBuilder() {
       }
     }
   }, [fullReset]);
-
-  const handleEnableSessionMode = useCallback(() => {
-    if (confirm('Enable Session Mode? Your data will only be stored for this browser session and will be lost when you close the browser.')) {
-      try {
-        enableSessionMode();
-      } catch (error) {
-        console.error('Error enabling session mode:', error);
-        alert('Error enabling session mode. Please try again.');
-      }
-    }
-  }, [enableSessionMode]);
-
-  const handleDisableSessionMode = useCallback(() => {
-    if (confirm('Disable Session Mode? Your current session data will be saved to permanent storage.')) {
-      try {
-        disableSessionMode();
-      } catch (error) {
-        console.error('Error disabling session mode:', error);
-        alert('Error disabling session mode. Please try again.');
-      }
-    }
-  }, [disableSessionMode]);
 
   // Safe blocks update with validation
   const handleUpdateBlocks = useCallback((newBlocks: any[]) => {
@@ -323,10 +288,7 @@ export default function PageBuilder() {
         onImport={() => setShowImportDialog(true)}
         onImportTheme={() => setShowImportThemeDialog(true)}
         onClearProject={handleClearProject}
-        onEnableSessionMode={handleEnableSessionMode}
-        onDisableSessionMode={handleDisableSessionMode}
         onFullReset={handleFullReset}
-        isSessionMode={isSessionMode}
       />
 
       {/* Main Builder Interface */}
@@ -340,15 +302,6 @@ export default function PageBuilder() {
           setBlocks={handleUpdateBlocks}
         />
       </div>
-
-      {/* Storage Stats (for development/debugging) */}
-      {process.env.NODE_ENV === 'development' && stats && (
-        <div className="bg-muted/50 px-4 py-2 text-xs text-muted-foreground border-t">
-          Project: {stats.projectName} | Blocks: {stats.blocksCount} | Collections: {stats.collectionsCount} | 
-          Favorites: {stats.favoritesCount} | Storage: {stats.useSessionOnly ? 'Session' : 'LocalStorage'} | 
-          Memory: {(stats.memoryUsage / 1024).toFixed(1)}KB | Last Sync: {stats.lastSync}
-        </div>
-      )}
 
       {/* Dialogs */}
       <ImportProjectDialog

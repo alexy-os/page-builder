@@ -1,4 +1,4 @@
-import { Moon, Sun, Download, Upload, Menu, Palette, Grid3X3, Hammer, EllipsisVertical, Trash2, RefreshCw, Database, Power } from "lucide-react";
+import { Moon, Sun, Download, Upload, Menu, Palette, Grid3X3, Hammer, EllipsisVertical, Trash2, Power } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,10 +24,7 @@ interface NavigationProps {
   onImportCollections?: () => void;
   onClearCollections?: () => void;
   onClearProject?: () => void;
-  onEnableSessionMode?: () => void;
-  onDisableSessionMode?: () => void;
   onFullReset?: () => void;
-  isSessionMode?: boolean;
 }
 
 export default function Navigation({
@@ -44,10 +41,7 @@ export default function Navigation({
   onImportCollections,
   onClearCollections,
   onClearProject,
-  onEnableSessionMode,
-  onDisableSessionMode,
-  onFullReset,
-  isSessionMode = false
+  onFullReset
 }: NavigationProps) {
   return (
     <nav className="border-b border-border bg-card/50 backdrop-blur-sm">
@@ -60,48 +54,10 @@ export default function Navigation({
           </Link>
           <div className="hidden md:block text-sm text-muted-foreground">
             {projectName}
-            {isSessionMode && (
-              <span className="ml-2 px-2 py-1 text-xs bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded">
-                Session Mode
-              </span>
-            )}
           </div>
         </div>
         
         <div className="flex items-center gap-2">
-          
-          {/* Session Mode Controls */}
-          {(onEnableSessionMode || onDisableSessionMode) && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" title="Session Mode">
-                  <Database className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                {!isSessionMode && onEnableSessionMode && (
-                  <DropdownMenuItem onClick={onEnableSessionMode}>
-                    <Database className="mr-2 h-4 w-4" />
-                    Enable Session Mode
-                  </DropdownMenuItem>
-                )}
-                {isSessionMode && onDisableSessionMode && (
-                  <DropdownMenuItem onClick={onDisableSessionMode}>
-                    <RefreshCw className="mr-2 h-4 w-4" />
-                    Disable Session Mode
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuSeparator />
-                <div className="px-2 py-1 text-xs text-muted-foreground">
-                  {isSessionMode 
-                    ? "Data stored in session only" 
-                    : "Data stored in localStorage"
-                  }
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="mr-2">

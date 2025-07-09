@@ -1,8 +1,8 @@
-// Simplified hook for working with projects through HybridStorage
+// Simplified hook for working with projects through SimpleStorage
 
-import { HybridStorage } from '@/lib/storage';
+import { SimpleStorage } from '@/lib/storage/simpleStorage';
 
-const storage = HybridStorage.getInstance();
+const storage = SimpleStorage.getInstance();
 
 export function useProject() {
   const project = storage.getProject();
@@ -21,7 +21,7 @@ export function useProject() {
   const saveProject = (themeId: string) => {
     if (project) {
       storage.setCurrentTheme(themeId);
-      storage.forceSync();
+      // No sync needed - SimpleStorage saves immediately
     }
   };
 

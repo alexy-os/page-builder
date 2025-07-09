@@ -1,7 +1,6 @@
-// UI state management with Zustand
+// UI state management with Zustand (Simplified)
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { HybridStorage } from '@/lib/storage';
 
 interface UIStore {
   // Dialog states
@@ -16,9 +15,6 @@ interface UIStore {
   columns: 2 | 3;
   activeTab: 'favorites' | 'all';
   
-  // Session management
-  isSessionMode: boolean;
-  
   // Dialog actions
   setShowImportDialog: (show: boolean) => void;
   setShowImportThemeDialog: (show: boolean) => void;
@@ -30,14 +26,7 @@ interface UIStore {
   setActiveCategory: (category: string | null) => void;
   setColumns: (columns: 2 | 3) => void;
   setActiveTab: (tab: 'favorites' | 'all') => void;
-  
-  // Session actions
-  enableSessionMode: () => void;
-  disableSessionMode: () => void;
-  checkSessionMode: () => void;
 }
-
-const storage = HybridStorage.getInstance();
 
 export const useUIStore = create<UIStore>()(
   devtools(
@@ -48,7 +37,11 @@ export const useUIStore = create<UIStore>()(
       showImportCollectionsDialog: false,
       saveDialogOpen: false,
       
-      activeCollection: null,
+      activeCollection: (() => {
+        // Initialize from URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('collection');
+      })(),
       activeCategory: (() => {
         // Initialize from URL params
         const urlParams = new URLSearchParams(window.location.search);
@@ -56,8 +49,6 @@ export const useUIStore = create<UIStore>()(
       })(),
       columns: 3,
       activeTab: 'all',
-      
-      isSessionMode: storage.isSessionMode(),
       
       // Dialog actions
       setShowImportDialog: (show: boolean) => {
@@ -79,6 +70,15 @@ export const useUIStore = create<UIStore>()(
       // Navigation actions
       setActiveCollection: (collection: string | null) => {
         set({ activeCollection: collection });
+        
+        // Update URL when collection changes
+        const url = new URL(window.location.href);
+        if (collection) {
+          url.searchParams.set('collection', collection);
+        } else {
+          url.searchParams.delete('collection');
+        }
+        window.history.replaceState({}, '', url.toString());
       },
       
       setActiveCategory: (category: string | null) => {
@@ -100,22 +100,6 @@ export const useUIStore = create<UIStore>()(
       
       setActiveTab: (tab: 'favorites' | 'all') => {
         set({ activeTab: tab });
-      },
-      
-      // Session actions
-      enableSessionMode: () => {
-        storage.enableSessionMode();
-        set({ isSessionMode: true });
-      },
-      
-      disableSessionMode: () => {
-        storage.disableSessionMode();
-        set({ isSessionMode: false });
-      },
-      
-      checkSessionMode: () => {
-        const isSession = storage.isSessionMode();
-        set({ isSessionMode: isSession });
       },
     }),
     {
