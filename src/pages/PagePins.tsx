@@ -1,5 +1,5 @@
-import { useEffect, useCallback, useState, useRef } from "react";
-import { Grid3X3, Grid2X2, Bookmark, ChevronDown, Heart, HeartHandshake, ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { Grid3X3, Grid2X2, Bookmark, ChevronDown, Heart, HeartHandshake, ChevronLeft, ChevronRight, Eye, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,7 +16,7 @@ import SaveToCollectionDialog from "@/components/dialogs/SaveToCollectionDialog"
 import ImportCollectionsDialog from "@/components/dialogs/ImportCollectionsDialog";
 import { allTemplates } from "@/components/blocks";
 import { useProjectStore, useUIStore, useThemeStore } from "@/store";
-import { selectedTemplateAtom, pinsColumnsAtom } from "@/atoms";
+import { selectedTemplateAtom, pinsColumnsAtom, lazyLoadingWithResetAtom } from "@/atoms";
 import type { Template } from "@/types";
 import { useSimpleStorage } from "@/hooks/useSimpleStorage";
 import { Link } from "react-router-dom";
@@ -29,6 +29,12 @@ export default function PagePins() {
   // Refs for panel control
   const sidebarPanelRef = useRef<any>(null);
   const panelGroupRef = useRef<any>(null);
+  
+  // Replace useState with Jotai atom
+  const [lazyState, setLazyState] = useAtom(lazyLoadingWithResetAtom);
+  const { visibleCount, isLoading } = lazyState;
+  
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   // Zustand stores
   const { 
@@ -117,6 +123,51 @@ export default function PagePins() {
   };
 
   const filteredBlocks = getFilteredBlocks();
+  
+  // Check if lazy loading should be active (only when no filters are applied)
+  const isLazyLoadingActive = !activeCollection && !activeCategory;
+  
+  // Get blocks to display (with lazy loading or all filtered blocks)
+  const blocksToDisplay = isLazyLoadingActive 
+    ? filteredBlocks.slice(0, visibleCount)
+    : filteredBlocks;
+
+  // Optimized scroll handler without useCallback
+  const handleScroll = (e: Event) => {
+    if (!isLazyLoadingActive || isLoading) return;
+    
+    const container = e.target as HTMLDivElement;
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    const scrollThreshold = scrollHeight - clientHeight - 200;
+
+    if (scrollTop >= scrollThreshold && visibleCount < filteredBlocks.length) {
+      setLazyState({ isLoading: true });
+      
+      setTimeout(() => {
+        setLazyState({ 
+          visibleCount: Math.min(visibleCount + 9, filteredBlocks.length),
+          isLoading: false 
+        });
+      }, 300);
+    }
+  };
+
+  // Reset when filters change (without useEffect)
+  const prevFilters = useRef({ activeCollection, activeCategory });
+  if (prevFilters.current.activeCollection !== activeCollection || 
+      prevFilters.current.activeCategory !== activeCategory) {
+    setLazyState('reset');
+    prevFilters.current = { activeCollection, activeCategory };
+  }
+
+  // Setup scroll listener with cleanup
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container || !isLazyLoadingActive) return;
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [isLazyLoadingActive]); // Меньше зависимостей
 
   const handleSaveToCollection = (template: Template) => {
     setSelectedTemplate(template);
@@ -340,7 +391,10 @@ export default function PagePins() {
               </div>
               
               {/* Grid Content - Scrollable Area */}
-              <div className="flex-1 overflow-y-auto scroll-area smooth-scroll">
+              <div 
+                ref={scrollContainerRef}
+                className="flex-1 overflow-y-auto scroll-area smooth-scroll"
+              >
                 <div className="p-6">
                   {(activeCollection || activeCategory) && (
                     <div className="mb-6">
@@ -352,7 +406,24 @@ export default function PagePins() {
                             `${categories.find(c => c.id === activeCategory)?.name} Blocks`
                         }
                       </h2>
-                      <p className="text-sm text-muted-foreground">{filteredBlocks.length} blocks</p>
+                      <p className="text-sm text-muted-foreground">
+                        {blocksToDisplay.length} blocks
+                        {!isLazyLoadingActive && filteredBlocks.length !== blocksToDisplay.length && 
+                          ` of ${filteredBlocks.length}`
+                        }
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Status indicator for lazy loading */}
+                  {isLazyLoadingActive && (
+                    <div className="mb-6">
+                      <p className="text-sm text-muted-foreground">
+                        Showing {blocksToDisplay.length} of {filteredBlocks.length} blocks
+                        {visibleCount < filteredBlocks.length && (
+                          <span className="ml-2 text-accent">• Scroll for more</span>
+                        )}
+                      </p>
                     </div>
                   )}
                   
@@ -363,14 +434,29 @@ export default function PagePins() {
                         : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
                     }`}
                   >
-                    {filteredBlocks.map((template) => (
+                    {blocksToDisplay.map((template) => (
                       <PinCard key={template.id} template={template} />
                     ))}
                   </div>
+
+                  {/* Loading indicator */}
+                  {isLoading && (
+                    <div className="flex justify-center items-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin text-accent" />
+                      <span className="ml-2 text-sm text-muted-foreground">Loading more blocks...</span>
+                    </div>
+                  )}
+
+                  {/* End of content indicator */}
+                  {isLazyLoadingActive && visibleCount >= filteredBlocks.length && filteredBlocks.length > 12 && (
+                    <div className="text-center py-8">
+                      <p className="text-sm text-muted-foreground">You've reached the end! 🎉</p>
+                    </div>
+                  )}
                   
-                  {filteredBlocks.length === 0 && (
+                  {blocksToDisplay.length === 0 && (
                     <div className="text-center py-12">
-                      <p className="text-muted-foreground">No blocks found in this collection</p>
+                      <p className="text-muted-foreground">No blocks found</p>
                     </div>
                   )}
                 </div>

@@ -55,7 +55,7 @@ export default function HeroSplitWithGallery({ content }: HeroSplitWithGalleryPr
           <div className="grid grid-cols-2 gap-8">
             {content.images.grid.items.map((image) => (
               <div key={image.id} className={image.className}>
-                <img src={image.src} alt={image.id} className="w-full h-full object-cover rounded-md"/>
+                <img src={image.src} alt={image.id} className="w-full h-auto max-w-[300px] object-cover rounded-md" decoding="async" loading="lazy" width={300} height={300} />
               </div>
             ))}
           </div>
@@ -80,9 +80,9 @@ export const heroSplitWithGalleryTemplate = {
       grid: {
         className: "grid grid-cols-2 gap-8",
         items: [
-          { id: "image1", src: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=300&fit=crop", className: "bg-muted rounded-md aspect-square" },
-          { id: "image2", src: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=300&h=600&fit=crop", className: "bg-muted rounded-md row-span-2" },
-          { id: "image3", src: "https://placehold.co/600x600", className: "bg-muted rounded-md aspect-square" }
+          { id: "image1", src: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=300&q=80", className: "bg-muted rounded-md aspect-square" },
+          { id: "image2", src: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=600&q=80", className: "bg-muted rounded-md row-span-2" },
+          { id: "image3", src: "https://images.unsplash.com/photo-1542125387-c71274d94f0a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=300&q=80", className: "bg-muted rounded-md aspect-square" }
         ]
       }
     }

@@ -47,7 +47,10 @@ export default function BlogPostsGridSection({ content }: BlogPostsGridSectionPr
               <img
                 src={post.image}
                 alt={post.title}
-                className="aspect-video object-cover"
+                width={560}
+                height={315}
+                className="aspect-video object-cover w-full h-auto max-w-[560px]"
+                style={{ aspectRatio: '16/9' }}
               />
               <div className="flex flex-col gap-4 p-6 text-start text-foreground">
                 <h3 className="text-lg font-semibold lg:text-xl">
@@ -89,7 +92,7 @@ export const blogPostsGridSectionTemplate = {
         author: "Jane Doe",
         published: "1 Jan 2025",
         href: "#",
-        image: "https://placehold.co/600x400?text=Atomic+Design"
+        image: "https://images.unsplash.com/photo-1542125387-c71274d94f0a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=560&h=315&q=80"
       },
       {
         title: "Why Tailwind CSS is a Game Changer for Developers",
@@ -98,7 +101,7 @@ export const blogPostsGridSectionTemplate = {
         author: "John Smith",
         published: "15 Jan 2025",
         href: "#",
-        image: "https://placehold.co/600x400?text=Tailwind+CSS"
+        image: "https://images.unsplash.com/photo-1542125387-c71274d94f0a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=560&h=315&q=80"
       },
       {
         title: "Building Accessible Components with shadcn/ui",
@@ -107,7 +110,7 @@ export const blogPostsGridSectionTemplate = {
         author: "Alex Johnson",
         published: "22 Jan 2025",
         href: "#",
-        image: "https://placehold.co/600x400?text=shadcn/ui"
+        image: "https://images.unsplash.com/photo-1542125387-c71274d94f0a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=560&h=315&q=80"
       }
     ]
   }

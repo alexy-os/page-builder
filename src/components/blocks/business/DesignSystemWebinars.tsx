@@ -50,7 +50,9 @@ export default function DesignSystemWebinars({ content }: DesignSystemWebinarsPr
                   <img
                     src={webinar.image}
                     alt={webinar.title}
-                    className="object-cover w-full h-full transition-transform group-hover:scale-105"
+                    width={560}
+                    height={315}
+                    className="object-cover w-full h-auto max-w-[560px] transition-transform group-hover:scale-105"
                   />
                 </div>
               </div>
@@ -77,7 +79,7 @@ export const designSystemWebinarsTemplate = {
         author: "Alex Dev",
         published: "10 Feb 2025",
         href: "#",
-        image: "https://placehold.co/1280x740?text=UI/UX+Insights"
+        image: "https://images.unsplash.com/photo-1542125387-c71274d94f0a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=560&h=315&q=80"
       },
       {
         title: "Advanced Prototyping with Buildy/UI",
@@ -86,7 +88,7 @@ export const designSystemWebinarsTemplate = {
         author: "Jordan Smith",
         published: "15 Feb 2025",
         href: "#",
-        image: "https://placehold.co/1280x740?text=Prototyping+Techniques"
+        image: "https://images.unsplash.com/photo-1542125387-c71274d94f0a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=560&h=315&q=80"
       }
     ]
   }

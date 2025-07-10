@@ -53,7 +53,9 @@ export default function BlogNewsBlock({ content }: BlogNewsBlockProps) {
                 <img 
                   src={article.image} 
                   alt={article.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  width={400}
+                  height={300}
+                  className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
               <div className="p-6">
@@ -94,14 +96,14 @@ export const blogNewsBlockTemplate = {
         excerpt: "We've added amazing new capabilities to help you build better.",
         date: "2025-01-15",
         readTime: "5 min read",
-        image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop"
+        image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=300&q=80"
       },
       {
         title: "Performance Updates",
         excerpt: "Experience faster loading times and smoother interactions.",
         date: "2025-01-10",
         readTime: "3 min read",
-        image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop"
+        image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=300&q=80"
       }
     ]
   }

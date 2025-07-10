@@ -36,7 +36,7 @@ export default function HeroSplitWithMedia({ content }: HeroSplitWithMediaProps)
             </div>
           </div>
           <div className="aspect-square rounded-lg bg-muted">
-            <img src={content.image.src} alt={content.image.alt} className={content.image.className} />
+            <img src={content.image.src} alt={content.image.alt} className={content.image.className} width={600} height={600} />
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@ export const heroSplitWithMediaTemplate = {
     primaryButtonText: "Try Now",
     secondaryButtonText: "View Demo",
     image: {
-      src: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&h=600&fit=crop",
+      src: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=600&q=80",
       alt: "Split Image",
       className: "w-full h-full object-cover rounded-lg"
     }

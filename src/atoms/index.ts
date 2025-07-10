@@ -34,4 +34,22 @@ export const blockErrorsAtom = atom<Set<string>>(new Set<string>());
 
 // Theme loading states
 export const themeLoadingAtom = atom<boolean>(false);
-export const themeErrorAtom = atom<string | null>(null); 
+export const themeErrorAtom = atom<string | null>(null);
+
+// Lazy loading state atom
+export const lazyLoadingAtom = atom({
+  visibleCount: 12,
+  isLoading: false
+});
+
+// Derived atom for resetting when filters change
+export const lazyLoadingWithResetAtom = atom(
+  (get) => get(lazyLoadingAtom),
+  (get, set, update: Partial<typeof lazyLoadingAtom.init> | 'reset') => {
+    if (update === 'reset') {
+      set(lazyLoadingAtom, { visibleCount: 12, isLoading: false });
+    } else {
+      set(lazyLoadingAtom, { ...get(lazyLoadingAtom), ...update });
+    }
+  }
+); 
