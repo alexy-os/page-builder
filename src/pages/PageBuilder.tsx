@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { useAtom } from 'jotai';
+import { Panel, PanelResizeHandle, PanelGroup } from 'react-resizable-panels';
 
 import BlockSidebar from "../components/builder/BlockSidebar";
 import BuilderCanvas from "../components/builder/BuilderCanvas";
@@ -290,17 +291,23 @@ export default function PageBuilder() {
         onClearProject={handleClearProject}
         onFullReset={handleFullReset}
       />
-
-      {/* Main Builder Interface */}
-      <div className="flex-1 flex overflow-hidden">
-        <BlockSidebar 
-          blocks={blocks}
-          setBlocks={handleUpdateBlocks}
-        />
-        <BuilderCanvas 
-          blocks={blocks}
-          setBlocks={handleUpdateBlocks}
-        />
+      
+      <div className="flex-1 flex min-h-0">
+        <PanelGroup direction="horizontal" className="flex-1">
+          <Panel defaultSize={25} minSize={15} maxSize={40} className="flex flex-col">
+            <BlockSidebar 
+              blocks={blocks}
+              setBlocks={handleUpdateBlocks}
+            />
+          </Panel>
+          <PanelResizeHandle className="w-1 bg-border hover:bg-accent transition-colors data-[panel-group-direction=horizontal]:cursor-col-resize" />
+          <Panel defaultSize={75} minSize={60} className="flex flex-col">
+            <BuilderCanvas 
+              blocks={blocks}
+              setBlocks={handleUpdateBlocks}
+            />
+          </Panel>
+        </PanelGroup>
       </div>
 
       {/* Dialogs */}

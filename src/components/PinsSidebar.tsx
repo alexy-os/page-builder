@@ -49,8 +49,9 @@ export default function PinsSidebar({ activeCollection, onCollectionChange }: Pi
   };
 
   return (
-    <div className="w-80 border-r border-border bg-card/30 backdrop-blur-sm overflow-y-auto">
-      <div className="p-6">
+    <div className="w-full h-full border-r border-border bg-card/30 backdrop-blur-sm flex flex-col">
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-6">
         {/* Tabs */}
         <div className="flex mb-6 bg-muted/50 rounded-lg p-1">
           <Button
@@ -167,6 +168,7 @@ export default function PinsSidebar({ activeCollection, onCollectionChange }: Pi
         >
           Show All Blocks
         </Button>
+        </div>
         </div>
       </div>
     </div>

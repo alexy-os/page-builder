@@ -71,8 +71,9 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
   const hasFavorites = favorites.length > 0;
 
   return (
-    <div className="w-80 border-r border-border bg-card/30 backdrop-blur-sm overflow-y-auto">
-      <div className="p-6">
+    <div className="w-full h-full border-r border-border bg-card/30 backdrop-blur-sm flex flex-col">
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-6">
         {/* Tabs - only show if there are favorites */}
         {hasFavorites && (
           <div className="flex mb-6 bg-muted/50 rounded-lg p-1">
@@ -118,6 +119,7 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
             <p className="text-muted-foreground text-xs">Visit the <a href="/" className="text-primary hover:underline">Pins page</a> to add blocks to favorites</p>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

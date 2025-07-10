@@ -176,17 +176,19 @@ export default function BuilderCanvas({ blocks, setBlocks }: BuilderCanvasProps)
   }, [setBlockErrors]);
 
   const EmptyState = () => (
-    <div className="flex-1 flex items-center justify-center bg-muted/20">
-      <div className="text-center max-w-md">
-        <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-sky-500/20 to-purple-500/20 rounded-full flex items-center justify-center">
-          <Edit className="w-12 h-12 text-muted-foreground" />
-        </div>
-        <h3 className="text-xl font-semibold mb-2">Start Building</h3>
-        <p className="text-muted-foreground mb-6">
-          Drag blocks from the sidebar to create your professional landing page
-        </p>
-        <div className="text-sm text-muted-foreground">
-          Choose from Hero, Features, News, CTA, and Footer blocks
+    <div className="w-full h-full flex flex-col bg-muted/10">
+      <div className="flex-1 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-sky-500/20 to-purple-500/20 rounded-full flex items-center justify-center">
+            <Edit className="w-12 h-12 text-muted-foreground" />
+          </div>
+          <h3 className="text-xl font-semibold mb-2">Start Building</h3>
+          <p className="text-muted-foreground mb-6">
+            Drag blocks from the sidebar to create your professional landing page
+          </p>
+          <div className="text-sm text-muted-foreground">
+            Choose from Hero, Features, News, CTA, and Footer blocks
+          </div>
         </div>
       </div>
     </div>
@@ -197,7 +199,8 @@ export default function BuilderCanvas({ blocks, setBlocks }: BuilderCanvasProps)
   }
 
   return (
-    <div className="flex-1 overflow-y-auto bg-muted/10">
+    <div className="w-full h-full flex flex-col bg-muted/10">
+      <div className="flex-1 overflow-y-auto">
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="canvas">
           {(provided, snapshot) => (
@@ -349,6 +352,7 @@ export default function BuilderCanvas({ blocks, setBlocks }: BuilderCanvasProps)
           </DialogContent>
         </Dialog>
       )}
+      </div>
     </div>
   );
 }

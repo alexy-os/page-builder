@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAtom } from 'jotai';
+import { Panel, PanelResizeHandle, PanelGroup } from 'react-resizable-panels';
 
 import PinsSidebar from "../components/PinsSidebar";
 import Navigation from "../components/Navigation";
@@ -230,100 +231,105 @@ export default function PagePins() {
       />
       
       {/* Main Content Area */}
-      <div className="flex-1 flex overflow-hidden">
-        <PinsSidebar 
-          activeCollection={activeCollection}
-          onCollectionChange={setActiveCollection}
-        />
-        
-        {/* Pins Grid */}
-        <div className="flex-1 flex flex-col">
-          {/* Top Controls */}
-          <div className="border-b border-border p-4 flex items-center justify-between bg-card/30 backdrop-blur-sm">
-            <div className="flex items-center gap-4">
-              {/* Category Filter */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    {activeCategory ? 
-                      categories.find(c => c.id === activeCategory)?.name || 'Category' : 
-                      'All Categories'
-                    }
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => setActiveCategory(null)}>
-                    All Categories
-                  </DropdownMenuItem>
-                  {categories.map((category) => (
-                    <DropdownMenuItem 
-                      key={category.id}
-                      onClick={() => setActiveCategory(category.id)}
-                    >
-                      {category.name}
+      <div className="flex-1 flex min-h-0">
+        <PanelGroup direction="horizontal" className="flex-1">
+          <Panel defaultSize={25} minSize={15} maxSize={40} className="flex flex-col">
+            <PinsSidebar 
+              activeCollection={activeCollection}
+              onCollectionChange={setActiveCollection}
+            />
+          </Panel>
+          <PanelResizeHandle className="w-1 bg-border hover:bg-accent transition-colors data-[panel-group-direction=horizontal]:cursor-col-resize" />
+          <Panel defaultSize={75} minSize={60} className="flex flex-col">
+            <div className="flex-1 flex flex-col">
+            {/* Top Controls */}
+            <div className="border-b border-border p-4 flex items-center justify-between bg-card/30 backdrop-blur-sm">
+              <div className="flex items-center gap-4">
+                {/* Category Filter */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      {activeCategory ? 
+                        categories.find(c => c.id === activeCategory)?.name || 'Category' : 
+                        'All Categories'
+                      }
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onClick={() => setActiveCategory(null)}>
+                      All Categories
                     </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-            
-            {/* Grid Controls */}
-            <div className="flex items-center gap-2">
-              <Button
-                variant={columns === 2 ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setColumns(2)}
-              >
-                <Grid2X2 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={columns === 3 ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setColumns(3)}
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-          
-          {/* Grid Content */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-6">
-              {(activeCollection || activeCategory) && (
-                <div className="mb-6">
-                  <h2 className="text-lg font-semibold">
-                    {activeCollection && activeCategory ? 
-                      `${getCollections().find(c => c.id === activeCollection)?.name || activeCollection} Collection - ${categories.find(c => c.id === activeCategory)?.name}` :
-                      activeCollection ? 
-                        `${getCollections().find(c => c.id === activeCollection)?.name || activeCollection} Collection` :
-                        `${categories.find(c => c.id === activeCategory)?.name} Blocks`
-                    }
-                  </h2>
-                  <p className="text-sm text-muted-foreground">{filteredBlocks.length} blocks</p>
-                </div>
-              )}
-              
-              <div 
-                className={`grid gap-6 ${
-                  columns === 2 
-                    ? 'grid-cols-1 lg:grid-cols-2' 
-                    : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
-                }`}
-              >
-                {filteredBlocks.map((template) => (
-                  <PinCard key={template.id} template={template} />
-                ))}
+                    {categories.map((category) => (
+                      <DropdownMenuItem 
+                        key={category.id}
+                        onClick={() => setActiveCategory(category.id)}
+                      >
+                        {category.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
               
-              {filteredBlocks.length === 0 && (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">No blocks found in this collection</p>
-                </div>
-              )}
+              {/* Grid Controls */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={columns === 2 ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setColumns(2)}
+                >
+                  <Grid2X2 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={columns === 3 ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setColumns(3)}
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-          </div>
-        </div>
+            
+            {/* Grid Content */}
+            <div className="flex-1 overflow-y-auto">
+              <div className="p-6">
+                {(activeCollection || activeCategory) && (
+                  <div className="mb-6">
+                    <h2 className="text-lg font-semibold">
+                      {activeCollection && activeCategory ? 
+                        `${getCollections().find(c => c.id === activeCollection)?.name || activeCollection} Collection - ${categories.find(c => c.id === activeCategory)?.name}` :
+                        activeCollection ? 
+                          `${getCollections().find(c => c.id === activeCollection)?.name || activeCollection} Collection` :
+                          `${categories.find(c => c.id === activeCategory)?.name} Blocks`
+                      }
+                    </h2>
+                    <p className="text-sm text-muted-foreground">{filteredBlocks.length} blocks</p>
+                  </div>
+                )}
+                
+                <div 
+                  className={`grid gap-6 ${
+                    columns === 2 
+                      ? 'grid-cols-1 lg:grid-cols-2' 
+                      : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
+                  }`}
+                >
+                  {filteredBlocks.map((template) => (
+                    <PinCard key={template.id} template={template} />
+                  ))}
+                </div>
+                
+                {filteredBlocks.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">No blocks found in this collection</p>
+                  </div>
+                )}
+              </div>
+            </div>
+            </div>
+          </Panel>
+        </PanelGroup>
       </div>
 
       {/* Save to Collection Dialog */}
