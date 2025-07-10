@@ -192,18 +192,22 @@ export default function PagePins() {
   const PinCard = ({ template }: { template: Template }) => {
     const PreviewComponent = template.component;
     
-    const handleCardClick = () => {
-      window.location.href = `/builder?template=${template.id}`;
-    };
-    
     return (
       <div 
-        className="scroll-preview-trigger relative overflow-hidden bg-background rounded-[16px] border border-transparent hover:border-accent transition-all duration-500 aspect-video group pointer-events-none"
-        onClick={handleCardClick}
+        className="relative overflow-hidden bg-background rounded-[16px] border border-transparent hover:border-accent transition-all duration-500 aspect-video group"
       >
-        <div className={`scroll-preview-content transform origin-top-left pointer-events-none overflow-y-auto scrollbar-hide ${
+        <Button
+          className="scroll-preview-eye-btn absolute top-2 left-2 !h-8 !w-8 z-10 duration-200"
+          type="button"
+          variant="ghost"
+          size="icon"
+        >
+          <Eye className="!h-5 !w-5" />
+        </Button>
+        
+        <div className={`scroll-preview-content transform origin-top-left overflow-y-auto scrollbar-hide ${
             columns === 2 
-              ? 'scale-[0.2] w-[500%] h-auto' 
+              ? 'scale-[0.3] w-[500%] h-auto absolute left-[-25%] top-0' 
               : 'scale-[0.2] w-[500%] h-auto'
           }`}>
           <PreviewComponent content={template.defaultContent} />
@@ -214,19 +218,13 @@ export default function PagePins() {
           <h3 className="font-semibold text-sm">{template.name}</h3>
           <p className="text-xs opacity-90">{template.description}</p>
         </div>
-        <Button
-          className="absolute top-2 left-2 h-8 w-8 pointer-events-auto"
-          variant="ghost"
-          size="icon"
-        >
-          <Eye className="h-4 w-4" />
-        </Button>
+        
         <div className="absolute top-3 right-3 flex flex-col gap-1">
           <Button 
             type="button"
-            size="sm"
+            size="icon"
             variant="ghost"
-            className="text-white hover:bg-transparent hover:text-yellow-500 !h-8 !w-8"
+            className="!h-8 !w-8"
             onClick={(e) => {
               e.stopPropagation();
               handleSaveToCollection(template);
@@ -236,16 +234,16 @@ export default function PagePins() {
           </Button>
           <Button 
             type="button"
-            size="sm"
+            size="icon"
             variant="ghost"
-            className="text-white hover:bg-transparent hover:text-red-500 !h-8 !w-8"
+            className="text-muted-foreground hover:text-destructive !h-8 !w-8"
             onClick={(e) => {
               e.stopPropagation();
               handleToggleFavorite(template);
             }}
           >
             {isFavorite(template.id) ? (
-              <HeartHandshake className="!h-5 !w-5" />
+              <HeartHandshake className="text-destructive !h-5 !w-5" />
             ) : (
               <Heart className="!h-5 !w-5" />
             )}

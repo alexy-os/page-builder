@@ -1,5 +1,16 @@
 import { Badge } from "@/components/ui/badge";
-import { Bookmark, BookmarkCheck } from "lucide-react";
+import { Bookmark, BookmarkCheck, Star, Shield, Zap, Users, Target, Heart } from "lucide-react";
+
+const iconMap = {
+  Bookmark,
+  BookmarkCheck,
+  Star,
+  Shield,
+  Zap,
+  Users,
+  Target,
+  Heart,
+} as const;
 
 interface BusinessCardsGalleryProps {
   content: {
@@ -10,7 +21,7 @@ interface BusinessCardsGalleryProps {
       id: string;
       title: string;
       description: string;
-      icon: React.ReactNode;
+      icon: keyof typeof iconMap;
       className: string;
     }>;
   };
@@ -18,6 +29,7 @@ interface BusinessCardsGalleryProps {
 
 export default function BusinessCardsGallery({ content }: BusinessCardsGalleryProps) {
   const { promo, title, description, cards } = content;
+  
   return (
     <section className="w-full py-16 lg:py-32 bg-background">
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
@@ -36,22 +48,25 @@ export default function BusinessCardsGallery({ content }: BusinessCardsGalleryPr
             </div>
           </header>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {cards?.map((card) => (
-              <div
-                key={card.id}
-                className={`bg-card rounded-md p-6 flex flex-col justify-between ${card.className} hover:shadow-lg transition-all duration-300 border border-border`}
-              >
-                {card.icon}
-                <div className="flex flex-col">
-                  <h3 className="text-xl font-semibold tracking-tight text-card-foreground">
-                    {card.title}
-                  </h3>
-                  <p className="text-muted-foreground text-base max-w-xs">
-                    {card.description}
-                  </p>
+            {cards?.map((card) => {
+              const IconComponent = iconMap[card.icon];
+              return (
+                <div
+                  key={card.id}
+                  className={`bg-card rounded-md p-6 flex flex-col justify-between ${card.className} hover:shadow-lg transition-all duration-300 border border-border`}
+                >
+                  {IconComponent && <IconComponent className="h-8 w-8 text-primary mb-4" />}
+                  <div className="flex flex-col">
+                    <h3 className="text-xl font-semibold tracking-tight text-card-foreground">
+                      {card.title}
+                    </h3>
+                    <p className="text-muted-foreground text-base max-w-xs">
+                      {card.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -73,56 +88,56 @@ export const businessCardsGalleryTemplate = {
         id: "card1",
         title: "Innovate Your Brand",
         description: "Transform your brand with modern design principles that resonate with your audience.",
-        icon: <Bookmark />,
+        icon: "Bookmark",
         className: "lg:col-span-2 lg:row-span-2 aspect-square lg:aspect-auto"
       },
       {
         id: "card2",
         title: "Bookmark-Centric Design",
         description: "Deliver intuitive experiences that prioritize user needs and usability.",
-        icon: <BookmarkCheck />,
+        icon: "BookmarkCheck",
         className: "aspect-square"
       },
       {
         id: "card3",
         title: "Strategic Branding",
         description: "Ensure consistency and elevate your brand identity across platforms.",
-        icon: <BookmarkCheck />,
+        icon: "Target",
         className: "aspect-square"
       },
       {
         id: "card4",
         title: "Seamless Aesthetics",
         description: "Integrate cohesive, modern design components effortlessly.",
-        icon: <Bookmark />,
+        icon: "Star",
         className: "aspect-square"
       },
       {
         id: "card5",
-        title: "Radix UI Foundation",
-        description: "Leverage Radix UI for accessible and robust componentry.",
-        icon: <BookmarkCheck />,
+        title: "Security Foundation",
+        description: "Leverage secure and robust componentry for your applications.",
+        icon: "Shield",
         className: "aspect-square"
       },
       {
         id: "card6",
-        title: "Tailwind Utility",
-        description: "Achieve rapid prototyping with Tailwind CSS's utility-first approach.",
-        icon: <Bookmark />,
+        title: "Performance Boost",
+        description: "Achieve rapid development with optimized utility-first approach.",
+        icon: "Zap",
         className: "aspect-square"
       },
       {
         id: "card7",
-        title: "Effortless Prototyping",
-        description: "Experience flexible and responsive development with pre-built components.",
-        icon: <BookmarkCheck />,
+        title: "Team Collaboration",
+        description: "Experience flexible and responsive development with your team.",
+        icon: "Users",
         className: "aspect-square"
       },
       {
         id: "card8",
         title: "Open Source Excellence",
         description: "Access open source components for personal or commercial projects.",
-        icon: <Bookmark />,
+        icon: "Heart",
         className: "lg:col-span-2 aspect-square lg:aspect-auto"
       }
     ]

@@ -41,7 +41,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   
   /* Custom animations for block preview scrolling */
-  --animate-scroll-preview: scroll-preview 5s ease-in-out;
+  --animate-scroll-preview: scroll-preview 4s ease-in-out;
 }
 
 @layer base {
@@ -68,19 +68,14 @@
   50% {
     transform: translateY(-75%);
   }
-  75% {
+  100% {
     transform: translateY(0);
   }
 }
 
-/* Utility classes for block preview */
-.scroll-preview-trigger:hover .scroll-preview-content {
+/* Utility classes for block preview - изменим селектор */
+.scroll-preview-eye-btn:hover ~ .scroll-preview-content {
   animation: var(--animate-scroll-preview);
-  cursor: grab;
-}
-
-.scroll-preview-trigger:hover .scroll-preview-content:active {
-  cursor: grabbing;
 }
 
 /* Hide scrollbar but keep functionality */

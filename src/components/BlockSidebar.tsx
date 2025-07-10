@@ -38,8 +38,16 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
     const PreviewComponent = template.component;
     
     return (
-      <div className="scroll-preview-trigger relative overflow-hidden bg-background rounded-[16px] border border-transparent hover:border-accent transition-all duration-500 aspect-video group pointer-events-none">
-        <div className="scroll-preview-content transform scale-[0.2] origin-top-left w-[500%] h-auto pointer-events-none overflow-y-auto scrollbar-hide">
+      <div className="relative overflow-hidden bg-background rounded-[16px] border border-transparent hover:border-accent transition-all duration-500 aspect-video group">
+        <Button
+          className="scroll-preview-eye-btn absolute top-2 left-2 h-8 w-8 z-10 duration-200"
+          variant="ghost"
+          size="icon"
+        >
+          <Eye className="h-4 w-4" />
+        </Button>
+        
+        <div className="scroll-preview-content transform scale-[0.2] origin-top-left w-[500%] h-auto overflow-y-auto scrollbar-hide">
           <PreviewComponent content={template.defaultContent} />
         </div>
         
@@ -48,13 +56,6 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
           <h4 className="font-semibold text-sm">{template.name}</h4>
           <p className="text-xs opacity-90">{template.description}</p>
         </div>
-        <Button
-          className="absolute top-2 left-2 h-8 w-8 pointer-events-auto"
-          variant="ghost"
-          size="icon"
-        >
-          <Eye className="h-4 w-4" />
-        </Button>
         <Button
           onClick={() => addBlock(template)}
           className="absolute top-2 right-2 h-8 w-8"
