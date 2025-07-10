@@ -1,6 +1,8 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { useAtom } from 'jotai';
 import { Panel, PanelResizeHandle, PanelGroup } from 'react-resizable-panels';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 import BlockSidebar from "../components/builder/BlockSidebar";
 import BuilderCanvas from "../components/builder/BuilderCanvas";
@@ -14,6 +16,14 @@ import { exportToHTML } from "../utils/htmlExporter";
 import { initializationErrorAtom, isInitializedAtom } from "@/atoms";
 
 export default function PageBuilder() {
+  // Local state for sidebar visibility and size
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [savedSidebarSize, setSavedSidebarSize] = useState(25);
+  
+  // Refs for panel control
+  const sidebarPanelRef = useRef<any>(null);
+  const panelGroupRef = useRef<any>(null);
+  
   // Jotai atoms for local state
   const [initializationError, setInitializationError] = useAtom(initializationErrorAtom);
   const [isInitialized, setIsInitialized] = useAtom(isInitializedAtom);
@@ -210,6 +220,27 @@ export default function PageBuilder() {
     }
   }, [updateProjectBlocks]);
 
+  // Toggle sidebar collapse/expand
+  const toggleSidebar = useCallback(() => {
+    const panel = sidebarPanelRef.current;
+    if (!panel) return;
+
+    // Use requestAnimationFrame to batch DOM operations
+    requestAnimationFrame(() => {
+      if (isSidebarCollapsed) {
+        // Expand sidebar
+        panel.resize(savedSidebarSize);
+        setIsSidebarCollapsed(false);
+      } else {
+        // Collapse sidebar - get size before resize to avoid multiple reflows
+        const currentSize = panel.getSize();
+        setSavedSidebarSize(currentSize);
+        panel.resize(0);
+        setIsSidebarCollapsed(true);
+      }
+    });
+  }, [isSidebarCollapsed, savedSidebarSize]);
+
   // Initialize stores on mount - only once
   useEffect(() => {
     safeInitialize();
@@ -292,9 +323,16 @@ export default function PageBuilder() {
         onFullReset={handleFullReset}
       />
       
-      <div className="flex-1 flex min-h-0">
-        <PanelGroup direction="horizontal" className="flex-1">
-          <Panel defaultSize={25} minSize={15} maxSize={40} className="flex flex-col">
+      <div className="flex-1 flex min-h-0 relative">
+        <PanelGroup direction="horizontal" className="flex-1" ref={panelGroupRef}>
+          <Panel 
+            ref={sidebarPanelRef}
+            defaultSize={25} 
+            minSize={0} 
+            maxSize={40} 
+            className="flex flex-col"
+            collapsible={true}
+          >
             <BlockSidebar 
               blocks={blocks}
               setBlocks={handleUpdateBlocks}
@@ -308,6 +346,20 @@ export default function PageBuilder() {
             />
           </Panel>
         </PanelGroup>
+        
+        {/* Floating Toggle Button */}
+        <Button
+          onClick={toggleSidebar}
+          className="absolute top-4 left-4 z-50 shadow-lg !w-8 !h-8"
+          size="sm"
+          variant="ghost"
+        >
+          {isSidebarCollapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
+        </Button>
       </div>
 
       {/* Dialogs */}

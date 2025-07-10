@@ -8,6 +8,7 @@ import { useAtom } from 'jotai';
 import { allComponents } from "./blocks/index";
 import type { Block } from "../../types";
 import { editingBlockAtom, blockErrorsAtom } from "@/atoms";
+import { performance } from "@/lib/utils";
 
 interface BuilderCanvasProps {
   blocks: Block[];
@@ -111,21 +112,29 @@ export default function BuilderCanvas({ blocks, setBlocks }: BuilderCanvasProps)
   const handleDragEnd = useCallback((result: DropResult) => {
     if (!result.destination) return;
 
-    try {
-      const items = Array.from(validBlocks);
-      const [reorderedItem] = items.splice(result.source.index, 1);
-      items.splice(result.destination.index, 0, reorderedItem);
+    performance.mark('drag-end-start');
 
-      // Update order property
-      const updatedItems = items.map((item: Block, index: number) => ({
-        ...item,
-        order: index
-      }));
+    // Use requestAnimationFrame to avoid blocking the main thread
+    requestAnimationFrame(() => {
+      try {
+        const items = Array.from(validBlocks);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination!.index, 0, reorderedItem);
 
-      setBlocks(updatedItems);
-    } catch (error) {
-      console.error('Error during drag and drop:', error);
-    }
+        // Update order property
+        const updatedItems = items.map((item: Block, index: number) => ({
+          ...item,
+          order: index
+        }));
+
+        setBlocks(updatedItems);
+        
+        performance.mark('drag-end-complete');
+        performance.measureBetween('drag-operation', 'drag-end-start', 'drag-end-complete');
+      } catch (error) {
+        console.error('Error during drag and drop:', error);
+      }
+    });
   }, [validBlocks, setBlocks]);
 
   const removeBlock = useCallback((blockId: string) => {

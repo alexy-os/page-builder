@@ -6,6 +6,7 @@ import {
   getThemeById, 
   saveCustomTheme
 } from '@/lib/themeManager';
+import { performance } from '@/lib/utils';
 import type { CustomTheme } from '@/types';
 
 interface ThemeStore {
@@ -30,27 +31,30 @@ interface ThemeStore {
 
 // Apply CSS variables directly in runtime
 function applyThemeVariables(themeId: string, isDarkMode: boolean = false) {
+  performance.mark('theme-apply-start');
+  
   const theme = getThemeById(themeId);
   if (!theme) return;
   
   const { theme: themeVars, light, dark } = theme.schema.cssVars;
   const root = document.documentElement;
   
-  // Apply theme variables
-  Object.entries(themeVars).forEach(([key, value]) => {
-    root.style.setProperty(`--${key}`, value);
+  // Batch CSS property changes to avoid multiple reflows
+  requestAnimationFrame(() => {
+    // Apply theme variables
+    Object.entries(themeVars).forEach(([key, value]) => {
+      root.style.setProperty(`--${key}`, value);
+    });
+    
+    // Apply variables depending on mode
+    const modeVars = isDarkMode ? dark : light;
+    Object.entries(modeVars).forEach(([key, value]) => {
+      root.style.setProperty(`--${key}`, value);
+    });
+    
+    performance.mark('theme-apply-end');
+    performance.measureBetween('theme-application', 'theme-apply-start', 'theme-apply-end');
   });
-  
-  // Apply variables depending on mode
-  if (isDarkMode) {
-    Object.entries(dark).forEach(([key, value]) => {
-      root.style.setProperty(`--${key}`, value);
-    });
-  } else {
-    Object.entries(light).forEach(([key, value]) => {
-      root.style.setProperty(`--${key}`, value);
-    });
-  }
 }
 
 const storage = SimpleStorage.getInstance();

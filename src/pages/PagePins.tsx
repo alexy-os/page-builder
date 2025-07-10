@@ -1,5 +1,5 @@
-import { useEffect, useCallback } from "react";
-import { Grid3X3, Grid2X2, Bookmark, ChevronDown, Heart, HeartHandshake } from "lucide-react";
+import { useEffect, useCallback, useState, useRef } from "react";
+import { Grid3X3, Grid2X2, Bookmark, ChevronDown, Heart, HeartHandshake, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,8 +19,17 @@ import { useProjectStore, useUIStore, useThemeStore } from "@/store";
 import { selectedTemplateAtom, pinsColumnsAtom } from "@/atoms";
 import type { Template } from "../types";
 import { useSimpleStorage } from "@/hooks/useSimpleStorage";
+import { Link } from "react-router-dom";
 
 export default function PagePins() {
+  // Local state for sidebar visibility and size
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [savedSidebarSize, setSavedSidebarSize] = useState(25);
+  
+  // Refs for panel control
+  const sidebarPanelRef = useRef<any>(null);
+  const panelGroupRef = useRef<any>(null);
+  
   // Zustand stores
   const { 
     isDark, 
@@ -157,6 +166,27 @@ export default function PagePins() {
     }
   }, [fullReset]);
 
+  // Toggle sidebar collapse/expand
+  const toggleSidebar = useCallback(() => {
+    const panel = sidebarPanelRef.current;
+    if (!panel) return;
+
+    // Use requestAnimationFrame to batch DOM operations
+    requestAnimationFrame(() => {
+      if (isSidebarCollapsed) {
+        // Expand sidebar
+        panel.resize(savedSidebarSize);
+        setIsSidebarCollapsed(false);
+      } else {
+        // Collapse sidebar - get size before resize to avoid multiple reflows
+        const currentSize = panel.getSize();
+        setSavedSidebarSize(currentSize);
+        panel.resize(0);
+        setIsSidebarCollapsed(true);
+      }
+    });
+  }, [isSidebarCollapsed, savedSidebarSize]);
+
   // Session mode removed - only using sessionStorage now
 
   const PinCard = ({ template }: { template: Template }) => {
@@ -231,9 +261,16 @@ export default function PagePins() {
       />
       
       {/* Main Content Area */}
-      <div className="flex-1 flex min-h-0">
-        <PanelGroup direction="horizontal" className="flex-1">
-          <Panel defaultSize={25} minSize={15} maxSize={40} className="flex flex-col">
+      <div className="flex-1 flex min-h-0 relative">
+        <PanelGroup direction="horizontal" className="flex-1" ref={panelGroupRef}>
+          <Panel 
+            ref={sidebarPanelRef}
+            defaultSize={25} 
+            minSize={0} 
+            maxSize={40} 
+            className="flex flex-col"
+            collapsible={true}
+          >
             <PinsSidebar 
               activeCollection={activeCollection}
               onCollectionChange={setActiveCollection}
@@ -241,95 +278,113 @@ export default function PagePins() {
           </Panel>
           <PanelResizeHandle className="w-1 bg-border hover:bg-accent transition-colors data-[panel-group-direction=horizontal]:cursor-col-resize" />
           <Panel defaultSize={75} minSize={60} className="flex flex-col">
-            <div className="flex-1 flex flex-col">
-            {/* Top Controls */}
-            <div className="border-b border-border p-4 flex items-center justify-between bg-card/30 backdrop-blur-sm">
-              <div className="flex items-center gap-4">
-                {/* Category Filter */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      {activeCategory ? 
-                        categories.find(c => c.id === activeCategory)?.name || 'Category' : 
-                        'All Categories'
-                      }
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => setActiveCategory(null)}>
-                      All Categories
-                    </DropdownMenuItem>
-                    {categories.map((category) => (
-                      <DropdownMenuItem 
-                        key={category.id}
-                        onClick={() => setActiveCategory(category.id)}
-                      >
-                        {category.name}
+            <div className="flex-1 flex flex-col min-h-0">
+              {/* Top Controls - Fixed Header */}
+              <div className="shrink-0 border-b border-border p-4 flex items-center justify-between bg-card/30 backdrop-blur-sm">
+                <div className="flex items-center gap-4">
+                  {/* Category Filter */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="gap-2">
+                        {activeCategory ? 
+                          categories.find(c => c.id === activeCategory)?.name || 'Category' : 
+                          'All Categories'
+                        }
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem onClick={() => setActiveCategory(null)}>
+                        All Categories
                       </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-              
-              {/* Grid Controls */}
-              <div className="flex items-center gap-2">
-                <Button
-                  variant={columns === 2 ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setColumns(2)}
-                >
-                  <Grid2X2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={columns === 3 ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setColumns(3)}
-                >
-                  <Grid3X3 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            
-            {/* Grid Content */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="p-6">
-                {(activeCollection || activeCategory) && (
-                  <div className="mb-6">
-                    <h2 className="text-lg font-semibold">
-                      {activeCollection && activeCategory ? 
-                        `${getCollections().find(c => c.id === activeCollection)?.name || activeCollection} Collection - ${categories.find(c => c.id === activeCategory)?.name}` :
-                        activeCollection ? 
-                          `${getCollections().find(c => c.id === activeCollection)?.name || activeCollection} Collection` :
-                          `${categories.find(c => c.id === activeCategory)?.name} Blocks`
-                      }
-                    </h2>
-                    <p className="text-sm text-muted-foreground">{filteredBlocks.length} blocks</p>
-                  </div>
-                )}
-                
-                <div 
-                  className={`grid gap-6 ${
-                    columns === 2 
-                      ? 'grid-cols-1 lg:grid-cols-2' 
-                      : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
-                  }`}
-                >
-                  {filteredBlocks.map((template) => (
-                    <PinCard key={template.id} template={template} />
-                  ))}
+                      {categories.map((category) => (
+                        <DropdownMenuItem 
+                          key={category.id}
+                          onClick={() => setActiveCategory(category.id)}
+                        >
+                          {category.name}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
                 
-                {filteredBlocks.length === 0 && (
-                  <div className="text-center py-12">
-                    <p className="text-muted-foreground">No blocks found in this collection</p>
-                  </div>
-                )}
+                {/* Grid Controls */}
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant={columns === 2 ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setColumns(2)}
+                  >
+                    <Grid2X2 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={columns === 3 ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setColumns(3)}
+                  >
+                    <Grid3X3 className="h-4 w-4" />
+                  </Button>
+                
+                <Link to="/builder">
+                  <Button size="sm">Get Builder</Button>
+                </Link>
+                </div>
               </div>
-            </div>
+              
+              {/* Grid Content - Scrollable Area */}
+              <div className="flex-1 overflow-y-auto scroll-area smooth-scroll">
+                <div className="p-6">
+                  {(activeCollection || activeCategory) && (
+                    <div className="mb-6">
+                      <h2 className="text-lg font-semibold">
+                        {activeCollection && activeCategory ? 
+                          `${getCollections().find(c => c.id === activeCollection)?.name || activeCollection} Collection - ${categories.find(c => c.id === activeCategory)?.name}` :
+                          activeCollection ? 
+                            `${getCollections().find(c => c.id === activeCollection)?.name || activeCollection} Collection` :
+                            `${categories.find(c => c.id === activeCategory)?.name} Blocks`
+                        }
+                      </h2>
+                      <p className="text-sm text-muted-foreground">{filteredBlocks.length} blocks</p>
+                    </div>
+                  )}
+                  
+                  <div 
+                    className={`grid gap-6 ${
+                      columns === 2 
+                        ? 'grid-cols-1 lg:grid-cols-2' 
+                        : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
+                    }`}
+                  >
+                    {filteredBlocks.map((template) => (
+                      <PinCard key={template.id} template={template} />
+                    ))}
+                  </div>
+                  
+                  {filteredBlocks.length === 0 && (
+                    <div className="text-center py-12">
+                      <p className="text-muted-foreground">No blocks found in this collection</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </Panel>
         </PanelGroup>
+        
+        {/* Floating Toggle Button */}
+        <Button
+          onClick={toggleSidebar}
+          className="absolute bg-accent/50 top-4 left-4 z-50 shadow-lg !w-8 !h-8"
+          size="sm"
+          variant="ghost"
+        >
+          {isSidebarCollapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
+        </Button>
       </div>
 
       {/* Save to Collection Dialog */}
