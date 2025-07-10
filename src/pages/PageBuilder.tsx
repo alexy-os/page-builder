@@ -4,15 +4,15 @@ import { Panel, PanelResizeHandle, PanelGroup } from 'react-resizable-panels';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
-import BlockSidebar from "../components/builder/BlockSidebar";
-import BuilderCanvas from "../components/builder/BuilderCanvas";
-import Navigation from "../components/Navigation";
-import ImportProjectDialog from "../components/dialogs/ImportProjectDialog";
-import ImportThemeDialog from "../components/dialogs/ImportThemeDialog";
+import BlockSidebar from "@/components/BlockSidebar";
+import BuilderCanvas from "@/components/BuilderCanvas";
+import Navigation from "@/components/Navigation";
+import ImportProjectDialog from "@/components/dialogs/ImportProjectDialog";
+import ImportThemeDialog from "@/components/dialogs/ImportThemeDialog";
 
 import { useProjectStore, useUIStore, useThemeStore } from "@/store";
-import { useSimpleStorage } from "../hooks/useSimpleStorage";
-import { exportToHTML } from "../utils/htmlExporter";
+import { useSimpleStorage } from "@/hooks/useSimpleStorage";
+import { exportToHTML } from "@/utils/htmlExporter";
 import { initializationErrorAtom, isInitializedAtom } from "@/atoms";
 
 export default function PageBuilder() {

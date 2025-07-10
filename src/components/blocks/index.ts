@@ -22,23 +22,23 @@ import {
 
 // Export all templates as an array for easy consumption
 export const allTemplates = [
+  ...heroTemplates,
+  ...featuresTemplates,
   ...blogTemplates,
   ...businessTemplates,
   ...ctaTemplates,
-  ...featuresTemplates,
   ...footerTemplates,
-  ...heroTemplates,
   ...defconTemplates
 ];
 
 // Export all components as an object for easy lookup
 export const allComponents = {
+  ...heroComponents,
+  ...featuresComponents,
   ...blogComponents,
   ...businessComponents,
   ...ctaComponents,
-  ...featuresComponents,
   ...footerComponents,
-  ...heroComponents,
   ...defconComponents
 };
 

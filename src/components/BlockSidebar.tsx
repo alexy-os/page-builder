@@ -1,14 +1,13 @@
-
-import { Plus } from "lucide-react";
+import { Plus, Eye } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAtom } from 'jotai';
 
-import type { Block, Template } from "../../types";
+import type { Block, Template } from "@/types";
 import { useProjectStore } from "@/store";
 import { builderActiveTabAtom } from "@/atoms";
 
-import { allTemplates } from "./blocks/index";
+import { allTemplates } from "@/components/blocks";
 
 interface BlockSidebarProps {
   blocks: Block[];
@@ -39,18 +38,26 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
     const PreviewComponent = template.component;
     
     return (
-      <div className="relative overflow-hidden bg-white dark:bg-gray-900 rounded-lg border-2 border-transparent hover:border-blue-500 transition-all duration-300 touch-manipulation h-32">
-        <div className="transform scale-[0.2] origin-top-left w-[500%] h-[500%] pointer-events-none">
+      <div className="scroll-preview-trigger relative overflow-hidden bg-background rounded-[16px] border border-transparent hover:border-accent transition-all duration-500 aspect-video group pointer-events-none">
+        <div className="scroll-preview-content transform scale-[0.2] origin-top-left w-[500%] h-auto pointer-events-none overflow-y-auto scrollbar-hide">
           <PreviewComponent content={template.defaultContent} />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <div className="absolute bottom-2 left-2 text-white">
+        
+        <div className="absolute inset-0 bg-gradient-to-t from-secondary/50 to-transparent pointer-events-none" />
+        <div className="absolute bottom-2 left-2 text-secondary-foreground pointer-events-none">
           <h4 className="font-semibold text-sm">{template.name}</h4>
           <p className="text-xs opacity-90">{template.description}</p>
         </div>
         <Button
+          className="absolute top-2 left-2 h-8 w-8 pointer-events-auto"
+          variant="ghost"
+          size="icon"
+        >
+          <Eye className="h-4 w-4" />
+        </Button>
+        <Button
           onClick={() => addBlock(template)}
-          className="absolute top-2 right-2 h-8 w-8 touch-manipulation"
+          className="absolute top-2 right-2 h-8 w-8"
           size="icon"
         >
           <Plus className="h-4 w-4" />
@@ -98,7 +105,7 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
         
         <div className="space-y-4">
           {templates.map((template: Template) => (
-            <Card key={template.id} className="p-0 overflow-hidden hover:shadow-lg transition-all duration-300">
+            <Card key={template.id} className="p-0 overflow-hidden hover:shadow-lg transition-all duration-300 rounded-[16px]">
               <BlockPreview template={template} />
             </Card>
           ))}

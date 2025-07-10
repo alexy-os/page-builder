@@ -5,8 +5,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { useState, useMemo, useCallback } from "react";
 import { useAtom } from 'jotai';
 
-import { allComponents } from "./blocks/index";
-import type { Block } from "../../types";
+import { allComponents } from "@/components/blocks";
+import type { Block } from "@/types";
 import { editingBlockAtom, blockErrorsAtom } from "@/atoms";
 import { performance } from "@/lib/utils";
 

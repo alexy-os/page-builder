@@ -5,7 +5,7 @@ import {
   generateTailwindThemeCSS,
   generateGoogleFontsURLForTheme
 } from "@/lib/themeManager";
-import { allComponents } from "../components/builder/blocks/index";
+import { allComponents } from "../components/blocks/index";
 
 export function exportToHTML(blocks: any[], projectName: string, themeId: string) {
   // Create static HTML from React components

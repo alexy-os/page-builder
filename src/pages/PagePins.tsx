@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useState, useRef } from "react";
-import { Grid3X3, Grid2X2, Bookmark, ChevronDown, Heart, HeartHandshake, ChevronLeft, ChevronRight } from "lucide-react";
+import { Grid3X3, Grid2X2, Bookmark, ChevronDown, Heart, HeartHandshake, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,14 +10,14 @@ import {
 import { useAtom } from 'jotai';
 import { Panel, PanelResizeHandle, PanelGroup } from 'react-resizable-panels';
 
-import PinsSidebar from "../components/PinsSidebar";
-import Navigation from "../components/Navigation";
-import SaveToCollectionDialog from "../components/dialogs/SaveToCollectionDialog";
-import ImportCollectionsDialog from "../components/dialogs/ImportCollectionsDialog";
-import { allTemplates } from "../components/builder/blocks/index";
+import PinsSidebar from "@/components/PinsSidebar";
+import Navigation from "@/components/Navigation";
+import SaveToCollectionDialog from "@/components/dialogs/SaveToCollectionDialog";
+import ImportCollectionsDialog from "@/components/dialogs/ImportCollectionsDialog";
+import { allTemplates } from "@/components/blocks";
 import { useProjectStore, useUIStore, useThemeStore } from "@/store";
 import { selectedTemplateAtom, pinsColumnsAtom } from "@/atoms";
-import type { Template } from "../types";
+import type { Template } from "@/types";
 import { useSimpleStorage } from "@/hooks/useSimpleStorage";
 import { Link } from "react-router-dom";
 
@@ -198,14 +198,29 @@ export default function PagePins() {
     
     return (
       <div 
-        className="group relative overflow-hidden bg-white dark:bg-gray-900 rounded-lg shadow hover:shadow-xl transition-all duration-300 h-64 touch-manipulation cursor-pointer"
+        className="scroll-preview-trigger relative overflow-hidden bg-background rounded-[16px] border border-transparent hover:border-accent transition-all duration-500 aspect-video group pointer-events-none"
         onClick={handleCardClick}
       >
-        <div className="transform scale-[0.25] origin-top-left w-[400%] h-[400%] pointer-events-none">
+        <div className={`scroll-preview-content transform origin-top-left pointer-events-none overflow-y-auto scrollbar-hide ${
+            columns === 2 
+              ? 'scale-[0.2] w-[500%] h-auto' 
+              : 'scale-[0.2] w-[500%] h-auto'
+          }`}>
           <PreviewComponent content={template.defaultContent} />
         </div>
         
-        {/* Action buttons */}
+        <div className="absolute inset-0 bg-gradient-to-t from-secondary/50 to-transparent pointer-events-none" />
+        <div className="absolute bottom-2 left-2 text-secondary-foreground pointer-events-none">
+          <h3 className="font-semibold text-sm">{template.name}</h3>
+          <p className="text-xs opacity-90">{template.description}</p>
+        </div>
+        <Button
+          className="absolute top-2 left-2 h-8 w-8 pointer-events-auto"
+          variant="ghost"
+          size="icon"
+        >
+          <Eye className="h-4 w-4" />
+        </Button>
         <div className="absolute top-3 right-3 flex flex-col gap-1">
           <Button 
             type="button"
@@ -235,12 +250,6 @@ export default function PagePins() {
               <Heart className="!h-5 !w-5" />
             )}
           </Button>
-        </div>
-        
-        {/* Info */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-          <h3 className="font-semibold text-sm mb-1 text-white">{template.name}</h3>
-          <p className="text-xs text-gray-300 line-clamp-2">{template.description}</p>
         </div>
       </div>
     );

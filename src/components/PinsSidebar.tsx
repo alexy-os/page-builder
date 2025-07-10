@@ -12,7 +12,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useCollections } from "../hooks/useCollections";
+import { useCollections } from "@/hooks/useCollections";
+import { useUIStore } from "@/store";
 
 interface PinsSidebarProps {
   activeCollection: string | null;
@@ -25,7 +26,7 @@ export default function PinsSidebar({ activeCollection, onCollectionChange }: Pi
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   
   const { collections, createCollection, deleteCollection } = useCollections();
-
+  const { setActiveCategory } = useUIStore();
   const buildyCollections = collections.filter(c => c.type === 'buildy');
   const userCollections = collections.filter(c => c.type === 'user');
   const currentCollections = activeTab === 'buildy' ? buildyCollections : userCollections;
@@ -169,7 +170,10 @@ export default function PinsSidebar({ activeCollection, onCollectionChange }: Pi
             <Button
               variant={activeCollection === null ? 'default' : 'outline'}
               className="w-full rounded-full"
-              onClick={() => onCollectionChange(null)}
+              onClick={() => {
+                onCollectionChange(null);
+                setActiveCategory(null);
+              }}
             >
               Show All Blocks
             </Button>
