@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAtom } from 'jotai';
-import { Palette, Check, Trash2 } from "lucide-react";
+import { Palette, Check, Trash2, Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -187,7 +187,7 @@ export function ThemeSelector({ onThemeChange, forceUpdate }: ThemeSelectorProps
     return (
       <Button variant="outline" size="sm" className="gap-2" disabled>
         <Palette className="h-4 w-4" />
-        Loading...
+        <Loader className="h-4 w-4 animate-spin" />
       </Button>
     );
   }
@@ -195,10 +195,10 @@ export function ThemeSelector({ onThemeChange, forceUpdate }: ThemeSelectorProps
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2" disabled={isLoading}>
-          <Palette className="h-4 w-4" />
+        <Button variant="outline" size="sm" className="gap-2 relative flex" disabled={isLoading}>
+          {isLoading && <><Loader className="h-4 w-4 animate-spin" /><span className="absolute inline-flex h-full w-full animate-ping rounded-lg bg-primary opacity-75"></span></>}
+          {!isLoading && <Palette className="h-4 w-4" />}
           {currentThemeData?.name || 'Select theme'}
-          {isLoading && ' (Loading...)'}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">

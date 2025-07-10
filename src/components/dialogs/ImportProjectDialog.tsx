@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -69,6 +70,9 @@ export default function ImportProjectDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Import Project</DialogTitle>
+          <DialogDescription>
+            Import a previously exported project.
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div>

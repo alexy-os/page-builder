@@ -1,3 +1,5 @@
+@import "./nunito.css";
+
 :root {
   --background: oklch(0.9707 0.0027 286.3504);
   --foreground: oklch(0.2316 0.0038 286.0989);

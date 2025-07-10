@@ -60,7 +60,7 @@ export default function Navigation({
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="mr-2">
+              <Button variant="outline" size="sm" className="gap-2 mr-2">
               <EllipsisVertical className="h-4 w-4" />
                 Navigation
               </Button>

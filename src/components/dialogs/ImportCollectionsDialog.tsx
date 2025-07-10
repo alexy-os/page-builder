@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -81,6 +82,9 @@ export default function ImportCollectionsDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Import Collections</DialogTitle>
+          <DialogDescription>
+            Import collections from a previously exported file.
+          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">
