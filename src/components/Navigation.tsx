@@ -1,4 +1,4 @@
-import { Moon, Sun, Download, Upload, Menu, Palette, Grid3X3, Hammer, EllipsisVertical, Trash2, Power } from "lucide-react";
+import { Moon, Sun, Download, Upload, Menu, Grid3X3, Hammer, EllipsisVertical, Trash2, Power } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
