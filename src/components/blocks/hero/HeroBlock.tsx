@@ -14,15 +14,16 @@ export default function HeroBlock({ content }: HeroBlockProps) {
   
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
-      {/* Background Image - убираем lazy loading для hero изображения */}
+      {/* Background Image - priority loading для LCP */}
       <img
         src={content.backgroundImage}
         alt="Hero background"
         className="absolute inset-0 w-full h-full object-cover object-center"
         width={1920}
         height={1080}
-        loading="lazy"
-        decoding="async"
+        loading="eager"
+        decoding="sync"
+        fetchPriority="high"
       />
       <div className="absolute inset-0 bg-black/50 dark:bg-black/60" />
       
@@ -67,6 +68,6 @@ export const heroTemplate = {
     title: "Build Something Amazing",
     subtitle: "Create stunning landing pages with our professional page builder",
     buttonText: "Get Started",
-    backgroundImage: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&h=1080&q=80"
+    backgroundImage: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&h=1080&q=75"
   }
 };

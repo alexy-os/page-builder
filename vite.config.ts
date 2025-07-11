@@ -33,21 +33,36 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // Manual chunking for better caching
-        manualChunks: {
+        manualChunks: (id) => {
           // React ecosystem
-          'react-vendor': ['react', 'react-dom'],
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+            return 'react-vendor';
+          }
           
-          // UI components
-          'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-accordion'],
+          // UI components - разделим Radix UI на более мелкие чанки
+          if (id.includes('@radix-ui')) {
+            return 'ui-vendor';
+          }
           
           // State management
-          'state-vendor': ['jotai', 'zustand'],
+          if (id.includes('jotai') || id.includes('zustand')) {
+            return 'state-vendor';
+          }
           
-          // Icons and styling
-          'icons-vendor': ['lucide-react'],
+          // Icons - потенциально большая библиотека
+          if (id.includes('lucide-react')) {
+            return 'icons-vendor';
+          }
           
           // Routing and utilities
-          'utils-vendor': ['react-router-dom', 'react-resizable-panels']
+          if (id.includes('react-router') || id.includes('react-resizable-panels')) {
+            return 'utils-vendor';
+          }
+          
+          // Все остальные node_modules
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
         },
         
         // Optimize asset file names for caching
@@ -106,7 +121,12 @@ export default defineConfig({
     treeShaking: true,
     
     // Use modern JS features
-    target: 'esnext'
+    target: 'esnext',
+    
+    // Additional minification
+    minifyIdentifiers: true,
+    minifySyntax: true,
+    minifyWhitespace: true
   },
   
   // CSS optimizations
