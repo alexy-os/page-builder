@@ -1,148 +1,70 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import tailwindcss from "@tailwindcss/vite"
-import path from "path"
+import compression from 'vite-plugin-compression'
+import tailwindcss from '@tailwindcss/vite'
+import path from 'path'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react(), 
-    tailwindcss()
+    react(),
+    tailwindcss(),
+    compression({
+      algorithm: 'gzip',
+      ext: '.gz',
+    }),
+    compression({
+      algorithm: 'brotliCompress',
+      ext: '.br',
+    })
   ],
+  root: './',
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    fs: {
+      strict: false
+    },
+    middlewareMode: false
+  },
+  esbuild: {
+    drop: ['console', 'debugger'],
+    legalComments: 'none'
+  },
   build: {
-    // Modern ESM target for better performance
-    target: 'esnext',
-    
-    // Enable minification
+    outDir: 'dist',
     minify: 'esbuild',
-    
-    // Optimize CSS
-    cssMinify: true,
-    
-    // Generate source maps for debugging but optimized for production
-    sourcemap: false,
-    
-    // Reduce chunk size warnings threshold
-    chunkSizeWarningLimit: 1000,
+    target: 'esnext',
     
     rollupOptions: {
       output: {
-        // Manual chunking for better caching
         manualChunks: {
-          // React ecosystem - важно держать их вместе
-          'react-vendor': ['react', 'react-dom', 'react/jsx-runtime'],
-          
-          // UI components
-          'ui-vendor': [
-            '@radix-ui/react-dialog', 
-            '@radix-ui/react-dropdown-menu', 
-            '@radix-ui/react-accordion',
-            '@radix-ui/react-avatar',
-            '@radix-ui/react-separator'
-          ],
-          
-          // State management
-          'state-vendor': ['jotai', 'zustand'],
-          
-          // Icons 
-          'icons-vendor': ['lucide-react'],
-          
-          // Routing and utilities
-          'utils-vendor': ['react-router-dom', 'react-resizable-panels']
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          ui: ['@radix-ui/react-slot', 'class-variance-authority']
         },
-        
-        // Optimize asset file names for caching
         assetFileNames: (assetInfo) => {
-          if (/\.(png|jpe?g|svg|gif|tiff|bmp|ico)$/i.test(assetInfo.name ?? '')) {
-            return `assets/images/[name]-[hash][extname]`;
+          if (/\.(png|jpe?g|webp|svg|gif|tiff|bmp|ico)$/i.test(assetInfo.name || '')) {
+            return `images/[name]-[hash][extname]`;
           }
-          
-          if (/\.(woff2?|eot|ttf|otf)$/i.test(assetInfo.name ?? '')) {
-            return `assets/fonts/[name]-[hash][extname]`;
+          if (/\.(woff2?|eot|ttf|otf)$/i.test(assetInfo.name || '')) {
+            return `fonts/[name]-[hash][extname]`;
           }
-          
           return `assets/[name]-[hash][extname]`;
         },
-        
-        // Optimize chunk file names
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
-      },
-      
-      // External dependencies for CDN loading (optional)
-      // external: ['react', 'react-dom'] // Uncomment if using CDN
+        chunkFileNames: 'js/[name]-[hash].js',
+        entryFileNames: 'js/[name]-[hash].js'
+      }
     },
     
-    // Optimize for modern browsers
-    modulePreload: {
-      polyfill: false
-    },
+    chunkSizeWarningLimit: 1000,
+    assetsInlineLimit: 4096,
+    cssCodeSplit: true
   },
-  
-  // Optimize development server
-  server: {
-    // Optimize HMR
-    hmr: {
-      overlay: false
-    }
-  },
-  
-  // Optimize preview server
   preview: {
     port: 4173,
-    strictPort: true,
-    
-    // Enable compression
-    headers: {
-      'Cache-Control': 'public, max-age=31536000, immutable',
-    }
-  },
-  
-  // ESBuild optimizations
-  esbuild: {
-    // Remove console logs and debugger in production
-    drop: ['console', 'debugger'],
-    
-    // Optimize for smaller bundle size
-    treeShaking: true,
-    
-    // Use modern JS features
-    target: 'esnext',
-    
-    // Additional minification
-    minifyIdentifiers: true,
-    minifySyntax: true,
-    minifyWhitespace: true
-  },
-  
-  // CSS optimizations
-  css: {
-    // PostCSS optimizations
-    postcss: {
-      plugins: [
-        // Add autoprefixer and other optimizations if needed
-      ]
-    }
-  },
-  
-  // Optimize dependencies
-  optimizeDeps: {
-    // Pre-bundle these dependencies
-    include: [
-      'react',
-      'react-dom',
-      'react-router-dom',
-      'jotai',
-      'zustand',
-      'lucide-react'
-    ],
-    
-    // Exclude these from pre-bundling
-    exclude: ['@vite/client', '@vite/env']
+    strictPort: true
   }
-})
+}) 

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, Suspense } from "react";
 import { Grid3X3, Grid2X2, Bookmark, ChevronDown, Heart, HeartHandshake, ChevronLeft, ChevronRight, Eye, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -240,7 +240,13 @@ export default function PagePins() {
               ? 'scale-[0.3] w-[500%] h-auto absolute left-[-25%] top-0' 
               : 'scale-[0.2] w-[500%] h-auto'
           }`}>
-          <PreviewComponent content={template.defaultContent} />
+          <Suspense fallback={
+            <div className="flex items-center justify-center h-32 bg-muted/50 rounded">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          }>
+            <PreviewComponent content={template.defaultContent} />
+          </Suspense>
         </div>
         
         <div className="absolute inset-0 bg-gradient-to-t from-secondary/50 to-transparent pointer-events-none" />

@@ -1,4 +1,5 @@
-import { Plus, Eye } from "lucide-react";
+import { Plus, Eye, Loader2 } from "lucide-react";
+import { Suspense } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAtom } from 'jotai';
@@ -48,7 +49,13 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
         </Button>
         
         <div className="scroll-preview-content transform scale-[0.2] origin-top-left w-[500%] h-auto overflow-y-auto scrollbar-hide">
-          <PreviewComponent content={template.defaultContent} />
+          <Suspense fallback={
+            <div className="flex items-center justify-center h-20 bg-muted/50 rounded">
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            </div>
+          }>
+            <PreviewComponent content={template.defaultContent} />
+          </Suspense>
         </div>
         
         <div className="absolute inset-0 bg-gradient-to-t from-secondary/50 to-transparent pointer-events-none" />
