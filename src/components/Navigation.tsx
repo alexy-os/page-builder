@@ -137,12 +137,12 @@ export default function Navigation({
                         Import Project
                       </DropdownMenuItem>
                     )}
-                    {onImportTheme && (
+                    {/* onImportTheme && (
                       <DropdownMenuItem onClick={onImportTheme}>
                         <Palette className="mr-2 h-4 w-4" />
                         Import Theme
                       </DropdownMenuItem>
-                    )}
+                    ) */}
                     {onImportCollections && (
                       <DropdownMenuItem onClick={onImportCollections}>
                         <Upload className="mr-2 h-4 w-4" />
