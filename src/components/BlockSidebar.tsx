@@ -48,7 +48,7 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
           <Eye className="h-4 w-4" />
         </Button>
         
-        <div className="scroll-preview-content transform scale-[0.2] origin-top-left w-[500%] h-auto overflow-y-auto scrollbar-hide">
+        <div className="scroll-preview-content transform scale-[0.2] origin-top-left w-[500%] h-auto scale-3col overflow-y-auto scrollbar-hide">
           <Suspense fallback={
             <div className="flex items-center justify-center h-20 bg-muted/50 rounded">
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />

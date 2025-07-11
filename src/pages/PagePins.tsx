@@ -237,8 +237,8 @@ export default function PagePins() {
         
         <div className={`scroll-preview-content transform origin-top-left overflow-y-auto scrollbar-hide ${
             columns === 2 
-              ? 'scale-[0.3] w-[500%] h-auto absolute left-[-25%] top-0' 
-              : 'scale-[0.2] w-[500%] h-auto'
+              ? 'scale-[0.3] w-[500%] h-auto absolute left-[-25%] top-0 scale-2col' 
+              : 'scale-[0.2] w-[500%] h-auto scale-3col'
           }`}>
           <Suspense fallback={
             <div className="flex items-center justify-center h-32 bg-muted/50 rounded">
