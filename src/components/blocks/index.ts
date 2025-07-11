@@ -1,11 +1,11 @@
 import { lazy } from 'react';
 
 // Lazy load all block components
-//const HeroBlock = lazy(() => import('./hero/HeroBlock').then(m => ({ default: m.default })));
+const HeroBlock = lazy(() => import('./hero/HeroBlock').then(m => ({ default: m.default })));
 const HeroCenteredSection = lazy(() => import('./hero/HeroCenteredSection').then(m => ({ default: m.default })));
 const HeroCenteredWithTopButton = lazy(() => import('./hero/HeroCenteredWithTopButton').then(m => ({ default: m.default })));
-//const HeroSplitWithGallery = lazy(() => import('./hero/HeroSplitWithGallery').then(m => ({ default: m.default })));
-//const HeroSplitWithMedia = lazy(() => import('./hero/HeroSplitWithMedia').then(m => ({ default: m.default })));
+const HeroSplitWithGallery = lazy(() => import('./hero/HeroSplitWithGallery').then(m => ({ default: m.default })));
+const HeroSplitWithMedia = lazy(() => import('./hero/HeroSplitWithMedia').then(m => ({ default: m.default })));
 
 const FeaturesBlock = lazy(() => import('./features/FeaturesBlock').then(m => ({ default: m.default })));
 const FeaturesGridMediaCards = lazy(() => import('./features/FeaturesGridMediaCards').then(m => ({ default: m.default })));
@@ -39,11 +39,11 @@ const FooterFourColumns = lazy(() => import('./footer/FooterFourColumns').then(m
 const FooterSocialButtons = lazy(() => import('./footer/FooterSocialButtons').then(m => ({ default: m.default })));
 
 // Import templates directly (they're just data, no components)
-//import { heroTemplate } from './hero/HeroBlock';
+import { heroTemplate } from './hero/HeroBlock';
 import { heroCenteredSectionTemplate } from './hero/HeroCenteredSection';
 import { heroCenteredWithTopButtonTemplate } from './hero/HeroCenteredWithTopButton';
-//import { heroSplitWithGalleryTemplate } from './hero/HeroSplitWithGallery';
-//import { heroSplitWithMediaTemplate } from './hero/HeroSplitWithMedia';
+import { heroSplitWithGalleryTemplate } from './hero/HeroSplitWithGallery';
+import { heroSplitWithMediaTemplate } from './hero/HeroSplitWithMedia';
 
 import { featuresBlockTemplate } from './features/FeaturesBlock';
 import { featuresGridMediaCardsTemplate } from './features/FeaturesGridMediaCards';
@@ -79,11 +79,11 @@ import { footerSocialButtonsTemplate } from './footer/FooterSocialButtons';
 // Create templates with lazy components
 export const allTemplates = [
   // Hero templates
- // { ...heroTemplate, component: HeroBlock },
+ { ...heroTemplate, component: HeroBlock },
   { ...heroCenteredSectionTemplate, component: HeroCenteredSection },
   { ...heroCenteredWithTopButtonTemplate, component: HeroCenteredWithTopButton },
- // { ...heroSplitWithGalleryTemplate, component: HeroSplitWithGallery },
-  //{ ...heroSplitWithMediaTemplate, component: HeroSplitWithMedia },
+ { ...heroSplitWithGalleryTemplate, component: HeroSplitWithGallery },
+  { ...heroSplitWithMediaTemplate, component: HeroSplitWithMedia },
 
   // Features templates
   { ...featuresBlockTemplate, component: FeaturesBlock },
