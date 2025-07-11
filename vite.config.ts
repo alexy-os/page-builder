@@ -33,36 +33,27 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // Manual chunking for better caching
-        manualChunks: (id) => {
-          // React ecosystem
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-            return 'react-vendor';
-          }
+        manualChunks: {
+          // React ecosystem - важно держать их вместе
+          'react-vendor': ['react', 'react-dom', 'react/jsx-runtime'],
           
-          // UI components - разделим Radix UI на более мелкие чанки
-          if (id.includes('@radix-ui')) {
-            return 'ui-vendor';
-          }
+          // UI components
+          'ui-vendor': [
+            '@radix-ui/react-dialog', 
+            '@radix-ui/react-dropdown-menu', 
+            '@radix-ui/react-accordion',
+            '@radix-ui/react-avatar',
+            '@radix-ui/react-separator'
+          ],
           
           // State management
-          if (id.includes('jotai') || id.includes('zustand')) {
-            return 'state-vendor';
-          }
+          'state-vendor': ['jotai', 'zustand'],
           
-          // Icons - потенциально большая библиотека
-          if (id.includes('lucide-react')) {
-            return 'icons-vendor';
-          }
+          // Icons 
+          'icons-vendor': ['lucide-react'],
           
           // Routing and utilities
-          if (id.includes('react-router') || id.includes('react-resizable-panels')) {
-            return 'utils-vendor';
-          }
-          
-          // Все остальные node_modules
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
+          'utils-vendor': ['react-router-dom', 'react-resizable-panels']
         },
         
         // Optimize asset file names for caching
