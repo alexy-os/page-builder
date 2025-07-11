@@ -16,7 +16,7 @@ import SaveToCollectionDialog from "@/components/dialogs/SaveToCollectionDialog"
 import ImportCollectionsDialog from "@/components/dialogs/ImportCollectionsDialog";
 import { allTemplates } from "@/components/blocks";
 import { useProjectStore, useUIStore, useThemeStore } from "@/store";
-import { selectedTemplateAtom, pinsColumnsAtom, lazyLoadingWithResetAtom } from "@/atoms";
+import { selectedTemplateAtom, pinsColumnsAtom } from "@/atoms";
 import type { Template } from "@/types";
 import { useSimpleStorage } from "@/hooks/useSimpleStorage";
 import { Link } from "react-router-dom";
@@ -30,10 +30,9 @@ export default function PagePins() {
   const sidebarPanelRef = useRef<any>(null);
   const panelGroupRef = useRef<any>(null);
   
-  // Replace useState with Jotai atom
-  const [lazyState, setLazyState] = useAtom(lazyLoadingWithResetAtom);
-  const { visibleCount, isLoading } = lazyState;
-  
+  // Simple state for manual loading
+  const [visibleCount, setVisibleCount] = useState(12);
+  const [isLoading, setIsLoading] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   // Zustand stores
@@ -132,42 +131,22 @@ export default function PagePins() {
     ? filteredBlocks.slice(0, visibleCount)
     : filteredBlocks;
 
-  // Optimized scroll handler without useCallback
-  const handleScroll = (e: Event) => {
-    if (!isLazyLoadingActive || isLoading) return;
-    
-    const container = e.target as HTMLDivElement;
-    const { scrollTop, scrollHeight, clientHeight } = container;
-    const scrollThreshold = scrollHeight - clientHeight - 200;
-
-    if (scrollTop >= scrollThreshold && visibleCount < filteredBlocks.length) {
-      setLazyState({ isLoading: true });
-      
-      setTimeout(() => {
-        setLazyState({ 
-          visibleCount: Math.min(visibleCount + 9, filteredBlocks.length),
-          isLoading: false 
-        });
-      }, 300);
-    }
-  };
-
-  // Reset when filters change (without useEffect)
-  const prevFilters = useRef({ activeCollection, activeCategory });
-  if (prevFilters.current.activeCollection !== activeCollection || 
-      prevFilters.current.activeCategory !== activeCategory) {
-    setLazyState('reset');
-    prevFilters.current = { activeCollection, activeCategory };
-  }
-
-  // Setup scroll listener with cleanup
+  // Reset visible count when filters change
   useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container || !isLazyLoadingActive) return;
+    setVisibleCount(12);
+    setIsLoading(false);
+  }, [activeCollection, activeCategory]);
 
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, [isLazyLoadingActive]); // Меньше зависимостей
+  // Simple load more function
+  const handleLoadMore = () => {
+    setIsLoading(true);
+    
+    // Simulate loading delay
+    setTimeout(() => {
+      setVisibleCount(prev => Math.min(prev + 9, filteredBlocks.length));
+      setIsLoading(false);
+    }, 300);
+  };
 
   const handleSaveToCollection = (template: Template) => {
     setSelectedTemplate(template);
@@ -439,18 +418,34 @@ export default function PagePins() {
                     ))}
                   </div>
 
-                  {/* Loading indicator */}
-                  {isLoading && (
-                    <div className="flex justify-center items-center py-8">
-                      <Loader2 className="h-6 w-6 animate-spin text-accent" />
-                      <span className="ml-2 text-sm text-muted-foreground">Loading more blocks...</span>
+                  {/* Load More Button */}
+                  {isLazyLoadingActive && visibleCount < filteredBlocks.length && (
+                    <div className="flex justify-center py-8">
+                      <Button 
+                        onClick={handleLoadMore}
+                        disabled={isLoading}
+                        variant="outline"
+                        size="lg"
+                        className="gap-2"
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Loading...
+                          </>
+                        ) : (
+                          <>
+                            Load More ({Math.min(9, filteredBlocks.length - visibleCount)} blocks)
+                          </>
+                        )}
+                      </Button>
                     </div>
                   )}
 
                   {/* End of content indicator */}
                   {isLazyLoadingActive && visibleCount >= filteredBlocks.length && filteredBlocks.length > 12 && (
                     <div className="text-center py-8">
-                      <p className="text-sm text-muted-foreground">You've reached the end! 🎉</p>
+                      <p className="text-sm text-muted-foreground">All blocks loaded! 🎉</p>
                     </div>
                   )}
                   
