@@ -1,0 +1,17 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "FeaturesSplitMedia",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/features/FeaturesSplitMedia.tsx",
+      "content": "import { Check } from \"lucide-react\";\r\nimport { Badge } from \"@/components/ui/badge\";\r\n\r\ninterface FeaturesSplitMediaProps {\r\n  content: {\r\n    badge: string;\r\n    title: string;\r\n    description: string;\r\n    features: Array<{\r\n      title: string;\r\n      description: string;\r\n    }>;\r\n  };\r\n}\r\n\r\nexport default function FeaturesSplitMedia({ content }: FeaturesSplitMediaProps) {\r\n  const { badge, title, description, features } = content;\r\n  return (\r\n    <section className=\"w-full py-16 lg:py-32 bg-background\">\r\n      <div className=\"container mx-auto px-4 md:px-6 lg:px-8\">\r\n        <div className=\"grid grid-cols-1 gap-8 items-center lg:grid-cols-2\">\r\n          <div className=\"flex gap-2 flex-col\">\r\n            <div className=\"flex gap-4 flex-col\">\r\n              <div>\r\n                <Badge variant=\"outline\" className=\"text-muted-foreground\">{badge}</Badge>\r\n              </div>\r\n              <div className=\"flex gap-2 flex-col\">\r\n                <h2 className=\"max-w-2xl text-3xl md:text-4xl lg:text-5xl font-bold text-foreground text-left\">\r\n                  {title}\r\n                </h2>\r\n                <p className=\"text-lg text-muted-foreground max-w-2xl text-left\">\r\n                  {description}\r\n                </p>\r\n              </div>\r\n            </div>\r\n            <div className=\"grid lg:pl-4 grid-cols-1 sm:grid-cols-3 items-start lg:grid-cols-1 gap-4\">\r\n              {features?.map((feature, index) => (\r\n                <div key={index} className=\"flex flex-row gap-4 items-start\">\r\n                  <Check className=\"w-4 h-4 mt-2 text-primary\" />\r\n                  <div className=\"flex flex-col gap-2\">\r\n                    <p>{feature.title}</p>\r\n                    <p className=\"text-muted-foreground text-sm\">\r\n                      {feature.description}\r\n                    </p>\r\n                  </div>\r\n                </div>\r\n              ))}\r\n            </div>\r\n          </div>\r\n          <div className=\"bg-muted rounded-md aspect-square\"></div>\r\n        </div>\r\n      </div>\r\n    </section>\r\n  );\r\n}\r\n\r\nexport const featuresSplitMediaTemplate = {\r\n  id: \"featuresSplitMedia\",\r\n  name: \"Features Split Media\",\r\n  description: \"A split layout for features with media on the right\",\r\n  component: FeaturesSplitMedia,\r\n  defaultContent: {\r\n    badge: 'Open Source',\r\n    title: 'Beautiful Components for Your Next Project',\r\n    description: 'Elevate your application with stunning, customizable UI elements built with Radix UI and Tailwind CSS.',\r\n    features: [\r\n      { title: 'Radix UI Integration', description: 'Harness the power of Radix UI\\'s robust component library for seamless integration into your project.' },\r\n      { title: 'Tailwind CSS Styling', description: 'Utilize Tailwind CSS for effortless customization and rapid development of your UI components.' },\r\n      { title: 'Free and Open Source', description: 'Access these beautifully crafted components absolutely free, perfect for both personal and commercial projects.' }\r\n    ]\r\n  },\r\n};",
+      "target": "blocks"
+    }
+  ]
+}

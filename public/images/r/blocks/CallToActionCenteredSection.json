@@ -1,0 +1,17 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "CallToActionCenteredSection",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/cta/CallToActionCenteredSection.tsx",
+      "content": "import { Button } from \"@/components/ui/button\"\r\nimport { ArrowRight } from \"lucide-react\"\r\n\r\ninterface CallToActionCenteredSectionProps {\r\n  content: {\r\n    title: string\r\n    description: string\r\n    primaryButtonText: string\r\n    secondaryButtonText: string\r\n  }\r\n}\r\n\r\nexport default function CallToActionCenteredSection({ content }: CallToActionCenteredSectionProps) {\r\n  return (\r\n    <section className=\"w-full py-16 lg:py-32 bg-background\">\r\n      <div className=\"container mx-auto px-4 md:px-6 lg:px-8\">\r\n        <div className=\"flex flex-col items-center text-center rounded-lg bg-accent p-8 md:rounded-xl lg:p-16\">\r\n          <div className=\"max-w-3xl space-y-4\">\r\n            <h2 className=\"text-2xl font-semibold md:text-4xl text-foreground\">\r\n              {content.title}\r\n            </h2>\r\n            <p className=\"text-muted-foreground lg:text-lg\">\r\n              {content.description}\r\n            </p>\r\n          </div>\r\n          \r\n          <div className=\"mt-8 flex flex-col sm:flex-row gap-4\">\r\n            <Button variant=\"outline\" className=\"w-full sm:w-auto\">\r\n              {content.primaryButtonText} <ArrowRight />\r\n            </Button>\r\n            <Button variant=\"default\" className=\"w-full sm:w-auto bg-primary text-primary-foreground\">\r\n              {content.secondaryButtonText} <ArrowRight />\r\n            </Button>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </section>\r\n  )\r\n}\r\n\r\nexport const callToActionCenteredSectionTemplate = {\r\n  id: \"ctaCallToActionCenteredSection\",\r\n  name: \"Call To Action Centered Section\",\r\n  description: \"Centered call to action section with buttons\",\r\n  component: CallToActionCenteredSection,\r\n  defaultContent: {\r\n    title: \"Unlock Your Business Potential\",\r\n    description: \"Discover innovative solutions that drive growth, efficiency, and transformative success for your organization.\",\r\n    primaryButtonText: \"Explore Solutions\",\r\n    secondaryButtonText: \"Start Your Journey\"\r\n  }\r\n}",
+      "target": "blocks"
+    }
+  ]
+}

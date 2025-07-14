@@ -1,0 +1,17 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "HeroBlock",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/hero/HeroBlock.tsx",
+      "content": "import { ArrowRight, Play } from \"lucide-react\";\r\nimport { Button } from \"@/components/ui/button\";\r\n\r\ninterface HeroBlockProps {\r\n  content: {\r\n    title: string;\r\n    subtitle: string;\r\n    buttonText: string;\r\n    backgroundImage: string;\r\n  };\r\n}\r\n\r\nexport default function HeroBlock({ content }: HeroBlockProps) {\r\n  \r\n  return (\r\n    <section className=\"relative min-h-screen flex items-center justify-center overflow-hidden bg-background\">\r\n      {/* Background Image - priority loading для LCP */}\r\n      <img\r\n        src={content.backgroundImage}\r\n        alt=\"Hero background\"\r\n        className=\"absolute inset-0 w-full h-full object-cover object-center\"\r\n        width={1920}\r\n        height={1080}\r\n        loading=\"eager\"\r\n        decoding=\"sync\"\r\n        fetchPriority=\"high\"\r\n      />\r\n      <div className=\"absolute inset-0 bg-black/50 dark:bg-black/60\" />\r\n      \r\n      {/* Content */}\r\n      <div className=\"relative z-10 text-center px-6 max-w-4xl mx-auto\">\r\n        <h1 className=\"text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight\">\r\n          {content.title}\r\n        </h1>\r\n        <p className=\"text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed\">\r\n          {content.subtitle}\r\n        </p>\r\n        \r\n        <div className=\"flex flex-col sm:flex-row gap-4 justify-center\">\r\n          <Button \r\n            size=\"lg\"\r\n            className=\"text-lg px-8 py-6 h-auto bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300\"\r\n          >\r\n            {content.buttonText}\r\n            <ArrowRight className=\"ml-2 h-5 w-5\" />\r\n          </Button>\r\n          \r\n          <Button \r\n            variant=\"outline\" \r\n            size=\"lg\"\r\n            className=\"text-lg px-8 py-6 h-auto bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white rounded-lg backdrop-blur-sm\"\r\n          >\r\n            <Play className=\"mr-2 h-5 w-5\" />\r\n            Watch Demo\r\n          </Button>\r\n        </div>\r\n      </div>\r\n    </section>\r\n  );\r\n}\r\n\r\nexport const heroTemplate = {\r\n  id: \"hero\",\r\n  name: \"Hero Section\",\r\n  description: \"Eye-catching header with CTA\",\r\n  component: HeroBlock,\r\n  defaultContent: {\r\n    title: \"Build Something Amazing\",\r\n    subtitle: \"Create stunning landing pages with our professional page builder\",\r\n    buttonText: \"Get Started\",\r\n    backgroundImage: \"https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&h=1080&q=75\"\r\n  }\r\n};\r\n",
+      "target": "blocks"
+    }
+  ]
+}

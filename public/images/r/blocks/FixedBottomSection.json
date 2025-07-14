@@ -1,0 +1,15 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "FixedBottomSection",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/defcon/FixedBottomSection.tsx",
+      "content": "interface FixedBottomSectionProps {\r\n  content: {\r\n    fullText: string;\r\n    shortText: string;\r\n    severity: \"info\" | \"warning\" | \"error\";\r\n  };\r\n}\r\n\r\nexport default function FixedBottomSection({ content }: FixedBottomSectionProps) {\r\n  const { fullText, shortText, severity } = content;\r\n\r\n  const getSeverityColor = (severity: string) => {\r\n    switch (severity) {\r\n      case \"error\":\r\n        return \"bg-red-500 border-red-500/70 text-white\";\r\n      case \"warning\":\r\n        return \"bg-yellow-500 border-yellow-500/70 text-black\";\r\n      default:\r\n        return \"bg-blue-500 border-blue-500/70 text-white\";\r\n    }\r\n  };\r\n\r\n  return (\r\n    <div className={`fixed bottom-0 left-0 right-0 border-t px-3 sm:px-6 py-1.5 sm:py-2 defcon-theme-transition ${getSeverityColor(severity)}`}>\r\n      <div className=\"text-center text-xs sm:text-xs font-bold tracking-wider sm:tracking-widest\">\r\n        <span className=\"hidden sm:inline\">{fullText}</span>\r\n        <span className=\"sm:hidden\">{shortText}</span>\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n\r\nexport const fixedBottomSectionTemplate = {\r\n  id: \"defconFixedBottomSection\",\r\n  name: \"Fixed Bottom Status Bar\",\r\n  description: \"A fixed bottom bar displaying system status information\",\r\n  component: FixedBottomSection,\r\n  defaultContent: {\r\n    fullText: \"SYSTEM STATUS // FOR AUTHORIZED PERSONNEL ONLY // SERVER MONITORING DIVISION\",\r\n    shortText: \"SYSTEM STATUS // MONITORING DIV\",\r\n    severity: \"info\"\r\n  }\r\n}; ",
+      "target": "blocks"
+    }
+  ]
+}

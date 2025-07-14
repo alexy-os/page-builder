@@ -1,0 +1,210 @@
+{
+  "$schema": "https://buildy.tw/schema/registry.json",
+  "components": [
+    {
+      "name": "HeroSplitWithMedia",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "HeroSplitWithGallery",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "HeroCenteredWithTopButton",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "HeroCenteredSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "HeroBlock",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "FooterSocialButtons",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "FooterFourColumns",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "FooterBlock",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "FeaturesThreeColumnsIcons",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "FeaturesThreeColumns",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "FeaturesSplitMedia",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "FeaturesSplitLeftMedia",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "FeaturesSplitCarousel",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "FeaturesGridMediaCards",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "FeaturesBlock",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "FAQContentSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "TimelineSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "MarketsSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "MainSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "HistorySection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "HeaderSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "FooterSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "FixedBottomSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "AdvertisementSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "NewsLetterCopy",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "NewsLetter",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "CtaBlock",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "CallToActionSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "CallToActionCenteredSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "PricingYearSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "PricingSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "DesignSystemWebinars",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "CareerSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "BusinessSolutionsGrid",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "BusinessCardsGallery",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "BlogPostsGridSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "BlogNewsBlock",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "BlogCardsSection",
+      "type": "registry:block",
+      "description": ""
+    },
+    {
+      "name": "BlogArticlesColumnsCards",
+      "type": "registry:block",
+      "description": ""
+    }
+  ],
+  "categories": [
+    "ui",
+    "components",
+    "blocks",
+    "lib",
+    "templates"
+  ],
+  "version": "1.0.0",
+  "lastUpdated": "2025-07-14T22:43:24.917Z",
+  "registry": "utility"
+}

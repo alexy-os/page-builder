@@ -1,0 +1,15 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "CareerSection",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/business/CareerSection.tsx",
+      "content": "interface CareerSectionProps {\r\n  content: {\r\n    // Simplified props based on typical structure, e.g.:\r\n    title: string;\r\n    description: string;\r\n    jobs: Array<{\r\n      title: string;\r\n      description: string;\r\n      location: string;\r\n    }>;\r\n  };\r\n}\r\n\r\nexport default function CareerSection({ content }: CareerSectionProps) {\r\n  const { title, description, jobs } = content;\r\n  return (\r\n    <section className=\"w-full py-16 lg:py-32 bg-background\">\r\n      <div className=\"container mx-auto px-4 md:px-6 lg:px-8\">\r\n        <h2 className=\"text-3xl md:text-4xl font-bold text-foreground mb-6\">{title}</h2>\r\n        <p className=\"text-muted-foreground mb-8\">{description}</p>\r\n        <div className=\"grid grid-cols-1 md:grid-cols-2 gap-6\">\r\n          {jobs?.map((job) => (\r\n            <div key={job.title} className=\"bg-card p-6 rounded-md border border-border hover:shadow-lg transition-all\">\r\n              <h3 className=\"text-xl font-semibold text-card-foreground\">{job.title}</h3>\r\n              <p className=\"text-muted-foreground mt-2\">{job.description}</p>\r\n              <p className=\"text-muted-foreground mt-2\">{job.location}</p>\r\n            </div>\r\n          ))}\r\n        </div>\r\n      </div>\r\n    </section>\r\n  );\r\n}\r\n\r\nexport const careerSectionTemplate = {\r\n  id: \"businessCareerSection\",\r\n  name: \"Career Section\",\r\n  description: \"A section for displaying career opportunities\",\r\n  component: CareerSection,\r\n  defaultContent: {\r\n    title: \"Join Our Team\",\r\n    description: \"Explore exciting career paths with us.\",\r\n    jobs: [\r\n      { title: \"Job 1\", description: \"Description here\", location: \"Location here\" },\r\n      { title: \"Job 2\", description: \"Description here\", location: \"Location here\" }\r\n    ]\r\n  }\r\n};",
+      "target": "blocks"
+    }
+  ]
+}

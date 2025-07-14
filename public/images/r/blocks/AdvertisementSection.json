@@ -1,0 +1,17 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "AdvertisementSection",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/defcon/AdvertisementSection.tsx",
+      "content": "import { LucideChevronDown } from \"lucide-react\";\r\n\r\ninterface AdvertisementSectionProps {\r\n  content: {\r\n    title: string;\r\n    icon: string;\r\n    status: {\r\n      text: string;\r\n      type: \"success\" | \"warning\" | \"error\";\r\n    };\r\n  };\r\n}\r\n\r\nexport default function AdvertisementSection({ content }: AdvertisementSectionProps) {\r\n  const { title, icon, status } = content;\r\n\r\n  const getStatusColor = (type: string) => {\r\n    switch (type) {\r\n      case \"success\":\r\n        return \"bg-green-500/20 text-green-500\";\r\n      case \"warning\":\r\n        return \"bg-yellow-500/20 text-yellow-500\";\r\n      case \"error\":\r\n        return \"bg-red-500/20 text-red-500\";\r\n      default:\r\n        return \"bg-muted/20 text-muted-foreground\";\r\n    }\r\n  };\r\n\r\n  return (\r\n    <div className=\"border-t border-border bg-background defcon-theme-transition\">\r\n      <div className=\"container mx-auto px-4 sm:px-6 py-4\">\r\n        <div className=\"flex items-center justify-center gap-2 py-2 px-4 bg-card/30 border border-border rounded-lg hover:border-primary defcon-theme-transition cursor-pointer group defcon-focus\">\r\n          <div className={`w-5 h-5 rounded-full flex items-center justify-center defcon-theme-transition ${getStatusColor(status.type)}`}>\r\n            <span className=\"text-xs\">{icon}</span>\r\n          </div>\r\n          <span className=\"text-xs font-mono text-muted-foreground group-hover:text-primary defcon-theme-transition\">\r\n            {title}\r\n          </span>\r\n          <LucideChevronDown className=\"w-3 h-3 text-muted-foreground group-hover:text-primary defcon-theme-transition\" />\r\n        </div>\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n\r\nexport const advertisementSectionTemplate = {\r\n  id: \"defconAdvertisementSection\",\r\n  name: \"Server Status Advertisement\",\r\n  description: \"A section displaying server status and monitoring information\",\r\n  component: AdvertisementSection,\r\n  defaultContent: {\r\n    title: \"Server Monitoring Active\",\r\n    icon: \"📊\",\r\n    status: {\r\n      text: \"All Systems Operational\",\r\n      type: \"success\"\r\n    }\r\n  }\r\n}; ",
+      "target": "blocks"
+    }
+  ]
+}

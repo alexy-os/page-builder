@@ -1,0 +1,17 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "NewsLetterCopy",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/cta/NewsLetterCopy.tsx",
+      "content": "import { Button } from \"@/components/ui/button\";\r\nimport { Input } from \"@/components/ui/input\";\r\nimport { ArrowRight } from \"lucide-react\";\r\n\r\ninterface NewsLetterCopyProps {\r\n  content: {\r\n    title: string;\r\n    description: string;\r\n    buttonText: string;\r\n  };\r\n}\r\n\r\nexport default function NewsLetterCopy({ content }: NewsLetterCopyProps) {\r\n  return (\r\n    <section className=\"w-full py-16 lg:py-32 bg-background\">\r\n      <div className=\"container mx-auto px-4 md:px-6 lg:px-8\">\r\n        <h3 className=\"text-center text-4xl md:text-5xl font-bold text-foreground\">\r\n          {content.title}\r\n        </h3>\r\n        <p className=\"text-xl text-muted-foreground text-center mt-4 mb-8\">\r\n          {content.description}\r\n        </p>\r\n\r\n        <form className=\"flex flex-col w-full md:flex-row md:w-6/12 lg:w-4/12 mx-auto gap-4 md:gap-2 bg-accent p-4 rounded-lg\">\r\n          <Input placeholder=\"yourmail@website.com\" className=\"bg-secondary\" />\r\n          <Button variant=\"default\" className=\"bg-primary text-primary-foreground\">\r\n            {content.buttonText} <ArrowRight />\r\n          </Button>\r\n        </form>\r\n      </div>\r\n    </section>\r\n  );\r\n}\r\n\r\nexport const newsLetterCopyTemplate = {\r\n  id: \"ctaNewsLetterCopy\",\r\n  name: \"News Letter Copy\",\r\n  description: \"Alternative newsletter subscription section\",\r\n  component: NewsLetterCopy,\r\n  defaultContent: {\r\n    title: \"Keep up to date with all new products\",\r\n    description: \"No spam. Only novelties and service improvement\",\r\n    buttonText: \"Subscribe\"\r\n  }\r\n};",
+      "target": "blocks"
+    }
+  ]
+}

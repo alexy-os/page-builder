@@ -1,0 +1,17 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "FeaturesThreeColumns",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/features/FeaturesThreeColumns.tsx",
+      "content": "import { Check } from \"lucide-react\";\r\n\r\ninterface FeaturesThreeColumnsProps {\r\n  content: {\r\n    title: string;\r\n    description: string;\r\n    features: Array<{\r\n      id: string;\r\n      title: string;\r\n      description: string;\r\n    }>;\r\n  };\r\n}\r\n\r\nexport default function FeaturesThreeColumns({ content }: FeaturesThreeColumnsProps) {\r\n  const { title, description, features } = content;\r\n  return (\r\n    <section className=\"w-full py-16 lg:py-32 bg-background\">\r\n      <div className=\"container mx-auto px-4 md:px-6 lg:px-8\">\r\n        <div className=\"flex gap-2 flex-col\">\r\n          <h2 className=\"text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-foreground\">{title}</h2>\r\n          <p className=\"text-lg text-muted-foreground max-w-2xl text-left mb-12\">{description}</p>\r\n        </div>\r\n        <div className=\"flex gap-10 pt-12 flex-col w-full\">\r\n          <div className=\"grid grid-cols-2 items-start lg:grid-cols-3 gap-10\">\r\n            {features?.map((feature) => (\r\n              <div key={feature.id} className=\"flex flex-row gap-6 w-full items-start\">\r\n                <Check className=\"w-4 h-4 mt-2 text-primary\" />\r\n                <div className=\"flex flex-col gap-1\">\r\n                  <p className=\"font-semibold\">{feature.title}</p>\r\n                  <p className=\"text-sm text-muted-foreground\">\r\n                    {feature.description}\r\n                  </p>\r\n                </div>\r\n              </div>\r\n            ))}\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </section>\r\n  );\r\n}\r\n\r\nexport const featuresThreeColumnsTemplate = {\r\n  id: \"featuresThreeColumns\",\r\n  name: \"Features Three Columns\",\r\n  description: \"A three-column layout for displaying features\",\r\n  component: FeaturesThreeColumns,\r\n  defaultContent: {\r\n    title: 'Effortless Prototyping and Flexible UI Development',\r\n    description: 'Simplify your business with our intuitive and customizable UI components.',\r\n    features: [\r\n      { id: 'feature-1', title: 'Modular Design', description: 'Create custom layouts using our grid system and responsive classes.' },\r\n      { id: 'feature-2', title: 'Theming Flexibility', description: 'Easily customize colors, fonts, and spacing to match your brand identity.' },\r\n      { id: 'feature-3', title: 'Component Library', description: 'Access a comprehensive set of pre-built UI components for rapid development.' },\r\n      { id: 'feature-4', title: 'Dark Mode Support', description: 'Provide users with comfortable viewing options through built-in dark mode functionality.' },\r\n      { id: 'feature-5', title: 'Accessibility', description: 'Ensure inclusivity with semantic HTML and ARIA attributes for all components.' },\r\n      { id: 'feature-6', title: 'Performance Optimization', description: 'Leverage Tailwind CSS for efficient rendering and reduced bundle size.' }\r\n    ]\r\n  }\r\n};",
+      "target": "blocks"
+    }
+  ]
+}

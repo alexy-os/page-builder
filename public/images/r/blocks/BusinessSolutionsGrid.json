@@ -1,0 +1,17 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "BusinessSolutionsGrid",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/business/BusinessSolutionsGrid.tsx",
+      "content": "import { Bookmark, Star, Shield, Zap, Users, Target } from \"lucide-react\";\r\n\r\nconst iconMap = {\r\n  Star,\r\n  Bookmark,\r\n  Shield,\r\n  Zap,\r\n  Users,\r\n  Target,\r\n} as const;\r\n\r\ninterface BusinessSolutionsGridProps {\r\n  content: {\r\n    title: string;\r\n    description: string;\r\n    items: Array<{\r\n      title: string;\r\n      description: string;\r\n      icon: keyof typeof iconMap;\r\n    }>;\r\n  };\r\n}\r\n\r\nexport default function BusinessSolutionsGrid({ content }: BusinessSolutionsGridProps) {\r\n  const { title, description, items } = content;\r\n  \r\n  return (\r\n    <section className=\"w-full py-16 lg:py-32 bg-background\">\r\n      <div className=\"container mx-auto px-4 md:px-6 lg:px-8\">\r\n        <h2 className=\"text-3xl md:text-4xl font-bold text-foreground mb-6\">{title}</h2>\r\n        <p className=\"text-muted-foreground mb-8\">{description}</p>\r\n        <div className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\">\r\n          {items?.map((item) => {\r\n            const IconComponent = iconMap[item.icon];\r\n            return (\r\n              <div key={item.title} className=\"bg-card p-6 rounded-md border border-border hover:shadow-lg transition-all\">\r\n                {IconComponent && <IconComponent className=\"h-8 w-8 text-primary mb-4\" />}\r\n                <h3 className=\"text-xl font-semibold text-card-foreground mt-4\">{item.title}</h3>\r\n                <p className=\"text-muted-foreground mt-2\">{item.description}</p>\r\n              </div>\r\n            );\r\n          })}\r\n        </div>\r\n      </div>\r\n    </section>\r\n  );\r\n}\r\n\r\nexport const businessSolutionsGridTemplate = {\r\n  id: \"businessSolutionsGrid\",\r\n  name: \"Business Solutions Grid\",\r\n  description: \"A grid for displaying business solutions\",\r\n  component: BusinessSolutionsGrid,\r\n  defaultContent: {\r\n    title: \"Our Solutions\",\r\n    description: \"Explore our range of business solutions.\",\r\n    items: [\r\n      { title: \"Digital Strategy\", description: \"Comprehensive digital transformation solutions\", icon: \"Target\" },\r\n      { title: \"Team Building\", description: \"Expert team management and development\", icon: \"Users\" },\r\n      { title: \"Security Solutions\", description: \"Advanced cybersecurity protection\", icon: \"Shield\" },\r\n      { title: \"Performance Boost\", description: \"Optimize your business performance\", icon: \"Zap\" },\r\n      { title: \"Premium Support\", description: \"24/7 premium customer support\", icon: \"Star\" },\r\n      { title: \"Resource Planning\", description: \"Strategic resource allocation\", icon: \"Bookmark\" }\r\n    ]\r\n  }\r\n};",
+      "target": "blocks"
+    }
+  ]
+}

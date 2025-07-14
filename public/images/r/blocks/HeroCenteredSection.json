@@ -1,0 +1,17 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "HeroCenteredSection",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/hero/HeroCenteredSection.tsx",
+      "content": "import { Info, Rocket } from \"lucide-react\";\r\nimport { Badge } from \"@/components/ui/badge\";\r\nimport { Button } from \"@/components/ui/button\";\r\n\r\ninterface HeroCenteredSectionProps {\r\n  content: {\r\n    badge?: string;\r\n    title: string;\r\n    description: string;\r\n    primaryButtonText: string;\r\n    secondaryButtonText: string;\r\n  };\r\n}\r\n\r\nexport default function HeroCenteredSection({ content }: HeroCenteredSectionProps) {\r\n  return (\r\n    <section className=\"w-full py-16 lg:py-32 bg-background\">\r\n      <div className=\"container mx-auto px-4 md:px-6 lg:px-8\">\r\n        <div className=\"flex flex-col text-center gap-8 items-center\">\r\n          {content.badge && (\r\n            <div className=\"flex justify-center\">\r\n              <Badge variant=\"secondary\" className=\"rounded-full px-4 py-2\">\r\n                {content.badge}\r\n              </Badge>\r\n            </div>\r\n          )}\r\n          \r\n          <div className=\"flex flex-col gap-4\">\r\n            <h2 className=\"max-w-2xl text-3xl md:text-4xl lg:text-6xl font-bold text-foreground\">\r\n              {content.title}\r\n            </h2>\r\n            <p className=\"text-lg text-muted-foreground max-w-2xl\">\r\n              {content.description}\r\n            </p>\r\n          </div>\r\n          \r\n          <div className=\"flex flex-col md:flex-row gap-8 justify-center\">\r\n            <Button\r\n              size=\"lg\"\r\n              className=\"text-lg px-8 py-6 h-auto bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300\"\r\n            >\r\n              <Info className=\"mr-2 h-5 w-5\" />\r\n              {content.primaryButtonText}\r\n            </Button>\r\n            \r\n            <Button\r\n              variant=\"outline\"\r\n              size=\"lg\"\r\n              className=\"text-lg px-8 py-6 h-auto border-border text-foreground hover:bg-muted rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300\"\r\n            >\r\n              <Rocket className=\"mr-2 h-5 w-5\" />\r\n              {content.secondaryButtonText}\r\n            </Button>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </section>\r\n  );\r\n}\r\n\r\nexport const heroCenteredSectionTemplate = {\r\n  id: \"heroCenteredSection\",\r\n  name: \"Hero Centered Section\",\r\n  description: \"Centered hero section with badge and buttons\",\r\n  component: HeroCenteredSection,\r\n  defaultContent: {\r\n    badge: \"Start Now\",\r\n    title: \"Explore Our BuildY!\",\r\n    description: \"Simplify your business operations with our cutting-edge solution.\",\r\n    primaryButtonText: \"Learn More\",\r\n    secondaryButtonText: \"Get Started\"\r\n  }\r\n};",
+      "target": "blocks"
+    }
+  ]
+}

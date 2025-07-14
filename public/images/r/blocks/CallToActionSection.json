@@ -1,0 +1,17 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "CallToActionSection",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/cta/CallToActionSection.tsx",
+      "content": "import { Button } from \"@/components/ui/button\"\r\nimport { ArrowRight } from \"lucide-react\"\r\n\r\ninterface CallToActionSectionProps {\r\n  content: {\r\n    title: string\r\n    description: string\r\n    primaryButtonText: string\r\n    secondaryButtonText: string\r\n  }\r\n}\r\n\r\nexport default function CallToActionSection({ content }: CallToActionSectionProps) {\r\n  return (\r\n    <section className=\"w-full py-16 lg:py-32 bg-background\">\r\n      <div className=\"container mx-auto px-4 md:px-6 lg:px-8\">\r\n        <div className=\"grid w-full rounded-lg bg-accent p-8 md:rounded-xl lg:grid-cols-2 lg:items-center lg:p-16\">\r\n          <div className=\"space-y-4\">\r\n            <h2 className=\"text-2xl font-semibold md:text-4xl text-foreground\">\r\n              {content.title}\r\n            </h2>\r\n            <p className=\"text-muted-foreground lg:text-lg\">\r\n              {content.description}\r\n            </p>\r\n          </div>\r\n          \r\n          <div className=\"mt-6 flex flex-col gap-4 sm:flex-row lg:justify-end\">\r\n            <Button variant=\"outline\" className=\"w-full sm:w-auto border-border text-foreground\">\r\n              {content.primaryButtonText} <ArrowRight />\r\n            </Button>\r\n            <Button variant=\"default\" className=\"w-full sm:w-auto bg-primary text-primary-foreground\">\r\n              {content.secondaryButtonText} <ArrowRight />\r\n            </Button>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </section>\r\n  )\r\n}\r\n\r\nexport const callToActionSectionTemplate = {\r\n  id: \"ctaCallToActionSection\",\r\n  name: \"Call To Action Section\",\r\n  description: \"Call to action section with buttons\",\r\n  component: CallToActionSection,\r\n  defaultContent: {\r\n    title: \"Transform Your Business Today\",\r\n    description: \"Unlock powerful solutions that drive growth, efficiency, and innovation for your organization.\",\r\n    primaryButtonText: \"Explore Solutions\",\r\n    secondaryButtonText: \"Start Your Journey\"\r\n  }\r\n}",
+      "target": "blocks"
+    }
+  ]
+}

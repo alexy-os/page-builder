@@ -1,0 +1,17 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "FooterSection",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/defcon/FooterSection.tsx",
+      "content": "import { AlertCircle } from \"lucide-react\";\r\nimport { Button } from \"@/components/ui/button\";\r\n\r\ninterface FooterSectionProps {\r\n  content: {\r\n    returnButtonText: string;\r\n    disclaimer: {\r\n      title: string;\r\n      text: string;\r\n    };\r\n  };\r\n}\r\n\r\nexport default function FooterSection({ content }: FooterSectionProps) {\r\n  const { returnButtonText, disclaimer } = content;\r\n\r\n  return (\r\n    <div className=\"border-t border-border bg-background defcon-theme-transition\">\r\n      <div className=\"container mx-auto px-4 sm:px-6 py-6 sm:py-8\">\r\n        <div className=\"text-center\">\r\n          <Button\r\n            variant=\"outline\"\r\n            className=\"inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-primary/10 border-primary text-primary hover:bg-primary/20 defcon-theme-transition transform hover:scale-105 font-mono text-sm sm:text-base defcon-focus\"\r\n          >\r\n            ↑ {returnButtonText}\r\n          </Button>\r\n        </div>\r\n        \r\n        <div className=\"mt-8 sm:mt-12 bg-destructive/10 border border-destructive rounded-lg p-4 sm:p-6 defcon-theme-transition\">\r\n          <div className=\"flex flex-col sm:flex-row sm:items-start gap-3\">\r\n            <AlertCircle className=\"w-5 h-5 sm:w-6 sm:h-6 text-destructive flex-shrink-0 sm:mt-1\" />\r\n            <div>\r\n              <h4 className=\"text-destructive font-bold mb-2 text-sm sm:text-base\">\r\n                {disclaimer.title}\r\n              </h4>\r\n              <p className=\"text-muted-foreground text-xs sm:text-sm leading-relaxed\">\r\n                {disclaimer.text}\r\n              </p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n\r\nexport const footerSectionTemplate = {\r\n  id: \"defconFooterSection\",\r\n  name: \"Server Monitoring Footer\",\r\n  description: \"A footer section with return button and system disclaimer\",\r\n  component: FooterSection,\r\n  defaultContent: {\r\n    returnButtonText: \"RETURN TO MONITORING DASHBOARD\",\r\n    disclaimer: {\r\n      title: \"OPERATIONAL DISCLAIMER\",\r\n      text: \"This monitoring dashboard is for authorized personnel only. Data correlation does not imply causation. Server metrics should be used in conjunction with other monitoring tools. Always verify alerts through multiple channels. 🖥️\"\r\n    }\r\n  }\r\n}; ",
+      "target": "blocks"
+    }
+  ]
+}

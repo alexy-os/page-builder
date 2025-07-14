@@ -1,0 +1,17 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "FAQContentSection",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/features/FAQContentSection.tsx",
+      "content": "import { Send } from \"lucide-react\";\r\nimport { Badge } from \"@/components/ui/badge\";\r\nimport {\r\n  Accordion,\r\n  AccordionContent,\r\n  AccordionItem,\r\n  AccordionTrigger,\r\n} from \"@/components/ui/accordion\";\r\nimport { Button } from \"@/components/ui/button\";\r\n\r\ninterface FAQContentSectionProps {\r\n  content: {\r\n    badge: string;\r\n    title: string;\r\n    description: string;\r\n    button: {\r\n      text: string;\r\n      variant: 'default' | 'destructive' | 'ghost' | 'link' | 'outline' | 'secondary';\r\n    };\r\n    faqs: Array<{\r\n      id: string;\r\n      question: string;\r\n      answer: string;\r\n    }>;\r\n  };\r\n}\r\n\r\nexport default function FAQContentSection({ content }: FAQContentSectionProps) {\r\n  const { badge, title, description, button, faqs } = content;\r\n  return (\r\n    <section className=\"w-full py-16 lg:py-32 bg-background\">\r\n      <div className=\"container mx-auto px-4 md:px-6 lg:px-8\">\r\n        <div className=\"grid lg:grid-cols-2 gap-10\">\r\n          <div className=\"flex flex-col gap-6\">\r\n            <header className=\"flex flex-col gap-4\">\r\n              <div>\r\n                <Badge variant=\"outline\" className=\"text-muted-foreground\">{badge}</Badge>\r\n              </div>\r\n              <h4 className=\"text-3xl md:text-4xl lg:text-6xl font-bold text-foreground max-w-xl\">\r\n                {title}\r\n              </h4>\r\n              <p className=\"text-lg text-muted-foreground max-w-2xl\">\r\n                {description}\r\n              </p>\r\n            </header>\r\n            <Button variant={button.variant} className=\"gap-4 w-fit\">\r\n              {button.text} <Send className=\"w-4 h-4\" />\r\n            </Button>\r\n          </div>\r\n          <Accordion type=\"single\" collapsible className=\"w-full\">\r\n            {faqs.map(({ id, question, answer }) => (\r\n              <AccordionItem key={id} value={id}>\r\n                <AccordionTrigger className=\"font-bold text-muted-foreground\">{question}</AccordionTrigger>\r\n                <AccordionContent>{answer}</AccordionContent>\r\n              </AccordionItem>\r\n            ))}\r\n          </Accordion>\r\n        </div>\r\n      </div>\r\n    </section>\r\n  );\r\n}\r\n\r\nexport const faqContentSectionTemplate = {\r\n  id: \"featuresFAQContentSection\",\r\n  name: \"FAQ Content Section\",\r\n  description: \"A section for displaying FAQs\",\r\n  component: FAQContentSection,\r\n  defaultContent: {\r\n    badge: \"FAQ\",\r\n    title: \"Why Choose shadcn/ui?\",\r\n    description: \"Discover the reasons why shadcn/ui is the ideal choice.\",\r\n    button: {\r\n      text: \"Any questions?\",\r\n      variant: \"default\"\r\n    },\r\n    faqs: [\r\n      {\r\n        id: \"faq1\",\r\n        question: \"What makes shadcn/ui unique?\",\r\n        answer: \"shadcn/ui leverages Radix UI and Tailwind CSS for accessible components.\"\r\n      },\r\n      {\r\n        id: \"faq2\",\r\n        question: \"Is shadcn/ui suitable for production?\",\r\n        answer: \"Yes, it's designed for production with a focus on accessibility.\"\r\n      }\r\n    ]\r\n  }\r\n};",
+      "target": "blocks"
+    }
+  ]
+}

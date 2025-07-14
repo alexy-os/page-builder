@@ -1,0 +1,15 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "FeaturesBlock",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/features/FeaturesBlock.tsx",
+      "content": "import { Card, CardContent } from \"@/components/ui/card\";\r\n\r\ninterface Feature {\r\n  icon: string;\r\n  title: string;\r\n  description: string;\r\n}\r\n\r\ninterface FeaturesBlockProps {\r\n  content: {\r\n    title: string;\r\n    subtitle: string;\r\n    features: Feature[];\r\n  };\r\n}\r\n\r\nexport default function FeaturesBlock({ content }: FeaturesBlockProps) {\r\n  \r\n  return (\r\n    <section className=\"py-20 px-6 bg-accent/25\">\r\n      <div className=\"max-w-6xl mx-auto\">\r\n        <div className=\"text-center mb-16\">\r\n          <h2 className=\"text-3xl md:text-5xl font-bold mb-6 text-foreground\">\r\n            {content.title}\r\n          </h2>\r\n          <p className=\"text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed\">\r\n            {content.subtitle}\r\n          </p>\r\n        </div>\r\n        \r\n        <div className=\"grid md:grid-cols-2 lg:grid-cols-3 gap-8\">\r\n          {content.features.map((feature: Feature, index: number) => (\r\n            <Card \r\n              key={index}\r\n              className=\"group hover:shadow-lg transition-all duration-300 border border-border bg-card hover:bg-card/80 hover:scale-105 rounded-lg\"\r\n            >\r\n              <CardContent className=\"p-8 text-center\">\r\n                <div className=\"text-4xl mb-6 transform group-hover:scale-110 transition-transform duration-300\">\r\n                  {feature.icon}\r\n                </div>\r\n                <h3 className=\"text-xl font-semibold mb-4 text-card-foreground\">\r\n                  {feature.title}\r\n                </h3>\r\n                <p className=\"text-muted-foreground leading-relaxed\">\r\n                  {feature.description}\r\n                </p>\r\n              </CardContent>\r\n            </Card>\r\n          ))}\r\n        </div>\r\n      </div>\r\n    </section>\r\n  );\r\n}\r\n\r\nexport const featuresBlockTemplate = {\r\n  id: \"featuresFeaturesBlock\",\r\n  name: \"Features Grid\",\r\n  description: \"Showcase key features\",\r\n  component: FeaturesBlock,\r\n  defaultContent: {\r\n    title: \"Powerful Features\",\r\n    subtitle: \"Everything you need to build amazing landing pages\",\r\n    features: [\r\n      {\r\n        icon: \"🚀\",\r\n        title: \"Fast Performance\",\r\n        description: \"Lightning-fast loading times with optimized code\"\r\n      },\r\n      {\r\n        icon: \"🎨\",\r\n        title: \"Beautiful Design\",\r\n        description: \"Professional templates and customizable themes\"\r\n      },\r\n      {\r\n        icon: \"📱\",\r\n        title: \"Mobile Ready\",\r\n        description: \"Fully responsive design that works on all devices\"\r\n      }\r\n    ]\r\n  }\r\n};\r\n",
+      "target": "blocks"
+    }
+  ]
+}

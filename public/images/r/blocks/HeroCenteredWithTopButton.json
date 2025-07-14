@@ -1,0 +1,17 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "HeroCenteredWithTopButton",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/hero/HeroCenteredWithTopButton.tsx",
+      "content": "import { ArrowUpRight, CheckCircle } from \"lucide-react\";\r\nimport { Button } from \"@/components/ui/button\";\r\n\r\ninterface HeroCenteredWithTopButtonProps {\r\n  content: {\r\n    topButtonText: string;\r\n    title: string;\r\n    description: string;\r\n    mainButtonText: string;\r\n  };\r\n}\r\n\r\nexport default function HeroCenteredWithTopButton({ content }: HeroCenteredWithTopButtonProps) {\r\n  return (\r\n    <section className=\"w-full py-12 md:py-24 lg:py-32 bg-accent\">\r\n      <div className=\"container mx-auto px-4 md:px-6\">\r\n        <div className=\"flex flex-col items-center text-center space-y-6\">\r\n          <Button variant=\"outline\" size=\"sm\" className=\"text-sm\">\r\n            {content.topButtonText} <ArrowUpRight className=\"ml-2 h-4 w-4\" />\r\n          </Button>\r\n          \r\n          <h1 className=\"text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl text-foreground\">\r\n            {content.title}\r\n          </h1>\r\n          \r\n          <p className=\"max-w-[700px] text-muted-foreground md:text-xl\">\r\n            {content.description}\r\n          </p>\r\n          \r\n          <Button size=\"lg\" className=\"bg-primary text-primary-foreground hover:bg-primary/90\">\r\n            {content.mainButtonText} <CheckCircle className=\"ml-2 h-5 w-5\" />\r\n          </Button>\r\n        </div>\r\n      </div>\r\n    </section>\r\n  );\r\n}\r\n\r\nexport const heroCenteredWithTopButtonTemplate = {\r\n  id: \"heroCenteredWithTopButton\",\r\n  name: \"Hero Centered With Top Button\",\r\n  description: \"Centered hero section with a top button\",\r\n  component: HeroCenteredWithTopButton,\r\n  defaultContent: {\r\n    topButtonText: \"New Feature\",\r\n    title: \"Discover the Power of BuildY\",\r\n    description: \"Our platform is designed to enhance your productivity and streamline your workflows.\",\r\n    mainButtonText: \"Start Building\"\r\n  }\r\n};",
+      "target": "blocks"
+    }
+  ]
+}

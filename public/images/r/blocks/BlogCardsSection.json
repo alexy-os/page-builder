@@ -1,0 +1,17 @@
+{
+  "$schema": "https://buildy.tw/schema/registry-item.json",
+  "name": "BlogCardsSection",
+  "type": "registry:block",
+  "description": "",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "files": [
+    {
+      "path": "builddy/blocks/blog/BlogCardsSection.tsx",
+      "content": "import { MoveRight } from \"lucide-react\";\r\nimport { Button } from \"@/components/ui/button\";\r\n\r\ninterface BlogCardsSectionProps {\r\n  content: {\r\n    title: string;\r\n    button?: {\r\n      text?: string;\r\n    };\r\n    articles: Array<{\r\n      title: string;\r\n      description: string;\r\n      imageAlt: string;\r\n    }>;\r\n  };\r\n}\r\n\r\nexport default function BlogCardsSection({ content }: BlogCardsSectionProps) {\r\n  return (\r\n    <section className=\"w-full py-16 lg:py-32 bg-background\">\r\n      <div className=\"container mx-auto px-4 md:px-6 lg:px-8 flex flex-col gap-8 text-foreground\">\r\n        <header className=\"flex w-full flex-col sm:flex-row sm:justify-between sm:items-center gap-4\">\r\n          <h2 className=\"text-3xl md:text-4xl lg:text-6xl font-bold\">\r\n            {content.title}\r\n          </h2>\r\n          {content.button && (\r\n            <Button className=\"gap-4 bg-primary text-primary-foreground hover:bg-primary/90\">\r\n              {content.button.text} <MoveRight className=\"w-4 h-4\" />\r\n            </Button>\r\n          )}\r\n        </header>\r\n        <div className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8\">\r\n          {content.articles.map((article, index) => (\r\n            <article key={index} className=\"flex flex-col gap-4 hover:opacity-75 cursor-pointer bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-all duration-300\">\r\n              <div \r\n                className=\"bg-muted rounded-md aspect-video mb-4\"\r\n                role=\"img\"\r\n                aria-label={article.imageAlt}\r\n              ></div>\r\n              <h3 className=\"text-xl tracking-tight text-foreground\">{article.title}</h3>\r\n              <p className=\"text-muted-foreground text-base\">{article.description}</p>\r\n            </article>\r\n          ))}\r\n        </div>\r\n      </div>\r\n    </section>\r\n  );\r\n}\r\n\r\nexport const blogCardsSectionTemplate = {\r\n  id: \"blogCardsSection\",\r\n  name: \"Blog Cards Section\",\r\n  description: \"Display blog articles in card format\",\r\n  component: BlogCardsSection,\r\n  defaultContent: {\r\n    title: \"Latest articles\",\r\n    button: {\r\n      text: \"View all articles\"\r\n    },\r\n    articles: [\r\n      {\r\n        title: \"Exploring the Future of Web Design\",\r\n        description: \"Discover how emerging technologies are reshaping the digital landscape.\",\r\n        imageAlt: \"Future of Web Design\"\r\n      },\r\n      {\r\n        title: \"10 Essential UI Design Trends for 2025\",\r\n        description: \"Stay ahead of the curve with these cutting-edge design principles.\",\r\n        imageAlt: \"UI Design Trends\"\r\n      },\r\n      {\r\n        title: \"Mastering React: Advanced Techniques for Building Scalable Apps\",\r\n        description: \"Learn how to optimize your React applications for better performance and maintainability.\",\r\n        imageAlt: \"React Advanced Techniques\"\r\n      }\r\n    ]\r\n  }\r\n};",
+      "target": "blocks"
+    }
+  ]
+}
