@@ -245,7 +245,7 @@ export default function PagePins() {
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           }>
-            <PreviewComponent content={template.defaultContent} />
+            <PreviewComponent />
           </Suspense>
         </div>
         

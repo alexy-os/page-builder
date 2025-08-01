@@ -3,7 +3,7 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{ts,tsx}",
-    "./node_modules/@ui8kit/**/*.{ts,tsx}"
+    "./**/@ui8kit/**/*.{ts,tsx}"
   ],
   darkMode: 'class',
   theme: {

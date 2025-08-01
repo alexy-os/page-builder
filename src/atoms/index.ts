@@ -29,7 +29,7 @@ export const initializationErrorAtom = atom<string | null>(null);
 export const isInitializedAtom = atom<boolean>(false);
 
 // Block editor states
-export const editingBlockAtom = atom<any | null>(null);
+
 export const blockErrorsAtom = atom<Set<string>>(new Set<string>());
 
 // Theme loading states

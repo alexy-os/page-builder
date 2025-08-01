@@ -29,7 +29,7 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
     const newBlock: Block = {
       id: `${template.id}_${Date.now()}`,
       type: template.id,
-      content: template.defaultContent,
+      content: {},
       order: blocks.length
     };
     setBlocks([...blocks, newBlock]);
@@ -54,7 +54,7 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
             </div>
           }>
-            <PreviewComponent content={template.defaultContent} />
+            <PreviewComponent />
           </Suspense>
         </div>
         
