@@ -76,11 +76,17 @@ export default function PagePins() {
   // Categories based on block directories
   const categories = [
     { id: 'hero', name: 'Hero' },
-    { id: 'features', name: 'Features' },
     { id: 'blog', name: 'Blog' },
     { id: 'business', name: 'Business' },
     { id: 'cta', name: 'CTA' },
+    { id: 'faq', name: 'FAQ' },
+    { id: 'features', name: 'Features' },
     { id: 'footer', name: 'Footer' },
+    { id: 'gallery', name: 'Gallery' },
+    { id: 'portfolio', name: 'Portfolio' },
+    { id: 'post', name: 'Post' },
+    { id: 'team', name: 'Team' },
+    { id: 'testimonial', name: 'Testimonial' },
   ];
 
   // Initialize theme on mount
@@ -92,6 +98,7 @@ export default function PagePins() {
   const getFilteredBlocks = () => {
     if (activeCategory) {
       return allTemplates.filter(template => {
+        // Фильтруем по префиксу ID блока
         return template.id.startsWith(activeCategory) || 
                template.id.includes(activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1));
       });
