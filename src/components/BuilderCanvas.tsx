@@ -1,5 +1,5 @@
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
-import { Trash2, GripVertical, AlertCircle, Info } from "lucide-react";
+import { Trash2, GripVertical, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useMemo, useCallback, memo } from "react";
 import { useAtom } from 'jotai';
