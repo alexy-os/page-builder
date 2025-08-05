@@ -10,7 +10,7 @@ export interface Template {
   name: string;
   description: string;
   component: React.ComponentType<any>;
-  defaultContent: any;
+  defaultProps?: any;
 }
 
 export interface Theme {

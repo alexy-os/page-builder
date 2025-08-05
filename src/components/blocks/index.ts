@@ -10,8 +10,10 @@ import { allPortfolioTemplates } from "./portfolio";
 import { allPostTemplates } from "./post";
 import { allTeamTemplates } from "./team";
 import { allTestimonialTemplates } from "./testimonial";
+
+import type { Template } from "@/types";
  
-export const allTemplates = [
+export const allTemplates: Template[] = [
   ...allHeroTemplates,
   ...allBlogTemplates,
   ...allBusinessTemplates,
@@ -24,7 +26,7 @@ export const allTemplates = [
   ...allPostTemplates,
   ...allTeamTemplates,
   ...allTestimonialTemplates
-];
+] as Template[];
 
 export const allComponents = allTemplates.reduce((acc, template) => {
   acc[template.id] = template.component;

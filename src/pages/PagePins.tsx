@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, Suspense } from "react";
+import { useEffect, useState, useCallback, useRef, Suspense, memo, useMemo } from "react";
 import { Grid3X3, Grid2X2, Bookmark, ChevronDown, Heart, HeartHandshake, ChevronLeft, ChevronRight, Eye, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -226,8 +226,25 @@ export default function PagePins() {
 
   // Session mode removed - only using sessionStorage now
 
-  const PinCard = ({ template }: { template: Template }) => {
-    const PreviewComponent = template.component;
+  // Memoized pin card component for better performance
+  const PinCard = memo(({ template }: { template: Template }) => {
+    const PreviewComponent = useMemo(() => {
+      return template.component;
+    }, [template.component]);
+
+    const handleSaveClick = useCallback((e: React.MouseEvent) => {
+      e.stopPropagation();
+      handleSaveToCollection(template);
+    }, [template]);
+
+    const handleFavoriteClick = useCallback((e: React.MouseEvent) => {
+      e.stopPropagation();
+      handleToggleFavorite(template);
+    }, [template]);
+
+    const isTemplateFavorite = useMemo(() => {
+      return isFavorite(template.id);
+    }, [template.id]);
     
     return (
       <div 
@@ -268,10 +285,7 @@ export default function PagePins() {
             size="icon"
             variant="ghost"
             className="!h-8 !w-8"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleSaveToCollection(template);
-            }}
+            onClick={handleSaveClick}
           >
             <Bookmark className="!h-5 !w-5" />
           </Button>
@@ -280,12 +294,9 @@ export default function PagePins() {
             size="icon"
             variant="ghost"
             className="text-muted-foreground hover:text-destructive !h-8 !w-8"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleToggleFavorite(template);
-            }}
+            onClick={handleFavoriteClick}
           >
-            {isFavorite(template.id) ? (
+            {isTemplateFavorite ? (
               <HeartHandshake className="text-destructive !h-5 !w-5" />
             ) : (
               <Heart className="!h-5 !w-5" />
@@ -294,7 +305,9 @@ export default function PagePins() {
         </div>
       </div>
     );
-  };
+  });
+
+  PinCard.displayName = 'PinCard';
 
   return (
     <div className="h-screen flex flex-col bg-background text-foreground">

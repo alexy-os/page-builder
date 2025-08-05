@@ -1,5 +1,5 @@
 import { Plus, Eye, Loader2 } from "lucide-react";
-import { Suspense } from "react";
+import { Suspense, memo, useCallback, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAtom } from 'jotai';
@@ -12,7 +12,7 @@ import { allTemplates } from "@/components/blocks";
 
 interface BlockSidebarProps {
   blocks: Block[];
-  setBlocks: (blocks: Block[]) => void;
+  setBlocks: (blocks: Block[] | ((prev: Block[]) => Block[])) => void;
 }
 
 export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
@@ -25,18 +25,25 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
   // Get favorites data
   const favorites = getFavorites();
 
-  const addBlock = (template: Template) => {
+  const addBlock = useCallback((template: Template) => {
     const newBlock: Block = {
       id: `${template.id}_${Date.now()}`,
       type: template.id,
       content: {},
       order: blocks.length
     };
-    setBlocks([...blocks, newBlock]);
-  };
+    setBlocks(prev => [...prev, newBlock]);
+  }, [blocks.length, setBlocks]);
 
-  const BlockPreview = ({ template }: { template: Template }) => {
-    const PreviewComponent = template.component;
+  // Memoized block preview component for better performance
+  const BlockPreview = memo(({ template }: { template: Template }) => {
+    const PreviewComponent = useMemo(() => {
+      return template.component;
+    }, [template.component]);
+
+    const handleAddBlock = useCallback(() => {
+      addBlock(template);
+    }, [template]);
     
     return (
       <div className="relative overflow-hidden bg-background rounded-[16px] border border-transparent hover:border-accent transition-all duration-500 aspect-video group">
@@ -64,7 +71,7 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
           <p className="text-xs opacity-90">{template.description}</p>
         </div>
         <Button
-          onClick={() => addBlock(template)}
+          onClick={handleAddBlock}
           className="absolute top-2 right-2 h-8 w-8"
           size="icon"
         >
@@ -72,7 +79,9 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
         </Button>
       </div>
     );
-  };
+  });
+
+  BlockPreview.displayName = 'BlockPreview';
 
   // Get templates based on active tab - now using Zustand data
   const getTemplates = () => {

@@ -14,6 +14,7 @@ import { useProjectStore, useUIStore, useThemeStore } from "@/store";
 import { useSimpleStorage } from "@/hooks/useSimpleStorage";
 import { exportToHTML } from "@/utils/htmlExporter";
 import { initializationErrorAtom, isInitializedAtom } from "@/atoms";
+import type { Block } from "@/types";
 
 export default function PageBuilder() {
   // Local state for sidebar visibility and size
@@ -192,16 +193,44 @@ export default function PageBuilder() {
   }, [fullReset]);
 
   // Safe blocks update with validation
-  const handleUpdateBlocks = useCallback((newBlocks: any[]) => {
+  const handleUpdateBlocks = useCallback((blocksOrUpdater: Block[] | ((prev: Block[]) => Block[])) => {
     try {
-      // Validate blocks structure
-      if (!Array.isArray(newBlocks)) {
-        console.error('Invalid blocks data: must be an array');
+      // Handle functional update
+      if (typeof blocksOrUpdater === 'function') {
+        const currentBlocks = project?.blocks || [];
+        const newBlocks = blocksOrUpdater(currentBlocks);
+        
+        // Validate result is array
+        if (!Array.isArray(newBlocks)) {
+          console.error('Functional update must return an array');
+          return;
+        }
+        
+        // Validate each block
+        const validBlocks = newBlocks.filter(block => {
+          if (!block || typeof block !== 'object') {
+            console.warn('Invalid block removed:', block);
+            return false;
+          }
+          if (!block.id || !block.type) {
+            console.warn('Block missing required fields:', block);
+            return false;
+          }
+          return true;
+        });
+
+        updateProjectBlocks(validBlocks);
+        return;
+      }
+
+      // Handle direct array update
+      if (!Array.isArray(blocksOrUpdater)) {
+        console.error('Invalid blocks data: must be an array or function');
         return;
       }
 
       // Validate each block
-      const validBlocks = newBlocks.filter(block => {
+      const validBlocks = blocksOrUpdater.filter(block => {
         if (!block || typeof block !== 'object') {
           console.warn('Invalid block removed:', block);
           return false;
@@ -218,7 +247,7 @@ export default function PageBuilder() {
       console.error('Error updating blocks:', error);
       alert('Error updating blocks. Please try again.');
     }
-  }, [updateProjectBlocks]);
+  }, [updateProjectBlocks, project?.blocks]);
 
   // Toggle sidebar collapse/expand
   const toggleSidebar = useCallback(() => {
