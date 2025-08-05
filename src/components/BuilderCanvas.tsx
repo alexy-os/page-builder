@@ -1,10 +1,10 @@
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
-import { Trash2, GripVertical, AlertCircle } from "lucide-react";
+import { Trash2, GripVertical, AlertCircle, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useMemo, useCallback, memo } from "react";
 import { useAtom } from 'jotai';
 
-import { allComponents } from "@/components/blocks";
+import { allComponents, allTemplates } from "@/components/blocks";
 import type { Block } from "@/types";
 import { blockErrorsAtom } from "@/atoms";
 import { performance } from "@/lib/utils";
@@ -103,6 +103,16 @@ const BlockItem = memo(({
     onRemove(block.id);
   }, [block.id, onRemove]);
 
+  // Get template for defaultProps
+  const template = useMemo(() => {
+    return allTemplates.find(t => t.id === block.type);
+  }, [block.type]);
+  
+  // Get block name from templates
+  const getBlockName = useCallback(() => {
+    return template?.name || block.type;
+  }, [template, block.type]);
+
   // Skip rendering if component doesn't exist
   if (!BlockComponent) {
     // console.warn(`❌ No component found for block type: "${block.type}"`);
@@ -141,7 +151,10 @@ const BlockItem = memo(({
         >
           {/* Block Controls - Desktop */}
           <div className="absolute top-4 right-4 z-50 pointer-events-auto">
-            <div className="flex gap-2 bg-black/80 backdrop-blur-sm rounded-lg p-2">
+            <div className="flex gap-2 bg-black/80 backdrop-blur-sm rounded-lg p-2 opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 ">
+            <div className="absolute right-full top-1/2 -translate-y-1/2 mr-2 py-2.5 px-4 bg-primary/10 text-primary border-2 border-primary/20 text-xs font-medium rounded-lg origin-right whitespace-nowrap">
+                {getBlockName()}
+            </div>
               <Button
                 size="icon"
                 variant="ghost"
