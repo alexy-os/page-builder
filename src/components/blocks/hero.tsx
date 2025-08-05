@@ -10,12 +10,6 @@ import {
 import React from "react";
 import { Info, Rocket, Play, ArrowRight, Heart } from "lucide-react";
 
-// Debug helper for development (can be temporarily enabled)
-// if (process.env.NODE_ENV === 'development') {
-//   console.log('Hero template keys:', Object.keys(centeredHeroTemplates));
-//   console.log('Custom component keys:', Object.keys(centeredHeroCustom));
-// }
-
 /**
  * Custom Data for Hero
  */
@@ -194,14 +188,28 @@ const CenteredHeroMissionCustom = () => {
   );
 };
 
-// Export all examples
+// Export all examples - MUST match library template IDs, not keys
 const centeredHeroCustom: Record<string, React.ComponentType> = {
-  simple: CenteredHeroSimpleCustom,
-  withTopButton: CenteredHeroWithTopButtonCustom,
-  withImage: CenteredHeroWithImageCustom,
-  withStats: CenteredHeroWithStatsCustom,
-  mission: CenteredHeroMissionCustom
+  centeredHeroSimple: CenteredHeroSimpleCustom,
+  centeredHeroWithTopButton: CenteredHeroWithTopButtonCustom,
+  centeredHeroWithImage: CenteredHeroWithImageCustom,
+  centeredHeroWithStats: CenteredHeroWithStatsCustom,
+  centeredHeroMission: CenteredHeroMissionCustom
 };
+
+/*
+// Debug helper for development (temporarily enabled for debugging)
+if (process.env.NODE_ENV === 'development') {
+  console.log('🔍 Hero Template Keys from Library:', Object.keys(centeredHeroTemplates));
+  console.log('🔧 Custom Component Keys:', Object.keys(centeredHeroCustom));
+  
+  // Check template IDs
+  Object.keys(centeredHeroTemplates).forEach(key => {
+    const template = (centeredHeroTemplates as any)[key];
+    console.log(`📋 Template key: "${key}" -> ID: "${template.id}"`);
+  });
+}
+*/
 
 // Create template objects using Examples components but Templates metadata
 export const allHeroTemplates = [
@@ -211,23 +219,40 @@ export const allHeroTemplates = [
   })),
   ...Object.keys(centeredHeroTemplates).map(key => {
     const template = centeredHeroTemplates[key as keyof typeof centeredHeroTemplates];
-    const customComponent = centeredHeroCustom[key as keyof typeof centeredHeroCustom];
+    // Use template.id as key instead of the object key
+    const customComponent = centeredHeroCustom[template.id];
     
     if (!customComponent) {
-      console.warn(`Missing custom component for hero key: ${key}`);
+      console.warn(`Missing custom component for hero template.id: ${template.id} (key: ${key})`);
       console.log('Available custom components:', Object.keys(centeredHeroCustom));
-      console.log('Required keys from library:', Object.keys(centeredHeroTemplates));
+      console.log('Template details:', template);
     }
     
     return {
       ...template,
-      component: customComponent || (() => <div>Missing Component: {key}</div>)
+      component: customComponent || (() => <div>Missing Component: {template.id}</div>)
     };
   })
 ];
 
-// Debug helper for development (can be temporarily enabled)
-// if (process.env.NODE_ENV === 'development') {
-//   console.log('centeredHeroTemplates keys:', Object.keys(centeredHeroTemplates));
-//   console.log('centeredHeroCustom keys:', Object.keys(centeredHeroCustom));
-// }
+/*
+// Debug hero template creation process
+if (process.env.NODE_ENV === 'development') {
+  console.log('🔧 Creating allHeroTemplates...');
+  
+  // Debug split hero templates
+  const splitKeys = Object.keys(splitHeroTemplates);
+  console.log('📋 Split hero keys:', splitKeys);
+  
+  // Debug centered hero templates mapping
+  const centeredKeys = Object.keys(centeredHeroTemplates);
+  console.log('📋 Centered hero keys from library:', centeredKeys);
+  console.log('📋 Custom component keys available:', Object.keys(centeredHeroCustom));
+  
+  centeredKeys.forEach(key => {
+    const template = (centeredHeroTemplates as any)[key];
+    const hasCustomComponent = !!centeredHeroCustom[key];
+    console.log(`🔍 Key "${key}": template.id="${template.id}", has custom component: ${hasCustomComponent}`);
+  });
+}
+*/

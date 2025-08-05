@@ -105,7 +105,9 @@ const BlockItem = memo(({
 
   // Skip rendering if component doesn't exist
   if (!BlockComponent) {
-    console.warn(`No component found for block type: ${block.type}`);
+    // console.warn(`❌ No component found for block type: "${block.type}"`);
+    // console.log('Available component keys:', Object.keys(allComponents));
+    // console.log('Block details:', block);
     return (
       <div className="bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 m-2">
         <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-300">
@@ -138,19 +140,20 @@ const BlockItem = memo(({
           }`}
         >
           {/* Block Controls - Desktop */}
-          <div className="absolute top-4 right-4 z-10">
+          <div className="absolute top-4 right-4 z-50 pointer-events-auto">
             <div className="flex gap-2 bg-black/80 backdrop-blur-sm rounded-lg p-2">
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-6 w-6 text-white hover:text-red-300 hover:bg-red-500/20"
+                className="h-6 w-6 text-white hover:text-red-300 hover:bg-red-500/20 pointer-events-auto"
                 onClick={handleRemove}
+                type="button"
               >
                 <Trash2 className="h-3 w-3" />
               </Button>
               <div
                 {...provided.dragHandleProps}
-                className="p-1 text-white hover:text-sky-300 cursor-grab active:cursor-grabbing"
+                className="p-1 text-white hover:text-sky-300 cursor-grab active:cursor-grabbing pointer-events-auto"
               >
                 <GripVertical className="h-4 w-4" />
               </div>
@@ -167,8 +170,8 @@ const BlockItem = memo(({
             </BlockErrorBoundary>
           </div>
 
-          {/* Hover Overlay */}
-          <div className="absolute inset-0 border-2 border-transparent group-hover:border-sky-400 group-hover:bg-sky-500/5 transition-all duration-200 pointer-events-none rounded-lg" />
+          {/* Hover Overlay - ensure it doesn't block controls */}
+          <div className="absolute inset-0 border-2 border-transparent group-hover:border-sky-400 group-hover:bg-sky-500/5 transition-all duration-200 pointer-events-none rounded-lg z-0" />
           
           {/* Error indicator */}
           {blockErrors.has(block.id) && (
@@ -234,7 +237,18 @@ export default function BuilderCanvas({ blocks, setBlocks }: BuilderCanvasProps)
 
   const removeBlock = useCallback((blockId: string) => {
     try {
-      setBlocks(prev => prev.filter((block: Block) => block.id !== blockId));
+      console.log(`🗑️ Attempting to remove block: "${blockId}"`);
+      
+      setBlocks(prev => {
+        // const blockToRemove = prev.find(block => block.id === blockId);
+        // console.log(`📋 Block to remove:`, blockToRemove);
+        
+        const filteredBlocks = prev.filter((block: Block) => block.id !== blockId);
+        // console.log(`📊 Blocks before removal: ${prev.length}, after: ${filteredBlocks.length}`);
+        
+        return filteredBlocks;
+      });
+      
       // Remove from error tracking
       setBlockErrors(prev => {
         const newSet = new Set(prev);

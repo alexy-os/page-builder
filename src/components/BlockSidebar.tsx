@@ -32,6 +32,10 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
       content: {},
       order: blocks.length
     };
+    
+    //console.log(`➕ Adding new block:`, newBlock);
+    //console.log(`📋 Template used:`, { id: template.id, name: template.name });
+    
     setBlocks(prev => [...prev, newBlock]);
   }, [blocks.length, setBlocks]);
 

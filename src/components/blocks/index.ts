@@ -33,8 +33,15 @@ export const allComponents = allTemplates.reduce((acc, template) => {
   return acc;
 }, {} as Record<string, any>);
 
-// Debug helper for development (can be temporarily enabled)
-// if (process.env.NODE_ENV === 'development') {
-//   console.log('Total templates:', allTemplates.length);
-//   console.log('All component keys:', Object.keys(allComponents));
-// }
+// Debug helper for development (temporarily enabled for debugging)
+/* if (process.env.NODE_ENV === 'development') {
+  console.log('📊 Total templates:', allTemplates.length);
+  console.log('📦 All component keys:', Object.keys(allComponents));
+  
+  // Check hero templates specifically
+  const heroTemplates = allTemplates.filter(t => t.id.includes('hero') || t.id.includes('Hero'));
+  console.log('🦸 Hero templates found:');
+  heroTemplates.forEach(t => {
+    console.log(`  - ID: "${t.id}" | Name: "${t.name}" | Has Component: ${!!t.component}`);
+  });
+} */
