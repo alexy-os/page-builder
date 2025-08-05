@@ -13,7 +13,7 @@ import { allTestimonialTemplates } from "./testimonial";
  
 export const allTemplates = [
   ...allHeroTemplates,
-  /*...allBlogTemplates,
+  ...allBlogTemplates,
   ...allBusinessTemplates,
   ...allCTATemplates,
   ...allFAQTemplates,
@@ -23,7 +23,7 @@ export const allTemplates = [
   ...allPortfolioTemplates,
   ...allPostTemplates,
   ...allTeamTemplates,
-  ...allTestimonialTemplates*/
+  ...allTestimonialTemplates
 ];
 
 export const allComponents = allTemplates.reduce((acc, template) => {
