@@ -32,3 +32,9 @@ export const allComponents = allTemplates.reduce((acc, template) => {
   acc[template.id] = template.component;
   return acc;
 }, {} as Record<string, any>);
+
+// Debug helper for development (can be temporarily enabled)
+// if (process.env.NODE_ENV === 'development') {
+//   console.log('Total templates:', allTemplates.length);
+//   console.log('All component keys:', Object.keys(allComponents));
+// }

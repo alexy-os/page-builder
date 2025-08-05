@@ -7,7 +7,14 @@ import {
   CenteredHero, type CenteredHeroData
 } from "@ui8kit/blocks";
 
+import React from "react";
 import { Info, Rocket, Play, ArrowRight, Heart } from "lucide-react";
+
+// Debug helper for development (can be temporarily enabled)
+// if (process.env.NODE_ENV === 'development') {
+//   console.log('Hero template keys:', Object.keys(centeredHeroTemplates));
+//   console.log('Custom component keys:', Object.keys(centeredHeroCustom));
+// }
 
 /**
  * Custom Data for Hero
@@ -188,7 +195,7 @@ const CenteredHeroMissionCustom = () => {
 };
 
 // Export all examples
-const centeredHeroCustom = {
+const centeredHeroCustom: Record<string, React.ComponentType> = {
   simple: CenteredHeroSimpleCustom,
   withTopButton: CenteredHeroWithTopButtonCustom,
   withImage: CenteredHeroWithImageCustom,
@@ -202,12 +209,25 @@ export const allHeroTemplates = [
     ...splitHeroTemplates[key as keyof typeof splitHeroTemplates],
     component: splitHeroExamples[key as keyof typeof splitHeroExamples]
   })),
-  ...Object.keys(centeredHeroTemplates).map(key => ({
-    ...centeredHeroTemplates[key as keyof typeof centeredHeroTemplates], 
-    component: centeredHeroCustom[key as keyof typeof centeredHeroCustom]
-  })),
-  /*...Object.keys(centeredHeroTemplates).map(key => ({
-    ...centeredHeroTemplates[key as keyof typeof centeredHeroTemplates], 
-    component: centeredHeroExamples[key as keyof typeof centeredHeroExamples]
-  }))*/
+  ...Object.keys(centeredHeroTemplates).map(key => {
+    const template = centeredHeroTemplates[key as keyof typeof centeredHeroTemplates];
+    const customComponent = centeredHeroCustom[key as keyof typeof centeredHeroCustom];
+    
+    if (!customComponent) {
+      console.warn(`Missing custom component for hero key: ${key}`);
+      console.log('Available custom components:', Object.keys(centeredHeroCustom));
+      console.log('Required keys from library:', Object.keys(centeredHeroTemplates));
+    }
+    
+    return {
+      ...template,
+      component: customComponent || (() => <div>Missing Component: {key}</div>)
+    };
+  })
 ];
+
+// Debug helper for development (can be temporarily enabled)
+// if (process.env.NODE_ENV === 'development') {
+//   console.log('centeredHeroTemplates keys:', Object.keys(centeredHeroTemplates));
+//   console.log('centeredHeroCustom keys:', Object.keys(centeredHeroCustom));
+// }
