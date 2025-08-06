@@ -18,15 +18,24 @@ const theme = {
 }
 
 import React from "react";
-import { CenteredHeroContent, SplitHeroContent } from "./saas-content"; // ./content
+import { useHeroContent } from "@/hooks/useBlockContent";
 
 /**
  * Custom Data for Hero
  */
 
+// Interface for content props that can be passed to components
+interface ContentProps {
+  content?: any;
+  blockId?: string;
+}
+
 // 1. Simple centered hero
-const CenteredHeroSimpleCustom = () => {
-  const content = CenteredHeroContent.centeredHeroSimple;
+const CenteredHeroSimpleCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+  const { getCenteredHeroContent } = useHeroContent();
+  
+  // PRIORITY: 1. Provided content, 2. Session content (via adapter), 3. Static fallback
+  const content = providedContent || getCenteredHeroContent('centeredHeroSimple', blockId);
 
   return (
     <div className="w-full relative">
@@ -47,8 +56,11 @@ const CenteredHeroSimpleCustom = () => {
 };
 
 // 2. Centered hero with top button
-const CenteredHeroWithTopButtonCustom = () => {
-  const content = CenteredHeroContent.centeredHeroWithTopButton;
+const CenteredHeroWithTopButtonCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+  const { getCenteredHeroContent } = useHeroContent();
+  
+  // PRIORITY: 1. Provided content, 2. Session content (via adapter), 3. Static fallback
+  const content = providedContent || getCenteredHeroContent('centeredHeroWithTopButton', blockId);
 
   return (
     <CenteredHero
@@ -61,8 +73,10 @@ const CenteredHeroWithTopButtonCustom = () => {
 };
 
 // 3. Centered hero with image
-const CenteredHeroWithImageCustom = () => {
-  const content = CenteredHeroContent.centeredHeroWithImage;
+const CenteredHeroWithImageCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+  const { getCenteredHeroContent } = useHeroContent();
+  
+  const content = providedContent || getCenteredHeroContent('centeredHeroWithImage', blockId);
 
   return (
     <div className="w-full bg-background dark:bg-secondary/5 relative">
@@ -92,8 +106,10 @@ const CenteredHeroWithImageCustom = () => {
 };
 
 // 4. Centered hero with stats
-const CenteredHeroWithStatsCustom = () => {
-  const content = CenteredHeroContent.centeredHeroWithStats;
+const CenteredHeroWithStatsCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+  const { getCenteredHeroContent } = useHeroContent();
+  
+  const content = providedContent || getCenteredHeroContent('centeredHeroWithStats', blockId);
 
   return (
     <CenteredHero
@@ -106,8 +122,10 @@ const CenteredHeroWithStatsCustom = () => {
 };
 
 // 5. Mission-focused centered hero
-const CenteredHeroMissionCustom = () => {
-  const content = CenteredHeroContent.centeredHeroMission;
+const CenteredHeroMissionCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+  const { getCenteredHeroContent } = useHeroContent();
+  
+  const content = providedContent || getCenteredHeroContent('centeredHeroMission', blockId);
 
   return (
     <CenteredHero
@@ -122,46 +140,57 @@ const CenteredHeroMissionCustom = () => {
 };
 
 // Add new custom functions for SplitHero
-const SplitHeroMediaCustom = () => {
-  const content = SplitHeroContent.splitHeroMedia;
+const SplitHeroMediaCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+  const { getSplitHeroContent } = useHeroContent();
+  
+  // PRIORITY: 1. Provided content, 2. Session content (via adapter), 3. Static fallback
+  const content = providedContent || getSplitHeroContent('splitHeroMedia', blockId);
   return (
     <div className="w-full relative">
       <div className="absolute inset-0 z-0 bg-gradient-to-t from-primary/10 to-secondary/10" />
-      <SplitHero content={content} variant="media" useContainer={true} className="relative z-10" py="2xl" />
+      <SplitHero content={content} variant="media" useContainer={true} className="relative z-10" py="xl" />
     </div>
   );
 };
 
-const SplitHeroLeftMediaCustom = () => {
-  const content = SplitHeroContent.splitHeroLeftMedia;
+const SplitHeroLeftMediaCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+  const { getSplitHeroContent } = useHeroContent();
+  
+  const content = providedContent || getSplitHeroContent('splitHeroLeftMedia', blockId);
   return (
-    <SplitHero content={content} variant="media" leftMedia={true} useContainer={true} py="2xl" />
+    <SplitHero content={content} variant="media" leftMedia={true} useContainer={true} py="xl" />
   );
 };
 
-const SplitHeroGalleryCustom = () => {
-  const content = SplitHeroContent.splitHeroGallery;
+const SplitHeroGalleryCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+  const { getSplitHeroContent } = useHeroContent();
+  
+  const content = providedContent || getSplitHeroContent('splitHeroGallery', blockId);
   return (
-    <SplitHero content={content} variant="gallery" leftMedia={true} useContainer={true} py="2xl" />
+    <SplitHero content={content} variant="gallery" leftMedia={true} useContainer={true} py="xl" />
   );
 };
 
-const SplitHeroWithTopButtonCustom = () => {
-  const content = SplitHeroContent.splitHeroWithTopButton;
+const SplitHeroWithTopButtonCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+  const { getSplitHeroContent } = useHeroContent();
+  
+  const content = providedContent || getSplitHeroContent('splitHeroWithTopButton', blockId);
   return (
-    <SplitHero content={content} variant="gallery" useContainer={true} className="bg-gradient-to-br from-primary/10 to-secondary/10" py="2xl" />
+    <SplitHero content={content} variant="gallery" useContainer={true} className="bg-gradient-to-br from-primary/10 to-secondary/10" py="xl" />
   );
 };
 
-const SplitHeroSecurityCustom = () => {
-  const content = SplitHeroContent.splitHeroSecurity;
+const SplitHeroSecurityCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+  const { getSplitHeroContent } = useHeroContent();
+  
+  const content = providedContent || getSplitHeroContent('splitHeroSecurity', blockId);
   return (
-    <SplitHero content={content} variant="media" leftMedia={true} useContainer={true} className="bg-gradient-to-r from-secondary to-primary/10" py="2xl" />
+    <SplitHero content={content} variant="media" leftMedia={true} useContainer={true} className="bg-gradient-to-r from-secondary to-primary/10" py="xl" />
   );
 };
 
 // Export all examples - MUST match library template IDs, not keys
-const centeredHeroCustom: Record<string, React.ComponentType> = {
+const centeredHeroCustom: Record<string, React.ComponentType<ContentProps>> = {
   centeredHeroSimple: CenteredHeroSimpleCustom,
   centeredHeroWithTopButton: CenteredHeroWithTopButtonCustom,
   centeredHeroWithImage: CenteredHeroWithImageCustom,
@@ -169,7 +198,7 @@ const centeredHeroCustom: Record<string, React.ComponentType> = {
   centeredHeroMission: CenteredHeroMissionCustom
 };
 
-const splitHeroCustom: Record<string, React.ComponentType> = {
+const splitHeroCustom: Record<string, React.ComponentType<ContentProps>> = {
   splitHeroMedia: SplitHeroMediaCustom,
   splitHeroLeftMedia: SplitHeroLeftMediaCustom,
   splitHeroGallery: SplitHeroGalleryCustom,

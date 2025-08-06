@@ -2,6 +2,7 @@
 
 import { SimpleStorage } from '@/lib/storage/simpleStorage';
 import type { Collection, SavedBlock } from '@/types';
+import { CenteredHeroContent, SplitHeroContent } from '@/components/blocks/hero/content';
 
 const storage = SimpleStorage.getInstance();
 
@@ -31,7 +32,8 @@ export function useCollections() {
 
   // Save a block to a collection
   const saveBlockToCollection = (templateId: string, templateName: string, templateDescription: string, collectionId: string): SavedBlock => {
-    const blockId = `block-${templateId}-${Date.now()}`;
+    const timestamp = Date.now();
+    const blockId = `block-${templateId}-${timestamp}`;
     
     // Create saved block record
     const savedBlock: SavedBlock = {
@@ -45,6 +47,14 @@ export function useCollections() {
     // Save the block
     storage.saveBlock(savedBlock);
 
+    // **NEW**: Automatically save content from intermediate layer to data array
+    const content = getContentFromIntermediateLayer(templateId);
+    if (content) {
+      const dataBlockId = `${templateId}_${timestamp}`;
+      storage.updateBlockData(dataBlockId, templateId, content);
+      console.log(`✅ Auto-saved content for ${templateId}:`, content);
+    }
+
     // Add block ID to collection
     const collection = collections.find(c => c.id === collectionId);
     if (collection) {
@@ -57,6 +67,73 @@ export function useCollections() {
     }
 
     return savedBlock;
+  };
+
+  // Helper function to clean content from non-serializable objects (React components, functions)
+  const cleanContentForSerialization = (content: any): any => {
+    if (!content || typeof content !== 'object') return content;
+    
+    const cleaned = { ...content };
+    
+    // Remove React components and functions that can't be serialized
+    Object.keys(cleaned).forEach(key => {
+      const value = cleaned[key];
+      
+      // Remove React components (icons) and functions
+      if (typeof value === 'function' || 
+          (typeof value === 'object' && value?.$$typeof)) {
+        delete cleaned[key];
+        console.log(`🧹 Removed non-serializable ${key} from content`);
+      }
+      
+      // Recursively clean nested objects
+      else if (typeof value === 'object' && value !== null) {
+        cleaned[key] = cleanContentForSerialization(value);
+      }
+    });
+    
+    return cleaned;
+  };
+
+  // Helper function to get content from intermediate layer (content.ts)
+  const getContentFromIntermediateLayer = (templateId: string): any => {
+    let rawContent = null;
+    
+    // Check CenteredHero content first
+    if (templateId.includes('Hero') && templateId.startsWith('centered')) {
+      const key = templateId as keyof typeof CenteredHeroContent;
+      rawContent = CenteredHeroContent[key];
+      if (rawContent) {
+        console.log(`✅ Found CenteredHero content for ${templateId}`);
+      }
+    }
+    
+    // Check SplitHero content  
+    else if (templateId.includes('Hero') && templateId.startsWith('split')) {
+      const key = templateId as keyof typeof SplitHeroContent;
+      rawContent = SplitHeroContent[key];
+      if (rawContent) {
+        console.log(`✅ Found SplitHero content for ${templateId}`);
+      }
+    }
+    
+    // For now, only Hero blocks are supported with custom content
+    // Other block types (blog, post, business, etc.) use library defaults
+    else if (!templateId.includes('Hero')) {
+      console.log(`⚠️  ${templateId} is not a Hero block - content extraction not supported yet`);
+      return null;
+    }
+    
+    if (!rawContent) {
+      console.warn(`❌ No content found for Hero templateId: ${templateId}`);
+      return null;
+    }
+    
+    // Clean the content for safe JSON serialization
+    const cleanedContent = cleanContentForSerialization(rawContent);
+    console.log(`🧹 Cleaned content for ${templateId}:`, cleanedContent);
+    
+    return cleanedContent;
   };
 
   // Remove a block from a collection
@@ -75,9 +152,24 @@ export function useCollections() {
         c.id !== collectionId && c.blockIds.includes(blockId)
       );
 
-      // If not used elsewhere, delete the block
+      // If not used elsewhere, delete the block AND its content data
       if (!isUsedInOtherCollections) {
         storage.deleteBlock(blockId);
+        
+        // Also delete corresponding content data
+        const savedBlocks = storage.getSavedBlocks();
+        const savedBlock = savedBlocks.find(block => block.id === blockId);
+        if (savedBlock) {
+          const parts = blockId.split('-');
+          if (parts.length >= 3) {
+            const templateId = parts[1];
+            const timestamp = parts[2];
+            const dataBlockId = `${templateId}_${timestamp}`;
+            
+            storage.deleteBlockData(dataBlockId, templateId);
+            console.log(`🗑️ Deleted content data for ${templateId}`);
+          }
+        }
       }
     }
   };

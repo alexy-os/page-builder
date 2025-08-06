@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { SimpleStorage } from '@/lib/storage/simpleStorage';
-import type { ProjectState, Collection, SavedBlock } from '@/types';
+import type { ProjectState, Collection, SavedBlock, BlockData } from '@/types';
 
 interface ProjectStore {
   // State
@@ -25,6 +25,14 @@ interface ProjectStore {
   getSavedBlocks: () => SavedBlock[];
   saveBlock: (block: SavedBlock) => void;
   deleteBlock: (blockId: string) => void;
+  
+  // Block content data actions
+  getBlockData: () => BlockData[];
+  saveBlockData: (blockData: BlockData) => void;
+  updateBlockData: (blockId: string, blockType: string, content: any) => void;
+  getBlockDataById: (blockId: string, blockType: string) => BlockData | undefined;
+  deleteBlockData: (blockId: string, blockType: string) => void;
+  getContentForSavedBlock: (savedBlockId: string) => any;
   
   // Favorites actions
   getFavorites: () => string[];
@@ -116,6 +124,37 @@ export const useProjectStore = create<ProjectStore>()(
         storage.deleteBlock(blockId);
         const project = storage.getProject();
         set({ project });
+      },
+      
+      // Block content data actions
+      getBlockData: () => {
+        return storage.getBlockData();
+      },
+      
+      saveBlockData: (blockData: BlockData) => {
+        storage.saveBlockData(blockData);
+        const project = storage.getProject();
+        set({ project });
+      },
+      
+      updateBlockData: (blockId: string, blockType: string, content: any) => {
+        storage.updateBlockData(blockId, blockType, content);
+        const project = storage.getProject();
+        set({ project });
+      },
+      
+      getBlockDataById: (blockId: string, blockType: string) => {
+        return storage.getBlockDataById(blockId, blockType);
+      },
+      
+      deleteBlockData: (blockId: string, blockType: string) => {
+        storage.deleteBlockData(blockId, blockType);
+        const project = storage.getProject();
+        set({ project });
+      },
+      
+      getContentForSavedBlock: (savedBlockId: string) => {
+        return storage.getContentForSavedBlock(savedBlockId);
       },
       
       // Favorites actions - with immediate UI feedback

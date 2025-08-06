@@ -5,6 +5,13 @@ export interface Block {
   order: number;
 }
 
+// New interface for storing block content data
+export interface BlockData {
+  id: string;  // ID блока (совпадает с SavedBlock.id без префикса "block-")
+  type: string; // тип блока (например, "heroSplitMedia")
+  content: any; // данные контента блока
+}
+
 export interface Template {
   id: string;
   name: string;
@@ -33,6 +40,9 @@ export interface ProjectState {
   version: string;
   
   blocks: any[];
+  
+  // New data array for block content
+  data: BlockData[];
   
   theme: {
     currentThemeId: string;

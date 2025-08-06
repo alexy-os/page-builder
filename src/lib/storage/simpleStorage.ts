@@ -1,5 +1,5 @@
 // Simplified storage system - only sessionStorage, immediate operations
-import type { ProjectState, Collection, SavedBlock, CustomTheme } from '@/types';
+import type { ProjectState, Collection, SavedBlock, CustomTheme, BlockData } from '@/types';
 
 const PROJECT_KEY = 'buildy_project';
 const DARK_MODE_KEY = 'buildy_darkmode';
@@ -47,6 +47,7 @@ function createDefaultProject(): ProjectState {
     id: `project-${Date.now()}`,
     version: '1.0.0',
     blocks: [],
+    data: [], // New data array for block content
     theme: {
       currentThemeId: 'sky-os',
       customThemes: [],
@@ -254,10 +255,37 @@ export class SimpleStorage {
   importProject(jsonData: string): boolean {
     try {
       const data = JSON.parse(jsonData);
+      
+      // New format: full project structure
       if (data.project) {
+        console.log('Importing new format with project structure');
         this.saveProject(data.project);
         return true;
       }
+      
+      // Legacy format: just collections (from old exports)
+      if (data.collections && Array.isArray(data.collections)) {
+        console.log('Importing legacy format - merging collections into existing project');
+        
+        const currentProject = this.getProject();
+        
+        // Merge collections, but keep existing ones if there are conflicts
+        const existingCollectionIds = new Set(currentProject.collections.map(c => c.id));
+        const newCollections = data.collections.filter((c: any) => 
+          c.id && c.name && !existingCollectionIds.has(c.id)
+        );
+        
+        // Add new collections to existing project
+        currentProject.collections = [...currentProject.collections, ...newCollections];
+        
+        // Note: Legacy format doesn't have savedBlocks or data, 
+        // so we can't import those - user will need to re-save blocks
+        
+        this.saveProject(currentProject);
+        return true;
+      }
+      
+      console.error('Invalid import format - missing project or collections data');
       return false;
     } catch (error) {
       console.error('Error importing project:', error);
@@ -270,12 +298,70 @@ export class SimpleStorage {
     sessionStorage.clear();
   }
 
+  // Block content data operations
+  getBlockData(): BlockData[] {
+    return this.getProject().data;
+  }
+
+  saveBlockData(blockData: BlockData): void {
+    const project = this.getProject();
+    const index = project.data.findIndex(d => d.id === blockData.id && d.type === blockData.type);
+    if (index >= 0) {
+      project.data[index] = blockData;
+    } else {
+      project.data.push(blockData);
+    }
+    this.saveProject(project);
+  }
+
+  updateBlockData(blockId: string, blockType: string, content: any): void {
+    const blockData: BlockData = {
+      id: blockId,
+      type: blockType,
+      content
+    };
+    this.saveBlockData(blockData);
+  }
+
+  getBlockDataById(blockId: string, blockType: string): BlockData | undefined {
+    return this.getProject().data.find(d => d.id === blockId && d.type === blockType);
+  }
+
+  deleteBlockData(blockId: string, blockType: string): void {
+    const project = this.getProject();
+    project.data = project.data.filter(d => !(d.id === blockId && d.type === blockType));
+    this.saveProject(project);
+  }
+
+  clearBlockData(): void {
+    const project = this.getProject();
+    project.data = [];
+    this.saveProject(project);
+  }
+
+  // Helper method to get content for a block by savedBlock ID
+  getContentForSavedBlock(savedBlockId: string): any {
+    // Extract the actual block ID from savedBlock ID
+    // "block-heroSplitMedia-1754303683138" -> "heroSplitMedia_1754303683138"
+    const parts = savedBlockId.split('-');
+    if (parts.length >= 3) {
+      const blockType = parts[1]; // "heroSplitMedia"
+      const timestamp = parts[2]; // "1754303683138"
+      const blockId = `${blockType}_${timestamp}`;
+      
+      const blockData = this.getBlockDataById(blockId, blockType);
+      return blockData?.content || null;
+    }
+    return null;
+  }
+
   // Statistics for debugging
   getStats() {
     const project = this.getProject();
     return {
       projectName: project.name,
       blocksCount: project.blocks.length,
+      dataCount: project.data.length, // Add data count to stats
       collectionsCount: project.collections.length,
       savedBlocksCount: project.savedBlocks.length,
       favoritesCount: project.favorites.length,
