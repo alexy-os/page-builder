@@ -52,7 +52,6 @@ export function useCollections() {
     if (content) {
       const dataBlockId = `${templateId}_${timestamp}`;
       storage.updateBlockData(dataBlockId, templateId, content);
-      console.log(`✅ Auto-saved content for ${templateId}:`, content);
     }
 
     // Add block ID to collection
@@ -83,7 +82,6 @@ export function useCollections() {
       if (typeof value === 'function' || 
           (typeof value === 'object' && value?.$$typeof)) {
         delete cleaned[key];
-        console.log(`🧹 Removed non-serializable ${key} from content`);
       }
       
       // Recursively clean nested objects
@@ -103,37 +101,26 @@ export function useCollections() {
     if (templateId.includes('Hero') && templateId.startsWith('centered')) {
       const key = templateId as keyof typeof CenteredHeroContent;
       rawContent = CenteredHeroContent[key];
-      if (rawContent) {
-        console.log(`✅ Found CenteredHero content for ${templateId}`);
-      }
     }
     
     // Check SplitHero content  
     else if (templateId.includes('Hero') && templateId.startsWith('split')) {
       const key = templateId as keyof typeof SplitHeroContent;
       rawContent = SplitHeroContent[key];
-      if (rawContent) {
-        console.log(`✅ Found SplitHero content for ${templateId}`);
-      }
     }
     
     // For now, only Hero blocks are supported with custom content
     // Other block types (blog, post, business, etc.) use library defaults
     else if (!templateId.includes('Hero')) {
-      console.log(`⚠️  ${templateId} is not a Hero block - content extraction not supported yet`);
       return null;
     }
     
     if (!rawContent) {
-      console.warn(`❌ No content found for Hero templateId: ${templateId}`);
       return null;
     }
     
     // Clean the content for safe JSON serialization
-    const cleanedContent = cleanContentForSerialization(rawContent);
-    console.log(`🧹 Cleaned content for ${templateId}:`, cleanedContent);
-    
-    return cleanedContent;
+    return cleanContentForSerialization(rawContent);
   };
 
   // Remove a block from a collection
@@ -167,7 +154,6 @@ export function useCollections() {
             const dataBlockId = `${templateId}_${timestamp}`;
             
             storage.deleteBlockData(dataBlockId, templateId);
-            console.log(`🗑️ Deleted content data for ${templateId}`);
           }
         }
       }

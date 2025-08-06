@@ -19,7 +19,6 @@ const cleanContentFromSession = (content: any): any => {
       if (value.$$typeof || value.displayName || value.render || 
           (key.includes('Icon') || key.includes('icon'))) {
         delete cleaned[key];
-        console.log(`🧹 Removed corrupted ${key} from session content`);
       }
       // Recursively clean nested objects
       else if (Array.isArray(value)) {
@@ -56,8 +55,6 @@ export function useBlockContent(): ContentAdapter {
 
   // Get content for a specific template/block
   const getContent = useCallback((templateId: string, blockId?: string) => {
-    console.log(`🔍 Getting content for templateId: ${templateId}, blockId: ${blockId}`);
-    
     // PRIORITY 1: Check if we have content in session data (from import/migration)
     const allBlockData = getBlockData();
     
@@ -66,7 +63,6 @@ export function useBlockContent(): ContentAdapter {
     if (sessionContent?.content) {
       // Clean the session content from any corrupted objects
       const cleanedSessionContent = cleanContentFromSession(sessionContent.content);
-      console.log(`✅ Found SESSION content for ${templateId}:`, cleanedSessionContent);
       return cleanedSessionContent;
     }
 
@@ -77,7 +73,6 @@ export function useBlockContent(): ContentAdapter {
       if (blockType) {
         const customContent = getBlockDataById(blockId, blockType);
         if (customContent?.content) {
-          console.log(`✅ Found CUSTOM content for ${templateId} with blockId ${blockId}`);
           return customContent.content;
         }
       }
@@ -85,15 +80,12 @@ export function useBlockContent(): ContentAdapter {
       // Try alternative method using savedBlock ID format
       const savedBlockContent = getContentForSavedBlock(blockId);
       if (savedBlockContent) {
-        console.log(`✅ Found SAVED BLOCK content for ${templateId} with blockId ${blockId}`);
         return savedBlockContent;
       }
     }
 
     // PRIORITY 3: Fallback to default static content
-    const defaultContent = getDefaultContent(templateId);
-    console.log(`⚠️ Using DEFAULT content for ${templateId}:`, defaultContent);
-    return defaultContent;
+    return getDefaultContent(templateId);
   }, [getContentForSavedBlock, getBlockDataById, getBlockData]);
 
   // Save custom content for a block  

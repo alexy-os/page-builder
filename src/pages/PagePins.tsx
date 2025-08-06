@@ -20,7 +20,6 @@ import { selectedTemplateAtom, pinsColumnsAtom } from "@/atoms";
 import type { Template } from "@/types";
 import { useSimpleStorage } from "@/hooks/useSimpleStorage";
 import { Link } from "react-router-dom";
-import { CenteredHeroContent, SplitHeroContent } from "@/components/blocks/hero/content";
 import { useBlockContent } from "@/hooks/useBlockContent";
 
 export default function PagePins() {
@@ -53,9 +52,7 @@ export default function PagePins() {
     exportProject,
     clearCollections,
     toggleFavorite, 
-    isFavorite,
-    getBlockData,
-    updateBlockData
+    isFavorite
   } = useProjectStore();
   
   const {
@@ -199,11 +196,7 @@ export default function PagePins() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       
-      console.log('Collections with full project data exported successfully');
-      
-      // Debug: Show data array content in console
-      const blockData = getBlockData();
-      console.log(`📊 Exported ${blockData.length} content items in data array:`, blockData);
+
       
     } catch (error) {
       console.error('Error exporting collections:', error);
@@ -215,192 +208,7 @@ export default function PagePins() {
     return importProject(jsonData);
   };
 
-  // Helper function to clean content from non-serializable objects (React components, functions)
-  const cleanContentForSerialization = (content: any): any => {
-    if (!content || typeof content !== 'object') return content;
-    
-    const cleaned = { ...content };
-    
-    // Remove React components and functions that can't be serialized
-    Object.keys(cleaned).forEach(key => {
-      const value = cleaned[key];
-      
-      // Remove React components (icons) and functions
-      if (typeof value === 'function' || 
-          (typeof value === 'object' && value?.$$typeof)) {
-        delete cleaned[key];
-        console.log(`🧹 Removed non-serializable ${key} from content`);
-      }
-      
-      // Recursively clean nested objects
-      else if (typeof value === 'object' && value !== null) {
-        cleaned[key] = cleanContentForSerialization(value);
-      }
-    });
-    
-    return cleaned;
-  };
 
-  // Helper function to get content from intermediate layer (same as in useCollections)
-  const getContentFromIntermediateLayer = (templateId: string): any => {
-    let rawContent = null;
-    
-    // Check CenteredHero content first
-    if (templateId.includes('Hero') && templateId.startsWith('centered')) {
-      const key = templateId as keyof typeof CenteredHeroContent;
-      rawContent = CenteredHeroContent[key];
-      if (rawContent) {
-        console.log(`✅ Found CenteredHero content for ${templateId}`);
-      }
-    }
-    
-    // Check SplitHero content  
-    else if (templateId.includes('Hero') && templateId.startsWith('split')) {
-      const key = templateId as keyof typeof SplitHeroContent;
-      rawContent = SplitHeroContent[key];
-      if (rawContent) {
-        console.log(`✅ Found SplitHero content for ${templateId}`);
-      }
-    }
-    
-    // For now, only Hero blocks are supported with custom content
-    // Other block types (blog, post, business, etc.) use library defaults
-    else if (!templateId.includes('Hero')) {
-      console.log(`⚠️  ${templateId} is not a Hero block - content extraction not supported yet`);
-      return null;
-    }
-    
-    if (!rawContent) {
-      console.warn(`❌ No content found for Hero templateId: ${templateId}`);
-      return null;
-    }
-    
-    // Clean the content for safe JSON serialization
-    const cleanedContent = cleanContentForSerialization(rawContent);
-    console.log(`🧹 Cleaned content for ${templateId}:`, cleanedContent);
-    
-    return cleanedContent;
-  };
-
-  // Migration function: Fill content for all existing blocks in collections
-  const handleFillContentForExistingBlocks = () => {
-    try {
-      const savedBlocks = getSavedBlocks();
-      const currentBlockData = getBlockData();
-      let addedCount = 0;
-      let skippedCount = 0;
-      let alreadyExistsCount = 0;
-      
-      // Statistics by block type
-      const blockTypeStats: Record<string, { total: number; added: number; skipped: number; }> = {};
-
-      console.log(`🔄 Starting content migration for ${savedBlocks.length} saved blocks...`);
-
-      savedBlocks.forEach(savedBlock => {
-        // Extract timestamp from savedBlock ID: "block-splitHeroSecurity-1754465928482"
-        const parts = savedBlock.id.split('-');
-        if (parts.length >= 3) {
-          const templateId = parts[1]; // "splitHeroSecurity"
-          const timestamp = parts[2]; // "1754465928482"
-          const dataBlockId = `${templateId}_${timestamp}`;
-
-          // Initialize block type stats
-          if (!blockTypeStats[templateId]) {
-            blockTypeStats[templateId] = { total: 0, added: 0, skipped: 0 };
-          }
-          blockTypeStats[templateId].total++;
-
-          // Check if content already exists
-          const existingContent = currentBlockData.find(item => 
-            item.id === dataBlockId && item.type === templateId
-          );
-
-          if (!existingContent) {
-            // Get content from intermediate layer
-            const content = getContentFromIntermediateLayer(templateId);
-            if (content) {
-              updateBlockData(dataBlockId, templateId, content);
-              addedCount++;
-              blockTypeStats[templateId].added++;
-              console.log(`✅ Added content for ${templateId}`);
-            } else {
-              skippedCount++;
-              blockTypeStats[templateId].skipped++;
-              console.log(`⚠️ No content available for ${templateId}`);
-            }
-          } else {
-            alreadyExistsCount++;
-            console.log(`⏭️ Content already exists for ${templateId}`);
-          }
-        }
-      });
-
-      // Create detailed statistics message
-      let statsMessage = '\n📊 Block Type Statistics:\n';
-      Object.entries(blockTypeStats).forEach(([blockType, stats]) => {
-        const status = blockType.includes('Hero') ? '✅ Supported' : '⚠️  Not supported yet';
-        statsMessage += `  ${blockType}: ${stats.added}/${stats.total} added ${status}\n`;
-      });
-
-      const message = `Migration complete!\n✅ Added: ${addedCount} content items\n⏭️ Skipped: ${skippedCount} blocks\n📋 Already exists: ${alreadyExistsCount}\n${statsMessage}\n💡 Note: Only Hero blocks have content extraction support currently.`;
-      
-      console.log(`🎉 Migration complete! Added: ${addedCount}, Skipped: ${skippedCount}, Already exists: ${alreadyExistsCount}`);
-      console.table(blockTypeStats);
-      alert(message);
-
-      // Refresh data display
-      const blockData = getBlockData();
-      console.log(`📊 Updated data array (${blockData.length} items):`, blockData);
-
-    } catch (error) {
-      console.error('Error during content migration:', error);
-      alert(`Error during migration: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  };
-
-  // Test function: Modify content in session to demonstrate live changes
-  const handleTestContentModification = () => {
-    try {
-      const blockData = getBlockData();
-      console.log('🧪 Testing live content modification...');
-      
-      // Find a Hero block to modify
-      const heroBlocks = blockData.filter(item => item.type.includes('Hero'));
-      
-      if (heroBlocks.length === 0) {
-        alert('⚠️ No Hero blocks found in session data.\n\nPlease:\n1. Add a Hero block to a collection\n2. Run "🔄 Fill Content" migration\n3. Then try this test');
-        return;
-      }
-
-      const randomBlock = heroBlocks[Math.floor(Math.random() * heroBlocks.length)];
-      const timestamp = Date.now();
-      
-      // Modify the content with test data
-      const modifiedContent = {
-        ...randomBlock.content,
-        title: `🧪 LIVE TEST TITLE - ${timestamp}`,
-        description: `This content was dynamically modified at ${new Date().toLocaleTimeString()}! Changes should appear immediately in all block previews. 🚀`,
-        badge: '🧪 LIVE SESSION DATA',
-        primaryButtonText: 'Live Content!',
-        secondaryButtonText: 'Session Powered'
-      };
-
-      // Update in session
-      updateBlockData(randomBlock.id, randomBlock.type, modifiedContent);
-      
-      console.log(`✅ Modified content for ${randomBlock.type}:`, modifiedContent);
-      
-      alert(`🧪 Content Test Complete!\n\n` +
-            `Modified: ${randomBlock.type}\n` +
-            `New Title: "${modifiedContent.title}"\n\n` +
-            `👀 Look at the block previews - they should show the new content immediately!\n\n` +
-            `Check console for detailed logs.`);
-
-    } catch (error) {
-      console.error('Error during content test:', error);
-      alert(`Error during content test: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  };
 
   const handleFullReset = useCallback(() => {
     if (confirm('Are you sure you want to perform a full reset? This will clear ALL data (projects, collections, themes) and reload the application.')) {
@@ -442,12 +250,7 @@ export default function PagePins() {
     
     // Get dynamic content for this template from session (if available)
     const dynamicContent = useMemo(() => {
-      const content = getContent(template.id);
-      // Only log for Hero blocks to reduce console noise
-      if (template.id.includes('Hero')) {
-        console.log(`🎨 PinCard for ${template.id} using content:`, content ? 'DYNAMIC' : 'STATIC');
-      }
-      return content;
+      return getContent(template.id);
     }, [template.id, getContent]);
     
     const PreviewComponent = useMemo(() => {
@@ -612,57 +415,7 @@ export default function PagePins() {
                     <Grid3X3 className="h-4 w-4" />
                   </Button>
 
-                  {/* Migration button to fill content for existing blocks */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleFillContentForExistingBlocks}
-                    title="Fill content for all existing blocks from intermediate layer"
-                    className="bg-blue-50 hover:bg-blue-100 dark:bg-blue-950 dark:hover:bg-blue-900 border-blue-200 dark:border-blue-800"
-                  >
-                    🔄 Fill Content
-                  </Button>
 
-                  {/* Test button to modify content in session */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleTestContentModification}
-                    title="Test: Modify Hero content in session to see live changes"
-                    className="bg-green-50 hover:bg-green-100 dark:bg-green-950 dark:hover:bg-green-900 border-green-200 dark:border-green-800"
-                  >
-                    🧪 Test Live Content
-                  </Button>
-
-                  {/* Reset button if corrupted data */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      if (confirm('⚠️ Reset all session data?\n\nThis will clear corrupted content and reload the page.\nUse this if you see "Element type is invalid" errors.')) {
-                        sessionStorage.clear();
-                        window.location.reload();
-                      }
-                    }}
-                    title="Clear corrupted session data and reload page"
-                    className="bg-red-50 hover:bg-red-100 dark:bg-red-950 dark:hover:bg-red-900 border-red-200 dark:border-red-800"
-                  >
-                    🔄 Reset Session
-                  </Button>
-
-                  {/* Debug button to check data array */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      const blockData = getBlockData();
-                      console.log(`📊 Current data array (${blockData.length} items):`, blockData);
-                      alert(`Data array has ${blockData.length} content items. Check console for details.`);
-                    }}
-                    title="Debug: Show data array content"
-                  >
-                    📊 Data ({getBlockData().length})
-                  </Button>
                 
                 <Link to="/builder">
                   <Button size="sm">Get Builder</Button>
