@@ -2,7 +2,7 @@
 
 import { SimpleStorage } from '@/lib/storage/simpleStorage';
 import type { Collection, SavedBlock } from '@/types';
-import { CenteredHeroContent, SplitHeroContent } from '@/components/blocks/hero/content';
+import { blockRegistry } from '@/lib/blockRegistry';
 
 const storage = SimpleStorage.getInstance();
 
@@ -68,7 +68,7 @@ export function useCollections() {
     return savedBlock;
   };
 
-  // Helper function to clean content from non-serializable objects (React components, functions)
+  // Generic helper function to clean content from non-serializable objects
   const cleanContentForSerialization = (content: any): any => {
     if (!content || typeof content !== 'object') return content;
     
@@ -86,41 +86,28 @@ export function useCollections() {
       
       // Recursively clean nested objects
       else if (typeof value === 'object' && value !== null) {
-        cleaned[key] = cleanContentForSerialization(value);
+        if (Array.isArray(value)) {
+          cleaned[key] = value.map(item => cleanContentForSerialization(item));
+        } else {
+          cleaned[key] = cleanContentForSerialization(value);
+        }
       }
     });
     
     return cleaned;
   };
 
-  // Helper function to get content from intermediate layer (content.ts)
+  // Helper function to get content from intermediate layer using block registry
   const getContentFromIntermediateLayer = (templateId: string): any => {
-    let rawContent = null;
-    
-    // Check CenteredHero content first
-    if (templateId.includes('Hero') && templateId.startsWith('centered')) {
-      const key = templateId as keyof typeof CenteredHeroContent;
-      rawContent = CenteredHeroContent[key];
-    }
-    
-    // Check SplitHero content  
-    else if (templateId.includes('Hero') && templateId.startsWith('split')) {
-      const key = templateId as keyof typeof SplitHeroContent;
-      rawContent = SplitHeroContent[key];
-    }
-    
-    // For now, only Hero blocks are supported with custom content
-    // Other block types (blog, post, business, etc.) use library defaults
-    else if (!templateId.includes('Hero')) {
-      return null;
-    }
+    // Try to get content from registered block providers
+    const rawContent = blockRegistry.getContent(templateId);
     
     if (!rawContent) {
       return null;
     }
     
-    // Clean the content for safe JSON serialization
-    return cleanContentForSerialization(rawContent);
+    // Clean the content using the appropriate provider
+    return blockRegistry.cleanContent(templateId, rawContent);
   };
 
   // Remove a block from a collection

@@ -8,6 +8,7 @@ import { allComponents, allTemplates } from "@/components/blocks";
 import type { Block } from "@/types";
 import { blockErrorsAtom } from "@/atoms";
 import { performance } from "@/lib/utils";
+import { useBlockContent } from "@/hooks/useBlockContent";
 
 interface BuilderCanvasProps {
   blocks: Block[];
@@ -83,7 +84,7 @@ function validateBlock(block: any): block is Block {
   return true;
 }
 
-// Memoized block component for better performance
+// Memoized block component for better performance with dynamic content support
 const BlockItem = memo(({ 
   block, 
   index, 
@@ -97,7 +98,13 @@ const BlockItem = memo(({
   onError: (blockId: string, error: Error) => void;
   blockErrors: Set<string>;
 }) => {
+  const { getContent } = useBlockContent();
   const BlockComponent = allComponents[block.type as keyof typeof allComponents];
+  
+  // Get dynamic content for this block from session (if available)
+  const dynamicContent = useMemo(() => {
+    return getContent(block.type, block.id);
+  }, [block.type, block.id, getContent]);
   
   const handleRemove = useCallback(() => {
     onRemove(block.id);
@@ -179,7 +186,8 @@ const BlockItem = memo(({
               block={block} 
               onError={onError}
             >
-              <BlockComponent />
+              {/* Pass dynamic content and block ID to component */}
+              <BlockComponent content={dynamicContent} blockId={block.id} />
             </BlockErrorBoundary>
           </div>
 

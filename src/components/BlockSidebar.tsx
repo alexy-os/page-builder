@@ -7,6 +7,7 @@ import { useAtom } from 'jotai';
 import type { Block, Template } from "@/types";
 import { useProjectStore } from "@/store";
 import { builderActiveTabAtom } from "@/atoms";
+import { useBlockContent } from "@/hooks/useBlockContent";
 
 import { allTemplates } from "@/components/blocks";
 
@@ -39,8 +40,15 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
     setBlocks(prev => [...prev, newBlock]);
   }, [blocks.length, setBlocks]);
 
-  // Memoized block preview component for better performance
+  // Memoized block preview component for better performance with dynamic content
   const BlockPreview = memo(({ template }: { template: Template }) => {
+    const { getContent } = useBlockContent();
+    
+    // Get dynamic content for this template from session (if available)
+    const dynamicContent = useMemo(() => {
+      return getContent(template.id);
+    }, [template.id, getContent]);
+    
     const PreviewComponent = useMemo(() => {
       return template.component;
     }, [template.component]);
@@ -65,7 +73,8 @@ export default function BlockSidebar({ blocks, setBlocks }: BlockSidebarProps) {
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
             </div>
           }>
-            <PreviewComponent />
+            {/* Pass dynamic content to component if it supports ContentProps */}
+            <PreviewComponent content={dynamicContent} blockId={template.id} />
           </Suspense>
         </div>
         

@@ -1,7 +1,9 @@
 // Hook for managing dynamic block content from collections
 import { useCallback, useMemo } from 'react';
 import { useProjectStore } from '@/store';
+import { blockRegistry } from '@/lib/blockRegistry';
 import { CenteredHeroContent, SplitHeroContent } from '@/components/blocks/hero/content';
+import { SplitBlogContent, GridBlogContent } from '@/components/blocks/blog/content';
 
 // Helper function to clean content from corrupted objects (from JSON serialization)
 const cleanContentFromSession = (content: any): any => {
@@ -134,9 +136,16 @@ function extractBlockTypeFromTemplateId(templateId: string): string | null {
 }
 
 /**
- * Get default content for a template
+ * Get default content for a template using block registry
  */
 function getDefaultContent(templateId: string): any {
+  // Try to get content from registered block providers first
+  const registryContent = blockRegistry.getContent(templateId);
+  if (registryContent) {
+    return registryContent;
+  }
+
+  // Fallback to hardcoded logic for backward compatibility
   // Hero blocks
   if (templateId.startsWith('centered')) {
     const key = templateId as keyof typeof CenteredHeroContent;
@@ -148,9 +157,16 @@ function getDefaultContent(templateId: string): any {
     return SplitHeroContent[key] || null;
   }
   
-  // Add other block types here as needed
-  // if (templateId.startsWith('blog')) { ... }
-  // if (templateId.startsWith('features')) { ... }
+  // Blog blocks
+  if (templateId.startsWith('splitBlog')) {
+    const key = templateId as keyof typeof SplitBlogContent;
+    return SplitBlogContent[key] || null;
+  }
+  
+  if (templateId.startsWith('gridBlog')) {
+    const key = templateId as keyof typeof GridBlogContent;
+    return GridBlogContent[key] || null;
+  }
   
   return null;
 }
@@ -181,6 +197,25 @@ export function useHeroContent() {
     // Helper method to check if content is coming from session
     isContentFromSession: (templateId: string) => {
       // Check if there's session content for this template
+      return contentAdapter.hasCustomContent(templateId);
+    }
+  };
+}
+
+export function useBlogContent() {
+  const contentAdapter = useBlockContent();
+
+  return {
+    ...contentAdapter,
+    getSplitBlogContent: (templateId: keyof typeof SplitBlogContent, blockId?: string) => {
+      const content = contentAdapter.getContent(templateId, blockId);
+      return content || SplitBlogContent[templateId];
+    },
+    getGridBlogContent: (templateId: keyof typeof GridBlogContent, blockId?: string) => {
+      const content = contentAdapter.getContent(templateId, blockId);
+      return content || GridBlogContent[templateId];
+    },
+    isContentFromSession: (templateId: string) => {
       return contentAdapter.hasCustomContent(templateId);
     }
   };
