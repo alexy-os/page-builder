@@ -91,6 +91,77 @@ export function initializeBlockRegistry() {
     });
   });
 
+  import('@/components/blocks/faq/hooks').then(({ getFAQContent, isFAQTemplate, cleanFAQContent }) => {
+    blockRegistry.register('faq', {
+      name: 'FAQ',
+      getContent: getFAQContent,
+      isValidTemplate: isFAQTemplate,
+      cleanContent: cleanFAQContent
+    });
+  });
+
+  import('@/components/blocks/features/hooks').then(({ getFeaturesContent, isFeaturesTemplate, cleanFeaturesContent }) => {
+    blockRegistry.register('features', {
+      name: 'Features',
+      getContent: getFeaturesContent,
+      isValidTemplate: isFeaturesTemplate,
+      cleanContent: cleanFeaturesContent
+    });
+  });
+
+  import('@/components/blocks/footer/hooks').then(({ getFooterContent, isFooterTemplate, cleanFooterContent }) => {
+    blockRegistry.register('footer', {
+      name: 'Footer',
+      getContent: getFooterContent,
+      isValidTemplate: isFooterTemplate,
+      cleanContent: cleanFooterContent
+    });
+  });
+
+  import('@/components/blocks/gallery/hooks').then(({ getGalleryContent, isGalleryTemplate, cleanGalleryContent }) => {
+    blockRegistry.register('gallery', {
+      name: 'Gallery',
+      getContent: getGalleryContent,
+      isValidTemplate: isGalleryTemplate,
+      cleanContent: cleanGalleryContent
+    });
+  });
+
+  import('@/components/blocks/portfolio/hooks').then(({ getPortfolioContent, isPortfolioTemplate, cleanPortfolioContent }) => {
+    blockRegistry.register('portfolio', {
+      name: 'Portfolio',
+      getContent: getPortfolioContent,
+      isValidTemplate: isPortfolioTemplate,
+      cleanContent: cleanPortfolioContent
+    });
+  });
+
+  import('@/components/blocks/post/hooks').then(({ getPostContent, isPostTemplate, cleanPostContent }) => {
+    blockRegistry.register('post', {
+      name: 'Post',
+      getContent: getPostContent,
+      isValidTemplate: isPostTemplate,
+      cleanContent: cleanPostContent
+    });
+  });
+
+  import('@/components/blocks/team/hooks').then(({ getTeamContent, isTeamTemplate, cleanTeamContent }) => {
+    blockRegistry.register('team', {
+      name: 'Team',
+      getContent: getTeamContent,
+      isValidTemplate: isTeamTemplate,
+      cleanContent: cleanTeamContent
+    });
+  });
+
+  import('@/components/blocks/testimonial/hooks').then(({ getTestimonialContent, isTestimonialTemplate, cleanTestimonialContent }) => {
+    blockRegistry.register('testimonial', {
+      name: 'Testimonial',
+      getContent: getTestimonialContent,
+      isValidTemplate: isTestimonialTemplate,
+      cleanContent: cleanTestimonialContent
+    });
+  });
+
   // Add more block types here as needed...
-  // import('@/components/blocks/cta/hooks').then(...)
 }

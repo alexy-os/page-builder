@@ -6,6 +6,14 @@ import { CenteredHeroContent, SplitHeroContent } from '@/components/blocks/hero/
 import { SplitBlogContent, GridBlogContent } from '@/components/blocks/blog/content';
 import { GridBusinessContent, SplitBusinessContent } from '@/components/blocks/business/content';
 import { CenteredCTAContent, SplitCTAContent } from '@/components/blocks/cta/content';
+import { CenteredFAQContent, SplitFAQContent } from '@/components/blocks/faq/content';
+import { GridFeaturesContent, SplitFeaturesContent } from '@/components/blocks/features/content';
+import { GridFooterContent, SplitFooterContent } from '@/components/blocks/footer/content';
+import { GridGalleryContent, SplitGalleryContent } from '@/components/blocks/gallery/content';
+import { GridPortfolioContent, SplitPortfolioContent } from '@/components/blocks/portfolio/content';
+import { CenteredPostContent, SplitPostContent } from '@/components/blocks/post/content';
+import { GridTeamContent, SplitTeamContent } from '@/components/blocks/team/content';
+import { GridTestimonialContent, SplitTestimonialContent } from '@/components/blocks/testimonial/content';
 
 // Helper function to clean content from corrupted objects (from JSON serialization)
 const cleanContentFromSession = (content: any): any => {
@@ -126,9 +134,9 @@ export function useBlockContent(): ContentAdapter {
  */
 function extractBlockTypeFromTemplateId(templateId: string): string | null {
   // For hero blocks, the templateId IS the block type
-  if (templateId.includes('Hero') || templateId.includes('hero')) {
+  /*if (templateId.includes('Hero') || templateId.includes('hero')) {
     return templateId;
-  }
+  }*/
   
   // Add logic for other block types if needed
   return templateId;
@@ -145,7 +153,7 @@ function getDefaultContent(templateId: string): any {
   }
 
   // Fallback to hardcoded logic for backward compatibility
-  // Hero blocks
+  /*// Hero blocks
   if (templateId.startsWith('centered')) {
     const key = templateId as keyof typeof CenteredHeroContent;
     return CenteredHeroContent[key] || null;
@@ -168,7 +176,7 @@ function getDefaultContent(templateId: string): any {
   }
 
   // CTA blocks
-  /*if (templateId.startsWith('centeredCTA')) { 
+  if (templateId.startsWith('centeredCTA')) { 
     const key = templateId as keyof typeof CenteredCTAContent;
     return CenteredCTAContent[key] || null;
   }
@@ -284,6 +292,158 @@ export function useCTAContent() {
     // Helper method to check if content is coming from session
     isContentFromSession: (templateId: string) => {
       // Check if there's session content for this template
+      return contentAdapter.hasCustomContent(templateId);
+    }
+  };
+}
+
+export function useFAQContent() {
+  const contentAdapter = useBlockContent();
+
+  return {
+    ...contentAdapter,
+    getCenteredFAQContent: (templateId: keyof typeof CenteredFAQContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || CenteredFAQContent[templateId];
+    },
+    getSplitFAQContent: (templateId: keyof typeof SplitFAQContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || SplitFAQContent[templateId];
+    },
+    isContentFromSession: (templateId: string) => {
+      return contentAdapter.hasCustomContent(templateId);
+    }
+  }
+}
+
+export function useFeaturesContent() {
+  const contentAdapter = useBlockContent();
+
+  return {
+    ...contentAdapter,
+    getGridFeaturesContent: (templateId: keyof typeof GridFeaturesContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || GridFeaturesContent[templateId];
+    },
+    getSplitFeaturesContent: (templateId: keyof typeof SplitFeaturesContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || SplitFeaturesContent[templateId];
+    },
+    isContentFromSession: (templateId: string) => {
+      return contentAdapter.hasCustomContent(templateId);
+    }
+  };
+}
+
+export function useFooterContent() {
+  const contentAdapter = useBlockContent();
+
+  return {
+    ...contentAdapter,
+    getGridFooterContent: (templateId: keyof typeof GridFooterContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || GridFooterContent[templateId];
+    },
+    getSplitFooterContent: (templateId: keyof typeof SplitFooterContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || SplitFooterContent[templateId];
+    },
+    isContentFromSession: (templateId: string) => {
+      return contentAdapter.hasCustomContent(templateId);
+    }
+  };
+}
+
+export function useGalleryContent() {
+  const contentAdapter = useBlockContent();
+
+  return {
+    ...contentAdapter,
+    getGridGalleryContent: (templateId: keyof typeof GridGalleryContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || GridGalleryContent[templateId];
+    },
+    getSplitGalleryContent: (templateId: keyof typeof SplitGalleryContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || SplitGalleryContent[templateId];
+    },
+    isContentFromSession: (templateId: string) => {
+      return contentAdapter.hasCustomContent(templateId);
+    }
+  };
+}
+
+export function usePortfolioContent() {
+  const contentAdapter = useBlockContent();
+
+  return {
+    ...contentAdapter,
+    getGridPortfolioContent: (templateId: keyof typeof GridPortfolioContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || GridPortfolioContent[templateId];
+    },
+    getSplitPortfolioContent: (templateId: keyof typeof SplitPortfolioContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || SplitPortfolioContent[templateId];
+    },
+    isContentFromSession: (templateId: string) => {
+      return contentAdapter.hasCustomContent(templateId);
+    }
+  };
+}
+
+export function usePostContent() {
+  const contentAdapter = useBlockContent();
+
+  return {
+    ...contentAdapter,
+    getCenteredPostContent: (templateId: keyof typeof CenteredPostContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || CenteredPostContent[templateId];
+    },
+    getSplitPostContent: (templateId: keyof typeof SplitPostContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || SplitPostContent[templateId];
+    },
+    isContentFromSession: (templateId: string) => {
+      return contentAdapter.hasCustomContent(templateId);
+    }
+  };
+}
+
+export function useTeamContent() {
+  const contentAdapter = useBlockContent();
+
+  return {
+    ...contentAdapter,
+    getGridTeamContent: (templateId: keyof typeof GridTeamContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || GridTeamContent[templateId];
+    },
+    getSplitTeamContent: (templateId: keyof typeof SplitTeamContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || SplitTeamContent[templateId];
+    },
+    isContentFromSession: (templateId: string) => {
+      return contentAdapter.hasCustomContent(templateId);
+    }
+  };
+}
+
+export function useTestimonialContent() {
+  const contentAdapter = useBlockContent();
+
+  return {
+    ...contentAdapter,
+    getGridTestimonialContent: (templateId: keyof typeof GridTestimonialContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || GridTestimonialContent[templateId];
+    },
+    getSplitTestimonialContent: (templateId: keyof typeof SplitTestimonialContent, blockId?: string) => {
+      const content = contentAdapter.getContent(String(templateId), blockId);
+      return content || SplitTestimonialContent[templateId];
+    },
+    isContentFromSession: (templateId: string) => {
       return contentAdapter.hasCustomContent(templateId);
     }
   };

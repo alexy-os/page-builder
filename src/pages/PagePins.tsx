@@ -80,8 +80,8 @@ export default function PagePins() {
     { id: 'hero', name: 'Hero' },
     { id: 'blog', name: 'Blog' },
     { id: 'business', name: 'Business' },
-    { id: 'cta', name: 'CTA' },
-    { id: 'faq', name: 'FAQ' },
+    { id: 'CTA', name: 'CTA' },
+    { id: 'FAQ', name: 'FAQ' },
     { id: 'features', name: 'Features' },
     { id: 'footer', name: 'Footer' },
     { id: 'gallery', name: 'Gallery' },
@@ -100,7 +100,6 @@ export default function PagePins() {
   const getFilteredBlocks = () => {
     if (activeCategory) {
       return allTemplates.filter(template => {
-        // Фильтруем по префиксу ID блока
         return template.id.startsWith(activeCategory) || 
                template.id.includes(activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1));
       });
