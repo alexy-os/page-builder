@@ -1,12 +1,9 @@
 // Import built-in template objects and examples from @ui8kit/blocks library
 import { 
   GridBusiness,
-  SplitBusiness,
-  type GridBusinessData,
-  type SplitBusinessData
+  SplitBusiness
 } from "@ui8kit/blocks";
 
-import React from "react";
 import { useBusinessContent } from "@/hooks/useBlockContent";
 
 /**
@@ -184,6 +181,9 @@ const SplitBusinessAboutCustom = ({ content: providedContent, blockId }: Content
     />
   );
 };
+
+// Export the base components
+export { GridBusiness, SplitBusiness };
 
 // Export functions that match the pattern from GitHub examples
 export const GridBusinessCardsGalleryExample = GridBusinessCardsGalleryCustom;
