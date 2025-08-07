@@ -9,19 +9,131 @@ import {
   Database,
   Cloud,
   Smartphone,
-  Target,
-  Award,
+  Target, 
+  Award, 
+  Globe,
   Zap,
-  Clock,
-  DollarSign,
   Rocket,
-  Globe
+  Clock,
+  DollarSign
 } from "lucide-react";
 
-// ===== GRID BUSINESS CONTENT =====
+// ===== TYPE DEFINITIONS =====
 
-// Sample business cards data
-const sampleBusinessCards = [
+interface BusinessCard {
+  id: string;
+  title: string;
+  description: string;
+  lucideIcon?: any;
+  colSpan?: number;
+  rowSpan?: number;
+}
+
+interface BusinessSolution {
+  id: string;
+  title: string;
+  description: string;
+  lucideIcon?: any;
+  stats?: {
+    value: string;
+    label: string;
+  };
+  image?: {
+    src: string;
+    alt: string;
+  };
+}
+
+interface PricingPlan {
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+  monthlyPrice?: string;
+  yearlyPrice?: string;
+  features: string[];
+  buttonText: string;
+  buttonVariant?: "default" | "outline" | "secondary";
+  isPopular?: boolean;
+}
+
+interface CareerOpening {
+  id: string;
+  title: string;
+  location: string;
+  department: string;
+  type: string;
+  salary?: string;
+}
+
+interface BusinessMetric {
+  id: string;
+  value: string;
+  label: string;
+  change?: string;
+  lucideIcon?: any;
+}
+
+interface BusinessFeature {
+  id: string;
+  title: string;
+  description: string;
+  lucideIcon?: any;
+}
+
+interface BusinessTestimonial {
+  id: string;
+  quote: string;
+  author: {
+    name: string;
+    role: string;
+    company: string;
+    avatar?: string;
+  };
+  rating?: number;
+}
+
+export interface GridBusinessData {
+  badge?: string;
+  promo?: string;
+  title: string;
+  description: string;
+  buttonText?: string;
+  secondaryButtonText?: string;
+  cards?: BusinessCard[];
+  solutions?: BusinessSolution[];
+  plans?: PricingPlan[];
+  openings?: CareerOpening[];
+  _showYearlyToggle?: boolean;
+}
+
+export interface SplitBusinessData {
+  badge?: string;
+  title: string;
+  subtitle?: string;
+  description: string;
+  buttonText?: string;
+  secondaryButtonText?: string;
+  metrics?: BusinessMetric[];
+  features?: BusinessFeature[];
+  testimonials?: BusinessTestimonial[];
+  cards?: BusinessFeature[];
+  stats?: {
+    clients?: string;
+    projects?: string;
+    satisfaction?: string;
+    years?: string;
+  };
+  image?: {
+    src: string;
+    alt: string;
+  };
+}
+
+// ===== CONTENT DATA =====
+
+// Sample business cards
+const sampleBusinessCards: BusinessCard[] = [
   {
     id: "1",
     title: "Advanced Analytics",
@@ -62,8 +174,7 @@ const sampleBusinessCards = [
   }
 ];
 
-// Sample solutions data
-const sampleSolutions = [
+const sampleSolutions: BusinessSolution[] = [
   {
     id: "1",
     title: "Enterprise Resource Planning",
@@ -96,8 +207,7 @@ const sampleSolutions = [
   }
 ];
 
-// Sample pricing plans
-const samplePricingPlans = [
+const samplePricingPlans: PricingPlan[] = [
   {
     id: "starter",
     name: "Starter",
@@ -113,7 +223,7 @@ const samplePricingPlans = [
       "Mobile app access"
     ],
     buttonText: "Get Started",
-    buttonVariant: "outline" as const
+    buttonVariant: "outline"
   },
   {
     id: "professional",
@@ -131,7 +241,7 @@ const samplePricingPlans = [
       "Custom integrations"
     ],
     buttonText: "Choose Professional",
-    buttonVariant: "default" as const,
+    buttonVariant: "default",
     isPopular: true
   },
   {
@@ -151,12 +261,11 @@ const samplePricingPlans = [
       "Dedicated account manager"
     ],
     buttonText: "Contact Sales",
-    buttonVariant: "outline" as const
+    buttonVariant: "outline"
   }
 ];
 
-// Sample career openings
-const sampleCareerOpenings = [
+const sampleCareerOpenings: CareerOpening[] = [
   {
     id: "1",
     title: "Senior Software Engineer",
@@ -207,46 +316,7 @@ const sampleCareerOpenings = [
   }
 ];
 
-// Grid Business Content variants
-export const GridBusinessContent = {
-  cardsGallery: {
-    promo: "Our Services",
-    title: "Comprehensive business solutions for modern enterprises",
-    description: "We provide cutting-edge technology solutions that help businesses scale, optimize operations, and achieve their strategic goals.",
-    cards: sampleBusinessCards
-  },
-  
-  solutionsGrid: {
-    badge: "Solutions",
-    title: "Transform your business with our proven solutions",
-    description: "Our enterprise-grade solutions are designed to help you streamline operations, improve efficiency, and drive growth.",
-    solutions: sampleSolutions
-  },
-  
-  pricing: {
-    title: "Choose the perfect plan for your business",
-    description: "Flexible pricing options designed to scale with your business needs. Start free and upgrade as you grow.",
-    plans: samplePricingPlans
-  },
-  
-  pricingYear: {
-    title: "Save more with annual billing",
-    description: "Get the same great features at a discounted rate when you choose annual billing. Save up to 20% on all plans.",
-    plans: samplePricingPlans
-  },
-  
-  career: {
-    title: "Join our growing team",
-    description: "We're always looking for talented individuals to join our mission of building innovative solutions that make a difference.",
-    buttonText: "View All Openings",
-    openings: sampleCareerOpenings
-  }
-};
-
-// ===== SPLIT BUSINESS CONTENT =====
-
-// Sample metrics for split business
-const sampleMetrics = [
+const sampleMetrics: BusinessMetric[] = [
   {
     id: "1",
     value: "500+",
@@ -276,8 +346,7 @@ const sampleMetrics = [
   }
 ];
 
-// Sample features for split business
-const sampleFeatures = [
+const sampleFeatures: BusinessFeature[] = [
   {
     id: "1",
     title: "Advanced Analytics",
@@ -304,8 +373,7 @@ const sampleFeatures = [
   }
 ];
 
-// Sample testimonials
-const sampleTestimonials = [
+const sampleTestimonials: BusinessTestimonial[] = [
   {
     id: "1",
     quote: "This platform has transformed how we manage our business operations. The efficiency gains have been remarkable, and our team productivity has increased by 40%.",
@@ -319,8 +387,7 @@ const sampleTestimonials = [
   }
 ];
 
-// Sample company values
-const sampleCompanyValues = [
+const sampleCompanyValues: BusinessFeature[] = [
   {
     id: "1",
     title: "Innovation First",
@@ -347,9 +414,64 @@ const sampleCompanyValues = [
   }
 ];
 
-// Split Business Content variants
-export const SplitBusinessContent = {
-  solutions: {
+// ===== GRID BUSINESS CONTENT =====
+
+interface GridBusinessDataContent {
+  gridBusinessCardsGallery: GridBusinessData;
+  gridBusinessSolutionsGrid: GridBusinessData;
+  gridBusinessPricing: GridBusinessData;
+  gridBusinessPricingYear: GridBusinessData;
+  gridBusinessCareer: GridBusinessData;
+}
+
+export const GridBusinessContent: GridBusinessDataContent = {
+  gridBusinessCardsGallery: {
+    promo: "Our Services",
+    title: "Comprehensive business solutions for modern enterprises",
+    description: "We provide cutting-edge technology solutions that help businesses scale, optimize operations, and achieve their strategic goals.",
+    cards: sampleBusinessCards
+  },
+
+  gridBusinessSolutionsGrid: {
+    badge: "Solutions",
+    title: "Transform your business with our proven solutions",
+    description: "Our enterprise-grade solutions are designed to help you streamline operations, improve efficiency, and drive growth.",
+    solutions: sampleSolutions
+  },
+
+  gridBusinessPricing: {
+    title: "Choose the perfect plan for your business",
+    description: "Flexible pricing options designed to scale with your business needs. Start free and upgrade as you grow.",
+    plans: samplePricingPlans
+  },
+
+  gridBusinessPricingYear: {
+    title: "Save more with annual billing",
+    description: "Get the same great features at a discounted rate when you choose annual billing. Save up to 20% on all plans.",
+    plans: samplePricingPlans,
+    _showYearlyToggle: true
+  },
+
+  gridBusinessCareer: {
+    title: "Join our growing team",
+    description: "We're always looking for talented individuals to join our mission of building innovative solutions that make a difference.",
+    buttonText: "View All Openings",
+    openings: sampleCareerOpenings
+  }
+};
+
+// ===== SPLIT BUSINESS CONTENT =====
+
+interface SplitBusinessDataContent {
+  splitBusinessSolutions: SplitBusinessData;
+  splitBusinessMetrics: SplitBusinessData;
+  splitBusinessTestimonial: SplitBusinessData;
+  splitBusinessFeatures: SplitBusinessData;
+  splitBusinessAbout: SplitBusinessData;
+}
+
+export const SplitBusinessContent: SplitBusinessDataContent = {
+  splitBusinessSolutions: {
     badge: "Enterprise Solutions",
     title: "Accelerate your business growth with our proven solutions",
     description: "We help enterprises streamline operations, reduce costs, and drive innovation through cutting-edge technology solutions tailored to your specific needs.",
@@ -361,8 +483,8 @@ export const SplitBusinessContent = {
       alt: "Business analytics dashboard"
     }
   },
-  
-  metrics: {
+
+  splitBusinessMetrics: {
     badge: "Proven Results",
     title: "Delivering measurable business impact",
     subtitle: "Trusted by industry leaders worldwide",
@@ -375,8 +497,8 @@ export const SplitBusinessContent = {
       years: "15+"
     }
   },
-  
-  testimonial: {
+
+  splitBusinessTestimonial: {
     badge: "Customer Success",
     title: "What our clients say about us",
     description: "Don't just take our word for it. Hear from the business leaders who have transformed their operations with our solutions.",
@@ -387,8 +509,8 @@ export const SplitBusinessContent = {
       alt: "Happy business team"
     }
   },
-  
-  features: {
+
+  splitBusinessFeatures: {
     badge: "Platform Features",
     title: "Everything you need to succeed in one platform",
     description: "Our comprehensive business platform provides all the tools and features you need to manage, grow, and scale your operations effectively.",
@@ -396,8 +518,8 @@ export const SplitBusinessContent = {
     secondaryButtonText: "View All Features",
     features: sampleFeatures
   },
-  
-  about: {
+
+  splitBusinessAbout: {
     badge: "Our Story",
     title: "Building the future of business technology",
     subtitle: "Since 2008, we've been at the forefront of innovation",
