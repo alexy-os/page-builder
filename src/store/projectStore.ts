@@ -44,6 +44,10 @@ interface ProjectStore {
   // Utils
   exportProject: () => string;
   importProject: (jsonData: string) => boolean;
+  
+  // Migration
+  forceUnifiedNamingMigration: () => boolean;
+  isUnifiedFormat: () => boolean;
 }
 
 const storage = SimpleStorage.getInstance();
@@ -198,6 +202,20 @@ export const useProjectStore = create<ProjectStore>()(
           set({ project });
         }
         return success;
+      },
+      
+      // Migration
+      forceUnifiedNamingMigration: () => {
+        const success = storage.forceUnifiedNamingMigration();
+        if (success) {
+          const project = storage.getProject();
+          set({ project });
+        }
+        return success;
+      },
+      
+      isUnifiedFormat: () => {
+        return storage.isUnifiedFormat();
       },
     }),
     {

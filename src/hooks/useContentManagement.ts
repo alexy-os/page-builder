@@ -29,19 +29,11 @@ export function useContentManagement() {
     }
 
     try {
-      // Extract blockId from savedBlockId format: "block-heroSplitMedia-1754303683138"
-      const parts = savedBlockId.split('-');
-      if (parts.length >= 3) {
-        const blockType = parts[1]; // "heroSplitMedia" 
-        const timestamp = parts[2]; // "1754303683138"
-        const blockId = `${blockType}_${timestamp}`;
-        
-        // Save the custom content
-        updateBlockData(blockId, blockType, customContent);
-        
-        console.log('✅ Custom content saved:', { blockId, blockType, content: customContent });
-        return true;
-      }
+      // Since savedBlockId now equals templateId directly, use it as both blockId and blockType
+      updateBlockData(savedBlockId, savedBlockId, customContent);
+      
+      console.log('✅ Custom content saved:', { blockId: savedBlockId, blockType: savedBlockId, content: customContent });
+      return true;
     } catch (error) {
       console.error('Error saving custom content:', error);
     }
@@ -122,11 +114,11 @@ function ExampleComponent() {
       // ... other content fields
     };
     
-    saveCustomHeroContent("block-heroSplitMedia-1754303683138", customContent);
+    saveCustomHeroContent("heroSplitMedia", customContent);
   };
 
   // Get content for rendering (custom or default)
-  const heroContent = getBlockContent("splitHeroMedia", "block-heroSplitMedia-1754303683138");
+  const heroContent = getBlockContent("heroSplitMedia", "heroSplitMedia");
   
   // List all blocks with custom content
   const customBlocks = listCustomContentBlocks();

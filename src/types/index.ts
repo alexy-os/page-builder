@@ -7,8 +7,8 @@ export interface Block {
 
 // New interface for storing block content data
 export interface BlockData {
-  id: string;  // ID блока (совпадает с SavedBlock.id без префикса "block-")
-  type: string; // тип блока (например, "heroSplitMedia")
+  id: string;  // ID блока (теперь равен templateId без префиксов и временных меток)
+  type: string; // тип блока (например, "heroSplitMedia") - равен templateId
   content: any; // данные контента блока
 }
 

@@ -1,5 +1,6 @@
 // Simplified storage system - only sessionStorage, immediate operations
 import type { ProjectState, Collection, SavedBlock, CustomTheme, BlockData } from '@/types';
+import { migrateProjectToUnifiedNaming, needsMigration, validateUnifiedFormat } from './migration';
 
 const PROJECT_KEY = 'buildy_project';
 const DARK_MODE_KEY = 'buildy_darkmode';
@@ -82,7 +83,18 @@ export class SimpleStorage {
         this.saveProject(defaultProject);
         return defaultProject;
       }
-      return JSON.parse(data);
+      
+      let project = JSON.parse(data);
+      
+      // Auto-migrate to unified naming format if needed
+      if (needsMigration(project)) {
+        console.log('🔄 Auto-migrating project to unified naming format...');
+        project = migrateProjectToUnifiedNaming(project);
+        this.saveProject(project);
+        console.log('✅ Project migrated successfully');
+      }
+      
+      return project;
     } catch (error) {
       console.warn('Error loading project, creating new:', error);
       const defaultProject = createDefaultProject();
@@ -244,10 +256,24 @@ export class SimpleStorage {
   // Import/Export
   exportProject(): string {
     const project = this.getProject();
+    
+    // Ensure all savedBlocks use templateId format (normalize on export)
+    const normalizedProject = {
+      ...project,
+      savedBlocks: project.savedBlocks.map(block => ({
+        ...block,
+        id: block.templateId  // Ensure ID is the templateId
+      })),
+      data: project.data.map(blockData => ({
+        ...blockData,
+        id: blockData.type  // Ensure data ID matches type (templateId)
+      }))
+    };
+    
     const exportData = {
-      project,
+      project: normalizedProject,
       exportedAt: new Date().toISOString(),
-      version: '1.0.0',
+      version: '2.0.0',  // Increment version for new format
     };
     return JSON.stringify(exportData, null, 2);
   }
@@ -258,8 +284,27 @@ export class SimpleStorage {
       
       // New format: full project structure
       if (data.project) {
-        console.log('Importing new format with project structure');
-        this.saveProject(data.project);
+        console.log('Importing project structure, version:', data.version || 'unknown');
+        
+        let importProject = data.project;
+        
+        // Handle version 1.0.0 format (old format with prefixed IDs)
+        if (!data.version || data.version === '1.0.0') {
+          console.log('Converting from old format to new format');
+          importProject = {
+            ...data.project,
+            savedBlocks: data.project.savedBlocks?.map((block: any) => ({
+              ...block,
+              id: block.templateId  // Convert old format to new
+            })) || [],
+            data: data.project.data?.map((blockData: any) => ({
+              ...blockData,
+              id: blockData.type  // Ensure data ID matches type
+            })) || []
+          };
+        }
+        
+        this.saveProject(importProject);
         return true;
       }
       
@@ -278,8 +323,20 @@ export class SimpleStorage {
         // Add new collections to existing project
         currentProject.collections = [...currentProject.collections, ...newCollections];
         
-        // Note: Legacy format doesn't have savedBlocks or data, 
-        // so we can't import those - user will need to re-save blocks
+        // Import savedBlocks if available and convert old format to new
+        if (data.savedBlocks && Array.isArray(data.savedBlocks)) {
+          const existingSavedBlockIds = new Set(currentProject.savedBlocks.map(b => b.id));
+          data.savedBlocks.forEach((block: any) => {
+            if (block.id && block.templateId && !existingSavedBlockIds.has(block.templateId)) {
+              // Convert old block ID format to new format (use templateId directly)
+              const normalizedBlock = {
+                ...block,
+                id: block.templateId  // Use templateId as the new ID
+              };
+              currentProject.savedBlocks.push(normalizedBlock);
+            }
+          });
+        }
         
         this.saveProject(currentProject);
         return true;
@@ -341,18 +398,33 @@ export class SimpleStorage {
 
   // Helper method to get content for a block by savedBlock ID
   getContentForSavedBlock(savedBlockId: string): any {
-    // Extract the actual block ID from savedBlock ID
-    // "block-heroSplitMedia-1754303683138" -> "heroSplitMedia_1754303683138"
-    const parts = savedBlockId.split('-');
-    if (parts.length >= 3) {
-      const blockType = parts[1]; // "heroSplitMedia"
-      const timestamp = parts[2]; // "1754303683138"
-      const blockId = `${blockType}_${timestamp}`;
-      
-      const blockData = this.getBlockDataById(blockId, blockType);
-      return blockData?.content || null;
+    // Since savedBlockId now equals templateId directly, use it as both blockId and blockType
+    const blockData = this.getBlockDataById(savedBlockId, savedBlockId);
+    return blockData?.content || null;
+  }
+
+  // Force migration to unified naming (for manual triggering)
+  forceUnifiedNamingMigration(): boolean {
+    try {
+      const project = this.getProject();
+      const migratedProject = migrateProjectToUnifiedNaming(project);
+      this.saveProject(migratedProject);
+      console.log('✅ Forced migration completed successfully');
+      return true;
+    } catch (error) {
+      console.error('❌ Migration failed:', error);
+      return false;
     }
-    return null;
+  }
+
+  // Check if project is in unified format
+  isUnifiedFormat(): boolean {
+    try {
+      const project = this.getProject();
+      return validateUnifiedFormat(project);
+    } catch {
+      return false;
+    }
   }
 
   // Statistics for debugging
@@ -368,7 +440,8 @@ export class SimpleStorage {
       customThemesCount: project.theme.customThemes.length,
       storageType: 'SessionStorage',
       lastSync: new Date(project.metadata.lastModified).toLocaleTimeString(),
-      memoryUsage: Math.round(JSON.stringify(project).length / 1024) // KB
+      memoryUsage: Math.round(JSON.stringify(project).length / 1024), // KB
+      isUnifiedFormat: this.isUnifiedFormat()
     };
   }
 } 

@@ -70,13 +70,10 @@ export function useBlockContent(): ContentAdapter {
 
     // PRIORITY 2: If blockId is provided, try to get specific custom content
     if (blockId) {
-      // For saved blocks, extract the type from templateId
-      const blockType = extractBlockTypeFromTemplateId(templateId);
-      if (blockType) {
-        const customContent = getBlockDataById(blockId, blockType);
-        if (customContent?.content) {
-          return customContent.content;
-        }
+      // Since blockId now equals templateId, use it directly
+      const customContent = getBlockDataById(blockId, blockId);
+      if (customContent?.content) {
+        return customContent.content;
       }
       
       // Try alternative method using savedBlock ID format
