@@ -1,5 +1,5 @@
 // CTA content data
-import { ArrowRight, Check, Users, Shield, Zap, Play, Star } from "lucide-react";
+import { ArrowRight, Check, Users, Shield, Zap } from "lucide-react";
 
 // Centered CTA data
 export const sampleCTASimpleData = {
