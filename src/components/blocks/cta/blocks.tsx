@@ -8,7 +8,6 @@ import {
 
 import React from "react";
 import { useCTAContent } from "@/hooks/useBlockContent";
-import type { Template } from "@/types";
 
 /**
  * Custom Data for CTA

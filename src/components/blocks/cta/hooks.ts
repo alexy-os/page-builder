@@ -1,6 +1,9 @@
 // CTA-specific content management hooks
 import { CenteredCTAContent, SplitCTAContent } from './content';
 
+// Export content objects for use in useBlockContent
+export { CenteredCTAContent, SplitCTAContent };
+
 export interface CTAContentHooks {
   getCenteredCTAContent: (templateId: keyof typeof CenteredCTAContent) => any;
   getSplitCTAContent: (templateId: keyof typeof SplitCTAContent) => any;

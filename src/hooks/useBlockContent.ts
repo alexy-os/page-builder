@@ -267,19 +267,19 @@ export function useCTAContent() {
   
   return {
     ...contentAdapter,
-    // Type-safe methods for CTA blocks with session priority
-    getCenteredCTAContent: (templateId: keyof typeof CenteredCTAContent, blockId?: string) => {
-      // Use the smart content adapter which checks session first
-      const content = contentAdapter.getContent(templateId, blockId);
-      // If nothing found, fallback to static content (should rarely happen now)
-      return content || CenteredCTAContent[templateId];
-    },
-    getSplitCTAContent: (templateId: keyof typeof SplitCTAContent, blockId?: string) => {
-      // Use the smart content adapter which checks session first  
-      const content = contentAdapter.getContent(templateId, blockId);
-      // If nothing found, fallback to static content (should rarely happen now)
-      return content || SplitCTAContent[templateId];
-    },
+      // Type-safe methods for CTA blocks with session priority
+  getCenteredCTAContent: (templateId: keyof typeof CenteredCTAContent, blockId?: string) => {
+    // Use the smart content adapter which checks session first
+    const content = contentAdapter.getContent(String(templateId), blockId);
+    // If nothing found, fallback to static content (should rarely happen now)
+    return content || CenteredCTAContent[templateId];
+  },
+  getSplitCTAContent: (templateId: keyof typeof SplitCTAContent, blockId?: string) => {
+    // Use the smart content adapter which checks session first  
+    const content = contentAdapter.getContent(String(templateId), blockId);
+    // If nothing found, fallback to static content (should rarely happen now)
+    return content || SplitCTAContent[templateId];
+  },
     
     // Helper method to check if content is coming from session
     isContentFromSession: (templateId: string) => {
