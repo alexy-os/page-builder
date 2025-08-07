@@ -1,13 +1,12 @@
 // Import built-in template objects and examples from @ui8kit/blocks library
 import { 
   CenteredCTA,
-  SplitCTA,
-  centeredCTATemplates,
-  splitCTATemplates
+  SplitCTA
 } from "@ui8kit/blocks";
 
 import React from "react";
 import { useCTAContent } from "@/hooks/useBlockContent";
+import type { Template } from "@/types";
 
 /**
  * Custom Data for CTA
@@ -164,6 +163,85 @@ const splitCTACustom: Record<string, React.ComponentType<ContentProps>> = {
   splitCTAWithFeatures: SplitCTAWithFeaturesCustom
 };
 
+// Define our own templates since we can't import them from @ui8kit/blocks
+const centeredCTATemplates: Record<string, Template> = {
+  centeredCTANewsletter: {
+    id: "centeredCTANewsletter",
+    name: "Newsletter CTA",
+    category: "cta",
+    description: "Centered CTA for newsletter subscription",
+    component: CenteredCTANewsletterCustom,
+    tags: ["cta", "centered", "newsletter"],
+    preview: "/previews/cta/centered-newsletter.jpg"
+  },
+  centeredCTASimple: {
+    id: "centeredCTASimple",
+    name: "Simple CTA",
+    category: "cta",
+    description: "Simple centered call-to-action",
+    component: CenteredCTASimpleCustom,
+    tags: ["cta", "centered", "simple"],
+    preview: "/previews/cta/centered-simple.jpg"
+  },
+  centeredCTAWithFeatures: {
+    id: "centeredCTAWithFeatures",
+    name: "CTA with Features",
+    category: "cta",
+    description: "Centered CTA showcasing key features",
+    component: CenteredCTAWithFeaturesCustom,
+    tags: ["cta", "centered", "features"],
+    preview: "/previews/cta/centered-features.jpg"
+  },
+  centeredCTATestimonial: {
+    id: "centeredCTATestimonial",
+    name: "CTA with Testimonial",
+    category: "cta",
+    description: "Centered CTA with customer testimonial",
+    component: CenteredCTATestimonialCustom,
+    tags: ["cta", "centered", "testimonial"],
+    preview: "/previews/cta/centered-testimonial.jpg"
+  }
+};
+
+const splitCTATemplates: Record<string, Template> = {
+  splitCTAAppDownload: {
+    id: "splitCTAAppDownload",
+    name: "App Download CTA",
+    category: "cta",
+    description: "Split layout for mobile app download",
+    component: SplitCTAAppDownloadCustom,
+    tags: ["cta", "split", "app", "download"],
+    preview: "/previews/cta/split-app-download.jpg"
+  },
+  splitCTAContact: {
+    id: "splitCTAContact",
+    name: "Contact CTA",
+    category: "cta",
+    description: "Split layout for contact information",
+    component: SplitCTAContactCustom,
+    tags: ["cta", "split", "contact"],
+    preview: "/previews/cta/split-contact.jpg"
+  },
+  splitCTANewsletter: {
+    id: "splitCTANewsletter",
+    name: "Newsletter Split CTA",
+    category: "cta",
+    description: "Split layout for newsletter subscription",
+    component: SplitCTANewsletterCustom,
+    tags: ["cta", "split", "newsletter"],
+    preview: "/previews/cta/split-newsletter.jpg"
+  },
+  splitCTAWithFeatures: {
+    id: "splitCTAWithFeatures",
+    name: "Split CTA with Features",
+    category: "cta",
+    description: "Split layout showcasing features",
+    component: SplitCTAWithFeaturesCustom,
+    tags: ["cta", "split", "features"],
+    preview: "/previews/cta/split-features.jpg"
+  }
+};
+
 // Export all CTA templates following hero pattern
 export const allCTATemplates = [
   ...Object.keys(centeredCTATemplates).map(key => {
@@ -183,32 +261,3 @@ export const allCTATemplates = [
     };
   })
 ];
-
-// Export the base components
-export { CenteredCTA, SplitCTA };
-
-// Export functions that match the pattern from GitHub examples
-export const CenteredCTANewsletterExample = CenteredCTANewsletterCustom;
-export const CenteredCTASimpleExample = CenteredCTASimpleCustom;
-export const CenteredCTAWithFeaturesExample = CenteredCTAWithFeaturesCustom;
-export const CenteredCTATestimonialExample = CenteredCTATestimonialCustom;
-
-export const SplitCTAAppDownloadExample = SplitCTAAppDownloadCustom;
-export const SplitCTAContactExample = SplitCTAContactCustom;
-export const SplitCTANewsletterExample = SplitCTANewsletterCustom;
-export const SplitCTAWithFeaturesExample = SplitCTAWithFeaturesCustom;
-
-// Export all examples
-export const centeredCTAExamples = {
-  newsletter: CenteredCTANewsletterExample,
-  simple: CenteredCTASimpleExample,
-  withFeatures: CenteredCTAWithFeaturesExample,
-  testimonial: CenteredCTATestimonialExample
-};
-
-export const splitCTAExamples = {
-  appDownload: SplitCTAAppDownloadExample,
-  contact: SplitCTAContactExample,
-  newsletter: SplitCTANewsletterExample,
-  withFeatures: SplitCTAWithFeaturesExample
-};
