@@ -1,3 +1,27 @@
-export { GridBusiness, SplitBusiness, allBusinessTemplates } from './blocks';
-export { GridBusinessContent, SplitBusinessContent, type GridBusinessData, type SplitBusinessData } from './content';
-export { getBusinessContent, isBusinessTemplate, getBusinessContentByVariant } from './hooks';
+export { 
+  GridBusiness, 
+  SplitBusiness,
+  GridBusinessCardsGalleryExample,
+  GridBusinessSolutionsGridExample,
+  GridBusinessPricingExample,
+  GridBusinessPricingYearExample,
+  GridBusinessCareerExample,
+  SplitBusinessSolutionsExample,
+  SplitBusinessMetricsExample,
+  SplitBusinessTestimonialExample,
+  SplitBusinessFeaturesExample,
+  SplitBusinessAboutExample,
+  gridBusinessExamples,
+  splitBusinessExamples
+} from './blocks';
+
+export { 
+  sampleBusinessCards,
+  sampleSolutions,
+  samplePricingPlans,
+  sampleCareerOpenings,
+  sampleMetrics,
+  sampleFeatures,
+  sampleTestimonials,
+  sampleCompanyValues 
+} from './content';
