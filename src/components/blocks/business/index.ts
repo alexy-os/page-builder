@@ -26,3 +26,8 @@ export {
   sampleTestimonials,
   sampleCompanyValues 
 } from './content';
+
+export { 
+  GridBusinessContent,
+  SplitBusinessContent 
+} from './hooks';
