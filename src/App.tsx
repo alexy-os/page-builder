@@ -5,7 +5,6 @@ import { Provider as JotaiProvider } from 'jotai';
 import PagePins from "./pages/PagePins";
 import PageBuilder from "./pages/PageBuilder";
 import { useThemeStore, useProjectStore } from "./store";
-import { HeroBlocks } from "./Blocks";
 
 function App() {
   // Initialize stores
@@ -24,7 +23,6 @@ function App() {
         <Routes>
           <Route path="/" element={<PagePins />} />
           <Route path="/builder" element={<PageBuilder />} />
-          <Route path="/blocks" element={<HeroBlocks />} />
         </Routes>
       </Router>
     </JotaiProvider>

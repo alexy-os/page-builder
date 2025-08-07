@@ -1,6 +1,5 @@
 // Simplified storage system - only sessionStorage, immediate operations
 import type { ProjectState, Collection, SavedBlock, CustomTheme, BlockData } from '@/types';
-import { migrateProjectToUnifiedNaming, needsMigration, validateUnifiedFormat } from './migration';
 
 const PROJECT_KEY = 'buildy_project';
 const DARK_MODE_KEY = 'buildy_darkmode';
@@ -85,14 +84,6 @@ export class SimpleStorage {
       }
       
       let project = JSON.parse(data);
-      
-      // Auto-migrate to unified naming format if needed
-      if (needsMigration(project)) {
-        console.log('🔄 Auto-migrating project to unified naming format...');
-        project = migrateProjectToUnifiedNaming(project);
-        this.saveProject(project);
-        console.log('✅ Project migrated successfully');
-      }
       
       return project;
     } catch (error) {
@@ -403,30 +394,6 @@ export class SimpleStorage {
     return blockData?.content || null;
   }
 
-  // Force migration to unified naming (for manual triggering)
-  forceUnifiedNamingMigration(): boolean {
-    try {
-      const project = this.getProject();
-      const migratedProject = migrateProjectToUnifiedNaming(project);
-      this.saveProject(migratedProject);
-      console.log('✅ Forced migration completed successfully');
-      return true;
-    } catch (error) {
-      console.error('❌ Migration failed:', error);
-      return false;
-    }
-  }
-
-  // Check if project is in unified format
-  isUnifiedFormat(): boolean {
-    try {
-      const project = this.getProject();
-      return validateUnifiedFormat(project);
-    } catch {
-      return false;
-    }
-  }
-
   // Statistics for debugging
   getStats() {
     const project = this.getProject();
@@ -441,7 +408,6 @@ export class SimpleStorage {
       storageType: 'SessionStorage',
       lastSync: new Date(project.metadata.lastModified).toLocaleTimeString(),
       memoryUsage: Math.round(JSON.stringify(project).length / 1024), // KB
-      isUnifiedFormat: this.isUnifiedFormat()
     };
   }
 } 
