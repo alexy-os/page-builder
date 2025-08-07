@@ -1,64 +1,57 @@
 // CTA-specific content management hooks
-import {
-  sampleCTASimpleData,
-  sampleCTAWithStatsData,
-  sampleCTAWithLogosData,
-  sampleCTAWithBackgroundData,
-  sampleCTAWithFeaturesData,
-  sampleSplitCTAWithImageData,
-  sampleSplitCTAWithStatsData,
-  sampleSplitCTAWithBackgroundData,
-  sampleSplitCTAWithFeaturesData,
-  sampleSplitCTAWithDevicesData
-} from './content';
-
-// CTA content mapping
-export const CenteredCTAContent = {
-  centeredCTASimple: sampleCTASimpleData,
-  centeredCTAWithStats: sampleCTAWithStatsData,
-  centeredCTAWithLogos: sampleCTAWithLogosData,
-  centeredCTAWithBackground: sampleCTAWithBackgroundData,
-  centeredCTAWithFeatures: sampleCTAWithFeaturesData
-};
-
-export const SplitCTAContent = {
-  splitCTAWithImage: sampleSplitCTAWithImageData,
-  splitCTAWithStats: sampleSplitCTAWithStatsData,
-  splitCTAWithBackground: sampleSplitCTAWithBackgroundData,
-  splitCTAWithFeatures: sampleSplitCTAWithFeaturesData,
-  splitCTAWithDevices: sampleSplitCTAWithDevicesData
-};
+import { CenteredCTAContent, SplitCTAContent } from './content';
 
 export interface CTAContentHooks {
-  getCenteredCTAContent: (templateId: string, blockId?: string) => any;
-  getSplitCTAContent: (templateId: string, blockId?: string) => any;
-  isContentFromSession: (templateId: string) => boolean;
+  getCenteredCTAContent: (templateId: keyof typeof CenteredCTAContent) => any;
+  getSplitCTAContent: (templateId: keyof typeof SplitCTAContent) => any;
 }
 
+// Content provider for CTA blocks
 export function getCTAContent(templateId: string): any {
-  // Check both centered and split CTA content
-  if (templateId in CenteredCTAContent) {
-    return CenteredCTAContent[templateId as keyof typeof CenteredCTAContent];
+  // Check CenteredCTA content
+  if (templateId.startsWith('centeredCTA')) {
+    const key = templateId as keyof typeof CenteredCTAContent;
+    return CenteredCTAContent[key] || null;
   }
   
-  if (templateId in SplitCTAContent) {
-    return SplitCTAContent[templateId as keyof typeof SplitCTAContent];
+  // Check SplitCTA content  
+  if (templateId.startsWith('splitCTA')) {
+    const key = templateId as keyof typeof SplitCTAContent;
+    return SplitCTAContent[key] || null;
   }
   
   return null;
 }
 
+// Check if templateId is CTA type
 export function isCTATemplate(templateId: string): boolean {
-  return templateId in CenteredCTAContent || templateId in SplitCTAContent;
+  return templateId.includes('CTA') || templateId.includes('cta');
 }
 
+// Clean content for serialization (remove React components/functions)
 export function cleanCTAContent(content: any): any {
-  if (!content) return content;
+  if (!content || typeof content !== 'object') return content;
   
-  // Clean up any dev-specific properties
   const cleaned = { ...content };
-  delete cleaned._dev;
-  delete cleaned._debug;
+  
+  // Remove React components and functions that can't be serialized
+  Object.keys(cleaned).forEach(key => {
+    const value = cleaned[key];
+    
+    // Remove React components (icons) and functions
+    if (typeof value === 'function' || 
+        (typeof value === 'object' && value?.$$typeof)) {
+      delete cleaned[key];
+    }
+    // Recursively clean nested objects
+    else if (typeof value === 'object' && value !== null) {
+      if (Array.isArray(value)) {
+        cleaned[key] = value.map(item => cleanCTAContent(item));
+      } else {
+        cleaned[key] = cleanCTAContent(value);
+      }
+    }
+  });
   
   return cleaned;
 }
