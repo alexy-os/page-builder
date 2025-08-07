@@ -5,6 +5,7 @@ import { blockRegistry } from '@/lib/blockRegistry';
 import { CenteredHeroContent, SplitHeroContent } from '@/components/blocks/hero/content';
 import { SplitBlogContent, GridBlogContent } from '@/components/blocks/blog/content';
 import { GridBusinessContent, SplitBusinessContent } from '@/components/blocks/business/hooks';
+import { CenteredCTAContent, SplitCTAContent } from '@/components/blocks/cta/hooks';
 
 // Helper function to clean content from corrupted objects (from JSON serialization)
 const cleanContentFromSession = (content: any): any => {
@@ -245,6 +246,30 @@ export function useBusinessContent() {
     // Helper method to check if content is coming from session
     isContentFromSession: (templateId: string) => {
       // Check if there's session content for this template
+      return contentAdapter.hasCustomContent(templateId);
+    }
+  };
+}
+
+export function useCTAContent() {
+  const contentAdapter = useBlockContent();
+  return {
+    ...contentAdapter,
+    getCenteredCTAContent: (templateId: keyof typeof CenteredCTAContent, blockId?: string) => {
+      const sessionData = contentAdapter.getContent(templateId, blockId);
+      if (sessionData) {
+        return sessionData;
+      }
+      return CenteredCTAContent[templateId];
+    },
+    getSplitCTAContent: (templateId: keyof typeof SplitCTAContent, blockId?: string) => {
+      const sessionData = contentAdapter.getContent(templateId, blockId);
+      if (sessionData) {
+        return sessionData;
+      }
+      return SplitCTAContent[templateId];
+    },
+    isContentFromSession: (templateId: string) => {
       return contentAdapter.hasCustomContent(templateId);
     }
   };
