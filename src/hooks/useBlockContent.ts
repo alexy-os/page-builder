@@ -4,8 +4,8 @@ import { useProjectStore } from '@/store';
 import { blockRegistry } from '@/lib/blockRegistry';
 import { CenteredHeroContent, SplitHeroContent } from '@/components/blocks/hero/content';
 import { SplitBlogContent, GridBlogContent } from '@/components/blocks/blog/content';
-import { GridBusinessContent, SplitBusinessContent } from '@/components/blocks/business/hooks';
-import { CenteredCTAContent, SplitCTAContent } from '@/components/blocks/cta/hooks';
+import { GridBusinessContent, SplitBusinessContent } from '@/components/blocks/business/content';
+import { CenteredCTAContent, SplitCTAContent } from '@/components/blocks/cta/content';
 
 // Helper function to clean content from corrupted objects (from JSON serialization)
 const cleanContentFromSession = (content: any): any => {
@@ -168,7 +168,7 @@ function getDefaultContent(templateId: string): any {
   }
 
   // CTA blocks
-  if (templateId.startsWith('centeredCTA')) {
+  /*if (templateId.startsWith('centeredCTA')) { 
     const key = templateId as keyof typeof CenteredCTAContent;
     return CenteredCTAContent[key] || null;
   }
@@ -176,7 +176,7 @@ function getDefaultContent(templateId: string): any {
   if (templateId.startsWith('splitCTA')) {
     const key = templateId as keyof typeof SplitCTAContent;
     return SplitCTAContent[key] || null;
-  }
+  }*/
   
   return null;
 }

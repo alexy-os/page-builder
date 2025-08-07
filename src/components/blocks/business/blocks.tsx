@@ -221,36 +221,3 @@ export const allBusinessTemplates = [
     };
   })
 ];
-
-// Export the base components
-export { GridBusiness, SplitBusiness };
-
-// Export functions that match the pattern from GitHub examples
-export const GridBusinessCardsGalleryExample = GridBusinessCardsGalleryCustom;
-export const GridBusinessSolutionsGridExample = GridBusinessSolutionsGridCustom;
-export const GridBusinessPricingExample = GridBusinessPricingCustom;
-export const GridBusinessPricingYearExample = GridBusinessPricingYearCustom;
-export const GridBusinessCareerExample = GridBusinessCareerCustom;
-
-export const SplitBusinessSolutionsExample = SplitBusinessSolutionsCustom;
-export const SplitBusinessMetricsExample = SplitBusinessMetricsCustom;
-export const SplitBusinessTestimonialExample = SplitBusinessTestimonialCustom;
-export const SplitBusinessFeaturesExample = SplitBusinessFeaturesCustom;
-export const SplitBusinessAboutExample = SplitBusinessAboutCustom;
-
-// Export all examples
-export const gridBusinessExamples = {
-  cardsGallery: GridBusinessCardsGalleryExample,
-  solutionsGrid: GridBusinessSolutionsGridExample,
-  pricing: GridBusinessPricingExample,
-  pricingYear: GridBusinessPricingYearExample,
-  career: GridBusinessCareerExample
-};
-
-export const splitBusinessExamples = {
-  solutions: SplitBusinessSolutionsExample,
-  metrics: SplitBusinessMetricsExample,
-  testimonial: SplitBusinessTestimonialExample,
-  features: SplitBusinessFeaturesExample,
-  about: SplitBusinessAboutExample
-};

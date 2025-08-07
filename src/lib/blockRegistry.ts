@@ -82,6 +82,15 @@ export function initializeBlockRegistry() {
     });
   });
 
+  import('@/components/blocks/cta/hooks').then(({ getCTAContent, isCTATemplate, cleanCTAContent }) => {
+    blockRegistry.register('cta', {
+      name: 'CTA',
+      getContent: getCTAContent,
+      isValidTemplate: isCTATemplate,
+      cleanContent: cleanCTAContent
+    });
+  });
+
   // Add more block types here as needed...
   // import('@/components/blocks/cta/hooks').then(...)
 }

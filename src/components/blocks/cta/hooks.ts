@@ -1,15 +1,12 @@
 // CTA-specific content management hooks
 import { CenteredCTAContent, SplitCTAContent } from './content';
 
-// Export content objects for use in useBlockContent
-export { CenteredCTAContent, SplitCTAContent };
-
 export interface CTAContentHooks {
   getCenteredCTAContent: (templateId: keyof typeof CenteredCTAContent) => any;
   getSplitCTAContent: (templateId: keyof typeof SplitCTAContent) => any;
 }
 
-// Content provider for CTA blocks
+// Content provider for cta blocks
 export function getCTAContent(templateId: string): any {
   // Check CenteredCTA content
   if (templateId.startsWith('centeredCTA')) {
@@ -26,7 +23,7 @@ export function getCTAContent(templateId: string): any {
   return null;
 }
 
-// Check if templateId is CTA type
+// Check if templateId is cta type
 export function isCTATemplate(templateId: string): boolean {
   return templateId.includes('CTA') || templateId.includes('cta');
 }
