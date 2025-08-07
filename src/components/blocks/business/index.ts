@@ -1,6 +1,7 @@
 export { 
   GridBusiness, 
   SplitBusiness,
+  allBusinessTemplates,
   GridBusinessCardsGalleryExample,
   GridBusinessSolutionsGridExample,
   GridBusinessPricingExample,

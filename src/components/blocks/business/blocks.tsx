@@ -5,6 +5,7 @@ import {
 } from "@ui8kit/blocks";
 
 import { useBusinessContent } from "@/hooks/useBlockContent";
+import type { Template } from "@/types";
 
 /**
  * Custom Data for Business
@@ -181,6 +182,140 @@ const SplitBusinessAboutCustom = ({ content: providedContent, blockId }: Content
     />
   );
 };
+
+// Template definitions
+const gridBusinessTemplates: Record<string, Template> = {
+  gridBusinessCardsGallery: {
+    id: "gridBusinessCardsGallery",
+    name: "Business Cards Gallery",
+    category: "business",
+    description: "Grid layout showcasing business services and solutions",
+    component: GridBusinessCardsGalleryCustom,
+    tags: ["business", "grid", "services"],
+    preview: "/previews/business/grid-cards-gallery.jpg"
+  },
+  gridBusinessSolutionsGrid: {
+    id: "gridBusinessSolutionsGrid",
+    name: "Business Solutions Grid",
+    category: "business", 
+    description: "Grid layout for business solutions with stats and images",
+    component: GridBusinessSolutionsGridCustom,
+    tags: ["business", "grid", "solutions"],
+    preview: "/previews/business/grid-solutions.jpg"
+  },
+  gridBusinessPricing: {
+    id: "gridBusinessPricing",
+    name: "Business Pricing",
+    category: "business",
+    description: "Grid layout for pricing plans and packages",
+    component: GridBusinessPricingCustom,
+    tags: ["business", "grid", "pricing"],
+    preview: "/previews/business/grid-pricing.jpg"
+  },
+  gridBusinessPricingYear: {
+    id: "gridBusinessPricingYear",
+    name: "Business Pricing with Yearly Toggle",
+    category: "business",
+    description: "Grid layout for pricing with monthly/yearly toggle",
+    component: GridBusinessPricingYearCustom,
+    tags: ["business", "grid", "pricing", "yearly"],
+    preview: "/previews/business/grid-pricing-year.jpg"
+  },
+  gridBusinessCareer: {
+    id: "gridBusinessCareer",
+    name: "Business Career Openings",
+    category: "business",
+    description: "Grid layout for job openings and career opportunities",
+    component: GridBusinessCareerCustom,
+    tags: ["business", "grid", "career"],
+    preview: "/previews/business/grid-career.jpg"
+  }
+};
+
+const splitBusinessTemplates: Record<string, Template> = {
+  splitBusinessSolutions: {
+    id: "splitBusinessSolutions",
+    name: "Business Solutions Split",
+    category: "business",
+    description: "Split layout for showcasing business solutions with metrics",
+    component: SplitBusinessSolutionsCustom,
+    tags: ["business", "split", "solutions"],
+    preview: "/previews/business/split-solutions.jpg"
+  },
+  splitBusinessMetrics: {
+    id: "splitBusinessMetrics",
+    name: "Business Metrics Split",
+    category: "business",
+    description: "Split layout highlighting business metrics and stats", 
+    component: SplitBusinessMetricsCustom,
+    tags: ["business", "split", "metrics"],
+    preview: "/previews/business/split-metrics.jpg"
+  },
+  splitBusinessTestimonial: {
+    id: "splitBusinessTestimonial",
+    name: "Business Testimonial Split",
+    category: "business",
+    description: "Split layout featuring customer testimonials",
+    component: SplitBusinessTestimonialCustom,
+    tags: ["business", "split", "testimonial"],
+    preview: "/previews/business/split-testimonial.jpg"
+  },
+  splitBusinessFeatures: {
+    id: "splitBusinessFeatures",
+    name: "Business Features Split",
+    category: "business",
+    description: "Split layout showcasing platform features",
+    component: SplitBusinessFeaturesCustom,
+    tags: ["business", "split", "features"],
+    preview: "/previews/business/split-features.jpg"
+  },
+  splitBusinessAbout: {
+    id: "splitBusinessAbout",
+    name: "Business About Split",
+    category: "business",
+    description: "Split layout for company story and values",
+    component: SplitBusinessAboutCustom,
+    tags: ["business", "split", "about"],
+    preview: "/previews/business/split-about.jpg"
+  }
+};
+
+// Component mappings
+const gridBusinessCustom: Record<string, React.ComponentType<ContentProps>> = {
+  gridBusinessCardsGallery: GridBusinessCardsGalleryCustom,
+  gridBusinessSolutionsGrid: GridBusinessSolutionsGridCustom,
+  gridBusinessPricing: GridBusinessPricingCustom,
+  gridBusinessPricingYear: GridBusinessPricingYearCustom,
+  gridBusinessCareer: GridBusinessCareerCustom
+};
+
+const splitBusinessCustom: Record<string, React.ComponentType<ContentProps>> = {
+  splitBusinessSolutions: SplitBusinessSolutionsCustom,
+  splitBusinessMetrics: SplitBusinessMetricsCustom,
+  splitBusinessTestimonial: SplitBusinessTestimonialCustom,
+  splitBusinessFeatures: SplitBusinessFeaturesCustom,
+  splitBusinessAbout: SplitBusinessAboutCustom
+};
+
+// Export all business templates
+export const allBusinessTemplates = [
+  ...Object.keys(gridBusinessTemplates).map(key => {
+    const template = gridBusinessTemplates[key as keyof typeof gridBusinessTemplates];
+    const customComponent = gridBusinessCustom[template.id];
+    return {
+      ...template,
+      component: customComponent || (() => <div>Missing Component: {template.id}</div>)
+    };
+  }),
+  ...Object.keys(splitBusinessTemplates).map(key => {
+    const template = splitBusinessTemplates[key as keyof typeof splitBusinessTemplates];
+    const customComponent = splitBusinessCustom[template.id];
+    return {
+      ...template,
+      component: customComponent || (() => <div>Missing Component: {template.id}</div>)
+    };
+  })
+];
 
 // Export the base components
 export { GridBusiness, SplitBusiness };

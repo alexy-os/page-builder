@@ -1,6 +1,6 @@
 import { allBlogTemplates } from "./blog";
 import { allHeroTemplates } from "./hero";
-// import { allBusinessTemplates } from "./business";
+import { allBusinessTemplates } from "./business";
 import { allCTATemplates } from "./cta";
 import { allFAQTemplates } from "./faq";
 import { allFeaturesTemplates } from "./features";
@@ -16,7 +16,7 @@ import type { Template } from "@/types";
 export const allTemplates: Template[] = [
   ...allHeroTemplates,
   ...allBlogTemplates,
-  // ...allBusinessTemplates,
+  ...allBusinessTemplates,
   ...allCTATemplates,
   ...allFAQTemplates,
   ...allFeaturesTemplates,
