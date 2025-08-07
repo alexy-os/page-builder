@@ -1,13 +1,12 @@
 // Import built-in template objects and examples from @ui8kit/blocks library
 import { 
   CenteredCTA,
-  SplitCTA,
-  centeredCTATemplates,
-  splitCTATemplates
+  SplitCTA
 } from "@ui8kit/blocks";
 
-import React from "react";
+
 import { useCTAContent } from "@/hooks/useBlockContent";
+import type { Template } from "@/types";
 
 /**
  * Custom Data for CTA
@@ -181,39 +180,101 @@ const SplitCTAWithDevicesCustom = ({ content: providedContent, blockId }: Conten
   );
 };
 
-// Component mappings for custom templates
-const centeredCTACustom: Record<string, React.ComponentType<ContentProps>> = {
-  centeredCTASimple: CenteredCTASimpleCustom,
-  centeredCTAWithStats: CenteredCTAWithStatsCustom,
-  centeredCTAWithLogos: CenteredCTAWithLogosCustom,
-  centeredCTAWithBackground: CenteredCTAWithBackgroundCustom,
-  centeredCTAWithFeatures: CenteredCTAWithFeaturesCustom
+
+
+// Create templates manually based on library structure
+const centeredCTATemplates: Record<string, Template> = {
+  simple: {
+    id: "centeredCTASimple",
+    name: "Simple Centered CTA",
+    description: "Clean centered call-to-action with title, description and buttons",
+    component: CenteredCTASimpleCustom,
+    defaultProps: { variant: "simple" as const }
+  },
+  
+  withLogos: {
+    id: "centeredCTAWithLogos",
+    name: "CTA with Brand Logos",
+    description: "Centered CTA featuring trusted brand logos",
+    component: CenteredCTAWithLogosCustom,
+    defaultProps: { variant: "withLogos" as const }
+  },
+
+  withBackground: {
+    id: "centeredCTAWithBackground",
+    name: "CTA with Background",
+    description: "Eye-catching CTA with background image or gradient",
+    component: CenteredCTAWithBackgroundCustom,
+    defaultProps: { variant: "withBackground" as const }
+  },
+
+  withFeatures: {
+    id: "centeredCTAWithFeatures",
+    name: "CTA with Features",
+    description: "CTA highlighting key features with icons",
+    component: CenteredCTAWithFeaturesCustom,
+    defaultProps: { variant: "withFeatures" as const }
+  },
+
+  withStats: {
+    id: "centeredCTAWithStats",
+    name: "CTA with Statistics",
+    description: "Data-driven CTA showcasing impressive statistics",
+    component: CenteredCTAWithStatsCustom,
+    defaultProps: { variant: "withStats" as const }
+  }
 };
 
-const splitCTACustom: Record<string, React.ComponentType<ContentProps>> = {
-  splitCTAWithImage: SplitCTAWithImageCustom,
-  splitCTAWithStats: SplitCTAWithStatsCustom,
-  splitCTAWithBackground: SplitCTAWithBackgroundCustom,
-  splitCTAWithFeatures: SplitCTAWithFeaturesCustom,
-  splitCTAWithDevices: SplitCTAWithDevicesCustom
+const splitCTATemplates: Record<string, Template> = {
+  withImage: {
+    id: "splitCTAWithImage",
+    name: "Split CTA with Image",
+    description: "Split layout CTA with image and content",
+    component: SplitCTAWithImageCustom,
+    defaultProps: { variant: "withImage" as const }
+  },
+  
+  withBackground: {
+    id: "splitCTAWithBackground",
+    name: "Split CTA with Background",
+    description: "Split layout CTA with background image or gradient",
+    component: SplitCTAWithBackgroundCustom,
+    defaultProps: { variant: "withBackground" as const }
+  },
+
+  withStats: {
+    id: "splitCTAWithStats",
+    name: "Split CTA with Statistics",
+    description: "Split layout CTA showcasing key statistics",
+    component: SplitCTAWithStatsCustom,
+    defaultProps: { variant: "withStats" as const }
+  },
+
+  withDevices: {
+    id: "splitCTAWithDevices",
+    name: "Split CTA with Device Stats",
+    description: "Split layout CTA highlighting multi-device support",
+    component: SplitCTAWithDevicesCustom,
+    defaultProps: { variant: "withDevices" as const }
+  },
+
+  withFeatures: {
+    id: "splitCTAWithFeatures",
+    name: "Split CTA with Features",
+    description: "Split layout CTA highlighting key features",
+    component: SplitCTAWithFeaturesCustom,
+    defaultProps: { variant: "withFeatures" as const }
+  }
 };
 
 // Export all CTA templates following hero pattern
 export const allCTATemplates = [
   ...Object.keys(centeredCTATemplates).map(key => {
     const template = centeredCTATemplates[key as keyof typeof centeredCTATemplates];
-    const customComponent = centeredCTACustom[template.id];
-    return {
-      ...template,
-      component: customComponent || (() => <div>Missing Component: {template.id}</div>)
-    };
+    return template;
   }),
   ...Object.keys(splitCTATemplates).map(key => {
     const template = splitCTATemplates[key as keyof typeof splitCTATemplates];
-    const customComponent = splitCTACustom[template.id];
-    return {
-      ...template,
-      component: customComponent || (() => <div>Missing Component: {template.id}</div>)
-    };
+    return template;
   })
 ];
