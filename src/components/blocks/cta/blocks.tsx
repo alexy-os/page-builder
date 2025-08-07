@@ -168,38 +168,26 @@ const centeredCTATemplates: Record<string, Template> = {
   centeredCTANewsletter: {
     id: "centeredCTANewsletter",
     name: "Newsletter CTA",
-    category: "cta",
     description: "Centered CTA for newsletter subscription",
-    component: CenteredCTANewsletterCustom,
-    tags: ["cta", "centered", "newsletter"],
-    preview: "/previews/cta/centered-newsletter.jpg"
+    component: CenteredCTANewsletterCustom
   },
   centeredCTASimple: {
     id: "centeredCTASimple",
     name: "Simple CTA",
-    category: "cta",
     description: "Simple centered call-to-action",
-    component: CenteredCTASimpleCustom,
-    tags: ["cta", "centered", "simple"],
-    preview: "/previews/cta/centered-simple.jpg"
+    component: CenteredCTASimpleCustom
   },
   centeredCTAWithFeatures: {
     id: "centeredCTAWithFeatures",
     name: "CTA with Features",
-    category: "cta",
     description: "Centered CTA showcasing key features",
-    component: CenteredCTAWithFeaturesCustom,
-    tags: ["cta", "centered", "features"],
-    preview: "/previews/cta/centered-features.jpg"
+    component: CenteredCTAWithFeaturesCustom
   },
   centeredCTATestimonial: {
     id: "centeredCTATestimonial",
     name: "CTA with Testimonial",
-    category: "cta",
     description: "Centered CTA with customer testimonial",
-    component: CenteredCTATestimonialCustom,
-    tags: ["cta", "centered", "testimonial"],
-    preview: "/previews/cta/centered-testimonial.jpg"
+    component: CenteredCTATestimonialCustom
   }
 };
 
@@ -207,38 +195,26 @@ const splitCTATemplates: Record<string, Template> = {
   splitCTAAppDownload: {
     id: "splitCTAAppDownload",
     name: "App Download CTA",
-    category: "cta",
     description: "Split layout for mobile app download",
-    component: SplitCTAAppDownloadCustom,
-    tags: ["cta", "split", "app", "download"],
-    preview: "/previews/cta/split-app-download.jpg"
+    component: SplitCTAAppDownloadCustom
   },
   splitCTAContact: {
     id: "splitCTAContact",
     name: "Contact CTA",
-    category: "cta",
     description: "Split layout for contact information",
-    component: SplitCTAContactCustom,
-    tags: ["cta", "split", "contact"],
-    preview: "/previews/cta/split-contact.jpg"
+    component: SplitCTAContactCustom
   },
   splitCTANewsletter: {
     id: "splitCTANewsletter",
     name: "Newsletter Split CTA",
-    category: "cta",
     description: "Split layout for newsletter subscription",
-    component: SplitCTANewsletterCustom,
-    tags: ["cta", "split", "newsletter"],
-    preview: "/previews/cta/split-newsletter.jpg"
+    component: SplitCTANewsletterCustom
   },
   splitCTAWithFeatures: {
     id: "splitCTAWithFeatures",
     name: "Split CTA with Features",
-    category: "cta",
     description: "Split layout showcasing features",
-    component: SplitCTAWithFeaturesCustom,
-    tags: ["cta", "split", "features"],
-    preview: "/previews/cta/split-features.jpg"
+    component: SplitCTAWithFeaturesCustom
   }
 };
 
