@@ -30,7 +30,7 @@ const CenteredCTANewsletterCustom = ({ content: providedContent, blockId }: Cont
   return (
     <CenteredCTA
       content={content}
-      variant="newsletter"
+      variant="simple"
       useContainer={true}
     />
   );
@@ -76,7 +76,7 @@ const CenteredCTATestimonialCustom = ({ content: providedContent, blockId }: Con
   return (
     <CenteredCTA
       content={content}
-      variant="testimonial"
+      variant="withStats"
       useContainer={true}
     />
   );
@@ -93,7 +93,7 @@ const SplitCTAAppDownloadCustom = ({ content: providedContent, blockId }: Conten
   return (
     <SplitCTA
       content={content}
-      variant="appDownload"
+      variant="withDevices"
       leftMedia={false}
       useContainer={true}
     />
@@ -109,7 +109,7 @@ const SplitCTAContactCustom = ({ content: providedContent, blockId }: ContentPro
   return (
     <SplitCTA
       content={content}
-      variant="contact"
+      variant="withImage"
       leftMedia={true}
       useContainer={true}
     />
@@ -125,7 +125,7 @@ const SplitCTANewsletterCustom = ({ content: providedContent, blockId }: Content
   return (
     <SplitCTA
       content={content}
-      variant="newsletter"
+      variant="withBackground"
       leftMedia={false}
       useContainer={true}
       className="bg-gradient-to-r from-primary/50 to-primary/10"

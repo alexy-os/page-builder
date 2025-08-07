@@ -1,5 +1,5 @@
 // CTA content data
-import { ArrowRight, Check, Star, Users, Shield, Zap } from "lucide-react";
+import { ArrowRight, Check, Users, Shield, Zap } from "lucide-react";
 
 export const sampleCTANewsletterData = {
   badge: "Stay Updated",
