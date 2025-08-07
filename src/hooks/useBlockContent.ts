@@ -4,6 +4,7 @@ import { useProjectStore } from '@/store';
 import { blockRegistry } from '@/lib/blockRegistry';
 import { CenteredHeroContent, SplitHeroContent } from '@/components/blocks/hero/content';
 import { SplitBlogContent, GridBlogContent } from '@/components/blocks/blog/content';
+import { GridBusinessContent, SplitBusinessContent } from '@/components/blocks/business/hooks';
 
 // Helper function to clean content from corrupted objects (from JSON serialization)
 const cleanContentFromSession = (content: any): any => {
@@ -213,6 +214,37 @@ export function useBlogContent() {
       return content || GridBlogContent[templateId];
     },
     isContentFromSession: (templateId: string) => {
+      return contentAdapter.hasCustomContent(templateId);
+    }
+  };
+}
+
+/**
+ * Hook specifically for Business block content with type safety
+ * Similar to useHeroContent but for business blocks
+ */
+export function useBusinessContent() {
+  const contentAdapter = useBlockContent();
+  
+  return {
+    ...contentAdapter,
+    // Type-safe methods for Business blocks with session priority
+    getGridBusinessContent: (templateId: keyof typeof GridBusinessContent, blockId?: string) => {
+      // Use the smart content adapter which checks session first
+      const content = contentAdapter.getContent(templateId, blockId);
+      // If nothing found, fallback to static content
+      return content || GridBusinessContent[templateId];
+    },
+    getSplitBusinessContent: (templateId: keyof typeof SplitBusinessContent, blockId?: string) => {
+      // Use the smart content adapter which checks session first  
+      const content = contentAdapter.getContent(templateId, blockId);
+      // If nothing found, fallback to static content
+      return content || SplitBusinessContent[templateId];
+    },
+    
+    // Helper method to check if content is coming from session
+    isContentFromSession: (templateId: string) => {
+      // Check if there's session content for this template
       return contentAdapter.hasCustomContent(templateId);
     }
   };
