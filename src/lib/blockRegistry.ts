@@ -73,7 +73,15 @@ export function initializeBlockRegistry() {
     });
   });
 
+  import('@/components/blocks/business/hooks').then(({ getBusinessContent, isBusinessTemplate, cleanBusinessContent }) => {
+    blockRegistry.register('business', {
+      name: 'Business',
+      getContent: getBusinessContent,
+      isValidTemplate: isBusinessTemplate,
+      cleanContent: cleanBusinessContent
+    });
+  });
+
   // Add more block types here as needed...
-  // import('@/components/blocks/business/hooks').then(...)
   // import('@/components/blocks/cta/hooks').then(...)
 }
