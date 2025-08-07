@@ -166,6 +166,17 @@ function getDefaultContent(templateId: string): any {
     const key = templateId as keyof typeof GridBlogContent;
     return GridBlogContent[key] || null;
   }
+
+  // CTA blocks
+  if (templateId.startsWith('centeredCTA')) {
+    const key = templateId as keyof typeof CenteredCTAContent;
+    return CenteredCTAContent[key] || null;
+  }
+  
+  if (templateId.startsWith('splitCTA')) {
+    const key = templateId as keyof typeof SplitCTAContent;
+    return SplitCTAContent[key] || null;
+  }
   
   return null;
 }
@@ -253,23 +264,26 @@ export function useBusinessContent() {
 
 export function useCTAContent() {
   const contentAdapter = useBlockContent();
+  
   return {
     ...contentAdapter,
+    // Type-safe methods for CTA blocks with session priority
     getCenteredCTAContent: (templateId: keyof typeof CenteredCTAContent, blockId?: string) => {
-      const sessionData = contentAdapter.getContent(templateId, blockId);
-      if (sessionData) {
-        return sessionData;
-      }
-      return CenteredCTAContent[templateId];
+      // Use the smart content adapter which checks session first
+      const content = contentAdapter.getContent(templateId, blockId);
+      // If nothing found, fallback to static content (should rarely happen now)
+      return content || CenteredCTAContent[templateId];
     },
     getSplitCTAContent: (templateId: keyof typeof SplitCTAContent, blockId?: string) => {
-      const sessionData = contentAdapter.getContent(templateId, blockId);
-      if (sessionData) {
-        return sessionData;
-      }
-      return SplitCTAContent[templateId];
+      // Use the smart content adapter which checks session first  
+      const content = contentAdapter.getContent(templateId, blockId);
+      // If nothing found, fallback to static content (should rarely happen now)
+      return content || SplitCTAContent[templateId];
     },
+    
+    // Helper method to check if content is coming from session
     isContentFromSession: (templateId: string) => {
+      // Check if there's session content for this template
       return contentAdapter.hasCustomContent(templateId);
     }
   };

@@ -20,22 +20,7 @@ interface ContentProps {
 
 // ===== CENTERED CTA EXAMPLES =====
 
-// 1. Newsletter CTA
-const CenteredCTANewsletterCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
-  const { getCenteredCTAContent } = useCTAContent();
-  
-  const content = providedContent || getCenteredCTAContent('centeredCTANewsletter', blockId);
-
-  return (
-    <CenteredCTA
-      content={content}
-      variant="simple"
-      useContainer={true}
-    />
-  );
-};
-
-// 2. Simple CTA
+// 1. Simple CTA
 const CenteredCTASimpleCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
   const { getCenteredCTAContent } = useCTAContent();
   
@@ -50,7 +35,53 @@ const CenteredCTASimpleCustom = ({ content: providedContent, blockId }: ContentP
   );
 };
 
-// 3. CTA with features
+// 2. CTA with stats
+const CenteredCTAWithStatsCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+  const { getCenteredCTAContent } = useCTAContent();
+  
+  const content = providedContent || getCenteredCTAContent('centeredCTAWithStats', blockId);
+
+  return (
+    <CenteredCTA
+      content={content}
+      variant="withStats"
+      useContainer={true}
+    />
+  );
+};
+
+// 3. CTA with logos
+const CenteredCTAWithLogosCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+  const { getCenteredCTAContent } = useCTAContent();
+  
+  const content = providedContent || getCenteredCTAContent('centeredCTAWithLogos', blockId);
+
+  return (
+    <CenteredCTA
+      content={content}
+      variant="withLogos"
+      useContainer={true}
+    />
+  );
+};
+
+// 4. CTA with background
+const CenteredCTAWithBackgroundCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+  const { getCenteredCTAContent } = useCTAContent();
+  
+  const content = providedContent || getCenteredCTAContent('centeredCTAWithBackground', blockId);
+
+  return (
+    <CenteredCTA
+      content={content}
+      variant="withBackground"
+      useContainer={true}
+      className="bg-gradient-to-br from-primary/50 to-secondary/50"
+    />
+  );
+};
+
+// 5. CTA with features
 const CenteredCTAWithFeaturesCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
   const { getCenteredCTAContent } = useCTAContent();
   
@@ -66,60 +97,45 @@ const CenteredCTAWithFeaturesCustom = ({ content: providedContent, blockId }: Co
   );
 };
 
-// 4. CTA with testimonial
-const CenteredCTATestimonialCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
-  const { getCenteredCTAContent } = useCTAContent();
-  
-  const content = providedContent || getCenteredCTAContent('centeredCTATestimonial', blockId);
-
-  return (
-    <CenteredCTA
-      content={content}
-      variant="withStats"
-      useContainer={true}
-    />
-  );
-};
-
 // ===== SPLIT CTA EXAMPLES =====
 
-// 1. App download split CTA
-const SplitCTAAppDownloadCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+// 1. Split CTA with image
+const SplitCTAWithImageCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
   const { getSplitCTAContent } = useCTAContent();
   
-  const content = providedContent || getSplitCTAContent('splitCTAAppDownload', blockId);
+  const content = providedContent || getSplitCTAContent('splitCTAWithImage', blockId);
 
   return (
     <SplitCTA
       content={content}
-      variant="withDevices"
+      variant="withImage"
       leftMedia={false}
       useContainer={true}
     />
   );
 };
 
-// 2. Contact split CTA
-const SplitCTAContactCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+// 2. Split CTA with stats
+const SplitCTAWithStatsCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
   const { getSplitCTAContent } = useCTAContent();
   
-  const content = providedContent || getSplitCTAContent('splitCTAContact', blockId);
+  const content = providedContent || getSplitCTAContent('splitCTAWithStats', blockId);
 
   return (
     <SplitCTA
       content={content}
-      variant="withImage"
+      variant="withStats"
       leftMedia={true}
       useContainer={true}
     />
   );
 };
 
-// 3. Newsletter split CTA
-const SplitCTANewsletterCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+// 3. Split CTA with background
+const SplitCTAWithBackgroundCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
   const { getSplitCTAContent } = useCTAContent();
   
-  const content = providedContent || getSplitCTAContent('splitCTANewsletter', blockId);
+  const content = providedContent || getSplitCTAContent('splitCTAWithBackground', blockId);
 
   return (
     <SplitCTA
@@ -148,73 +164,103 @@ const SplitCTAWithFeaturesCustom = ({ content: providedContent, blockId }: Conte
   );
 };
 
+// 5. Split CTA with devices
+const SplitCTAWithDevicesCustom = ({ content: providedContent, blockId }: ContentProps = {}) => {
+  const { getSplitCTAContent } = useCTAContent();
+  
+  const content = providedContent || getSplitCTAContent('splitCTAWithDevices', blockId);
+
+  return (
+    <SplitCTA
+      content={content}
+      variant="withDevices"
+      leftMedia={false}
+      useContainer={true}
+    />
+  );
+};
+
 // Component mappings for custom templates
 const centeredCTACustom: Record<string, React.ComponentType<ContentProps>> = {
-  centeredCTANewsletter: CenteredCTANewsletterCustom,
   centeredCTASimple: CenteredCTASimpleCustom,
-  centeredCTAWithFeatures: CenteredCTAWithFeaturesCustom,
-  centeredCTATestimonial: CenteredCTATestimonialCustom
+  centeredCTAWithStats: CenteredCTAWithStatsCustom,
+  centeredCTAWithLogos: CenteredCTAWithLogosCustom,
+  centeredCTAWithBackground: CenteredCTAWithBackgroundCustom,
+  centeredCTAWithFeatures: CenteredCTAWithFeaturesCustom
 };
 
 const splitCTACustom: Record<string, React.ComponentType<ContentProps>> = {
-  splitCTAAppDownload: SplitCTAAppDownloadCustom,
-  splitCTAContact: SplitCTAContactCustom,
-  splitCTANewsletter: SplitCTANewsletterCustom,
-  splitCTAWithFeatures: SplitCTAWithFeaturesCustom
+  splitCTAWithImage: SplitCTAWithImageCustom,
+  splitCTAWithStats: SplitCTAWithStatsCustom,
+  splitCTAWithBackground: SplitCTAWithBackgroundCustom,
+  splitCTAWithFeatures: SplitCTAWithFeaturesCustom,
+  splitCTAWithDevices: SplitCTAWithDevicesCustom
 };
 
 // Define our own templates since we can't import them from @ui8kit/blocks
 const centeredCTATemplates: Record<string, Template> = {
-  centeredCTANewsletter: {
-    id: "centeredCTANewsletter",
-    name: "Newsletter CTA",
-    description: "Centered CTA for newsletter subscription",
-    component: CenteredCTANewsletterCustom
-  },
   centeredCTASimple: {
     id: "centeredCTASimple",
     name: "Simple CTA",
     description: "Simple centered call-to-action",
     component: CenteredCTASimpleCustom
   },
+  centeredCTAWithStats: {
+    id: "centeredCTAWithStats",
+    name: "CTA with Stats",
+    description: "Centered CTA with statistics",
+    component: CenteredCTAWithStatsCustom
+  },
+  centeredCTAWithLogos: {
+    id: "centeredCTAWithLogos",
+    name: "CTA with Logos",
+    description: "Centered CTA with company logos",
+    component: CenteredCTAWithLogosCustom
+  },
+  centeredCTAWithBackground: {
+    id: "centeredCTAWithBackground",
+    name: "CTA with Background",
+    description: "Centered CTA with background image",
+    component: CenteredCTAWithBackgroundCustom
+  },
   centeredCTAWithFeatures: {
     id: "centeredCTAWithFeatures",
     name: "CTA with Features",
     description: "Centered CTA showcasing key features",
     component: CenteredCTAWithFeaturesCustom
-  },
-  centeredCTATestimonial: {
-    id: "centeredCTATestimonial",
-    name: "CTA with Testimonial",
-    description: "Centered CTA with customer testimonial",
-    component: CenteredCTATestimonialCustom
   }
 };
 
 const splitCTATemplates: Record<string, Template> = {
-  splitCTAAppDownload: {
-    id: "splitCTAAppDownload",
-    name: "App Download CTA",
-    description: "Split layout for mobile app download",
-    component: SplitCTAAppDownloadCustom
+  splitCTAWithImage: {
+    id: "splitCTAWithImage",
+    name: "Split CTA with Image",
+    description: "Split layout CTA with side image",
+    component: SplitCTAWithImageCustom
   },
-  splitCTAContact: {
-    id: "splitCTAContact",
-    name: "Contact CTA",
-    description: "Split layout for contact information",
-    component: SplitCTAContactCustom
+  splitCTAWithStats: {
+    id: "splitCTAWithStats",
+    name: "Split CTA with Stats",
+    description: "Split layout CTA with statistics",
+    component: SplitCTAWithStatsCustom
   },
-  splitCTANewsletter: {
-    id: "splitCTANewsletter",
-    name: "Newsletter Split CTA",
-    description: "Split layout for newsletter subscription",
-    component: SplitCTANewsletterCustom
+  splitCTAWithBackground: {
+    id: "splitCTAWithBackground",
+    name: "Split CTA with Background",
+    description: "Split layout CTA with background",
+    component: SplitCTAWithBackgroundCustom
   },
   splitCTAWithFeatures: {
     id: "splitCTAWithFeatures",
     name: "Split CTA with Features",
     description: "Split layout showcasing features",
     component: SplitCTAWithFeaturesCustom
+  },
+  splitCTAWithDevices: {
+    id: "splitCTAWithDevices",
+    name: "Split CTA with Devices",
+    description: "Split layout for app download with devices",
+    component: SplitCTAWithDevicesCustom
   }
 };
 

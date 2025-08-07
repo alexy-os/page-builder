@@ -1,26 +1,32 @@
 // CTA-specific content management hooks
 import {
-  sampleCTANewsletterData,
   sampleCTASimpleData,
+  sampleCTAWithStatsData,
+  sampleCTAWithLogosData,
+  sampleCTAWithBackgroundData,
   sampleCTAWithFeaturesData,
-  sampleCTATestimonialData,
-  sampleCTAAppDownloadData,
-  sampleCTAContactData
+  sampleSplitCTAWithImageData,
+  sampleSplitCTAWithStatsData,
+  sampleSplitCTAWithBackgroundData,
+  sampleSplitCTAWithFeaturesData,
+  sampleSplitCTAWithDevicesData
 } from './content';
 
 // CTA content mapping
 export const CenteredCTAContent = {
-  centeredCTANewsletter: sampleCTANewsletterData,
   centeredCTASimple: sampleCTASimpleData,
-  centeredCTAWithFeatures: sampleCTAWithFeaturesData,
-  centeredCTATestimonial: sampleCTATestimonialData
+  centeredCTAWithStats: sampleCTAWithStatsData,
+  centeredCTAWithLogos: sampleCTAWithLogosData,
+  centeredCTAWithBackground: sampleCTAWithBackgroundData,
+  centeredCTAWithFeatures: sampleCTAWithFeaturesData
 };
 
 export const SplitCTAContent = {
-  splitCTAAppDownload: sampleCTAAppDownloadData,
-  splitCTAContact: sampleCTAContactData,
-  splitCTANewsletter: sampleCTANewsletterData,
-  splitCTAWithFeatures: sampleCTAWithFeaturesData
+  splitCTAWithImage: sampleSplitCTAWithImageData,
+  splitCTAWithStats: sampleSplitCTAWithStatsData,
+  splitCTAWithBackground: sampleSplitCTAWithBackgroundData,
+  splitCTAWithFeatures: sampleSplitCTAWithFeaturesData,
+  splitCTAWithDevices: sampleSplitCTAWithDevicesData
 };
 
 export interface CTAContentHooks {
