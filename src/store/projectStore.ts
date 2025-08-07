@@ -203,20 +203,6 @@ export const useProjectStore = create<ProjectStore>()(
         }
         return success;
       },
-      
-      // Migration
-      forceUnifiedNamingMigration: () => {
-        const success = storage.forceUnifiedNamingMigration();
-        if (success) {
-          const project = storage.getProject();
-          set({ project });
-        }
-        return success;
-      },
-      
-      isUnifiedFormat: () => {
-        return storage.isUnifiedFormat();
-      },
     }),
     {
       name: 'project-store',

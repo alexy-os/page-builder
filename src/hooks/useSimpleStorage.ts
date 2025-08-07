@@ -13,7 +13,6 @@ interface StorageStats {
   storageType: string;
   lastSync: string;
   memoryUsage: number;
-  isUnifiedFormat: boolean;
 }
 
 export function useSimpleStorage() {
@@ -28,15 +27,14 @@ export function useSimpleStorage() {
     customThemesCount: 0,
     storageType: 'SessionStorage',
     lastSync: '',
-    memoryUsage: 0,
-    isUnifiedFormat: false,
+    memoryUsage: 0
   });
 
   // Update statistics (simple and fast)
   const updateStats = useCallback(() => {
     try {
       const newStats = storage.getStats();
-      setStats(newStats);
+      setStats(newStats as StorageStats);
     } catch (error) {
       console.error('Error updating storage stats:', error);
     }
@@ -88,29 +86,6 @@ export function useSimpleStorage() {
     }
   }, [storage, updateStats]);
 
-  // Migration utilities
-  const forceUnifiedNamingMigration = useCallback(() => {
-    try {
-      const result = storage.forceUnifiedNamingMigration();
-      if (result) {
-        updateStats();
-      }
-      return result;
-    } catch (error) {
-      console.error('Error running migration:', error);
-      return false;
-    }
-  }, [storage, updateStats]);
-
-  const isUnifiedFormat = useCallback(() => {
-    try {
-      return storage.isUnifiedFormat();
-    } catch (error) {
-      console.error('Error checking unified format:', error);
-      return false;
-    }
-  }, [storage]);
-
   return {
     // State
     stats,
@@ -123,10 +98,6 @@ export function useSimpleStorage() {
     fullReset,
     exportProject,
     importProject,
-    updateStats,
-    
-    // Migration utilities
-    forceUnifiedNamingMigration,
-    isUnifiedFormat,
+    updateStats
   };
 } 
