@@ -32,8 +32,8 @@ export function useCollections() {
 
   // Save a block to a collection
   const saveBlockToCollection = (templateId: string, templateName: string, templateDescription: string, collectionId: string): SavedBlock => {
-    const timestamp = Date.now();
-    const blockId = `block-${templateId}-${timestamp}`;
+    // Use template ID as the block ID without prefixes or timestamps
+    const blockId = templateId;
     
     // Create saved block record
     const savedBlock: SavedBlock = {
@@ -50,8 +50,8 @@ export function useCollections() {
     // **NEW**: Automatically save content from intermediate layer to data array
     const content = getContentFromIntermediateLayer(templateId);
     if (content) {
-      const dataBlockId = `${templateId}_${timestamp}`;
-      storage.updateBlockData(dataBlockId, templateId, content);
+      // Use template ID directly for data content
+      storage.updateBlockData(templateId, templateId, content);
     }
 
     // Add block ID to collection
@@ -130,18 +130,12 @@ export function useCollections() {
       if (!isUsedInOtherCollections) {
         storage.deleteBlock(blockId);
         
-        // Also delete corresponding content data
+        // Also delete corresponding content data using template ID directly
         const savedBlocks = storage.getSavedBlocks();
         const savedBlock = savedBlocks.find(block => block.id === blockId);
         if (savedBlock) {
-          const parts = blockId.split('-');
-          if (parts.length >= 3) {
-            const templateId = parts[1];
-            const timestamp = parts[2];
-            const dataBlockId = `${templateId}_${timestamp}`;
-            
-            storage.deleteBlockData(dataBlockId, templateId);
-          }
+          // Use templateId directly since blockId now equals templateId
+          storage.deleteBlockData(savedBlock.templateId, savedBlock.templateId);
         }
       }
     }
@@ -199,7 +193,12 @@ export function useCollections() {
       
       if (data.savedBlocks && Array.isArray(data.savedBlocks)) {
         data.savedBlocks.forEach((block: SavedBlock) => {
-          storage.saveBlock(block);
+          // Ensure block uses new unified format (templateId as ID)
+          const normalizedBlock = {
+            ...block,
+            id: block.templateId
+          };
+          storage.saveBlock(normalizedBlock);
         });
       }
 

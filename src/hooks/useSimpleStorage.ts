@@ -5,6 +5,7 @@ import { SimpleStorage } from '@/lib/storage/simpleStorage';
 interface StorageStats {
   projectName: string;
   blocksCount: number;
+  dataCount: number;
   collectionsCount: number;
   savedBlocksCount: number;
   favoritesCount: number;
@@ -12,6 +13,7 @@ interface StorageStats {
   storageType: string;
   lastSync: string;
   memoryUsage: number;
+  isUnifiedFormat: boolean;
 }
 
 export function useSimpleStorage() {
@@ -19,6 +21,7 @@ export function useSimpleStorage() {
   const [stats, setStats] = useState<StorageStats>({
     projectName: 'No Project',
     blocksCount: 0,
+    dataCount: 0,
     collectionsCount: 0,
     savedBlocksCount: 0,
     favoritesCount: 0,
@@ -26,6 +29,7 @@ export function useSimpleStorage() {
     storageType: 'SessionStorage',
     lastSync: '',
     memoryUsage: 0,
+    isUnifiedFormat: false,
   });
 
   // Update statistics (simple and fast)
@@ -84,6 +88,29 @@ export function useSimpleStorage() {
     }
   }, [storage, updateStats]);
 
+  // Migration utilities
+  const forceUnifiedNamingMigration = useCallback(() => {
+    try {
+      const result = storage.forceUnifiedNamingMigration();
+      if (result) {
+        updateStats();
+      }
+      return result;
+    } catch (error) {
+      console.error('Error running migration:', error);
+      return false;
+    }
+  }, [storage, updateStats]);
+
+  const isUnifiedFormat = useCallback(() => {
+    try {
+      return storage.isUnifiedFormat();
+    } catch (error) {
+      console.error('Error checking unified format:', error);
+      return false;
+    }
+  }, [storage]);
+
   return {
     // State
     stats,
@@ -97,5 +124,9 @@ export function useSimpleStorage() {
     exportProject,
     importProject,
     updateStats,
+    
+    // Migration utilities
+    forceUnifiedNamingMigration,
+    isUnifiedFormat,
   };
 } 

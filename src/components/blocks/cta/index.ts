@@ -1,0 +1,1 @@
+export { allCTATemplates } from './blocks';

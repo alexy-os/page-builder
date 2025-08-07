@@ -4,6 +4,8 @@ import { useProjectStore } from '@/store';
 import { blockRegistry } from '@/lib/blockRegistry';
 import { CenteredHeroContent, SplitHeroContent } from '@/components/blocks/hero/content';
 import { SplitBlogContent, GridBlogContent } from '@/components/blocks/blog/content';
+import { GridBusinessContent, SplitBusinessContent } from '@/components/blocks/business/content';
+import { CenteredCTAContent, SplitCTAContent } from '@/components/blocks/cta/content';
 
 // Helper function to clean content from corrupted objects (from JSON serialization)
 const cleanContentFromSession = (content: any): any => {
@@ -70,13 +72,10 @@ export function useBlockContent(): ContentAdapter {
 
     // PRIORITY 2: If blockId is provided, try to get specific custom content
     if (blockId) {
-      // For saved blocks, extract the type from templateId
-      const blockType = extractBlockTypeFromTemplateId(templateId);
-      if (blockType) {
-        const customContent = getBlockDataById(blockId, blockType);
-        if (customContent?.content) {
-          return customContent.content;
-        }
+      // Since blockId now equals templateId, use it directly
+      const customContent = getBlockDataById(blockId, blockId);
+      if (customContent?.content) {
+        return customContent.content;
       }
       
       // Try alternative method using savedBlock ID format
@@ -167,6 +166,17 @@ function getDefaultContent(templateId: string): any {
     const key = templateId as keyof typeof GridBlogContent;
     return GridBlogContent[key] || null;
   }
+
+  // CTA blocks
+  /*if (templateId.startsWith('centeredCTA')) { 
+    const key = templateId as keyof typeof CenteredCTAContent;
+    return CenteredCTAContent[key] || null;
+  }
+  
+  if (templateId.startsWith('splitCTA')) {
+    const key = templateId as keyof typeof SplitCTAContent;
+    return SplitCTAContent[key] || null;
+  }*/
   
   return null;
 }
@@ -216,6 +226,64 @@ export function useBlogContent() {
       return content || GridBlogContent[templateId];
     },
     isContentFromSession: (templateId: string) => {
+      return contentAdapter.hasCustomContent(templateId);
+    }
+  };
+}
+
+/**
+ * Hook specifically for Business block content with type safety
+ * Similar to useHeroContent but for business blocks
+ */
+export function useBusinessContent() {
+  const contentAdapter = useBlockContent();
+  
+  return {
+    ...contentAdapter,
+    // Type-safe methods for Business blocks with session priority
+    getGridBusinessContent: (templateId: keyof typeof GridBusinessContent, blockId?: string) => {
+      // Use the smart content adapter which checks session first
+      const content = contentAdapter.getContent(templateId, blockId);
+      // If nothing found, fallback to static content
+      return content || GridBusinessContent[templateId];
+    },
+    getSplitBusinessContent: (templateId: keyof typeof SplitBusinessContent, blockId?: string) => {
+      // Use the smart content adapter which checks session first  
+      const content = contentAdapter.getContent(templateId, blockId);
+      // If nothing found, fallback to static content
+      return content || SplitBusinessContent[templateId];
+    },
+    
+    // Helper method to check if content is coming from session
+    isContentFromSession: (templateId: string) => {
+      // Check if there's session content for this template
+      return contentAdapter.hasCustomContent(templateId);
+    }
+  };
+}
+
+export function useCTAContent() {
+  const contentAdapter = useBlockContent();
+  
+  return {
+    ...contentAdapter,
+      // Type-safe methods for CTA blocks with session priority
+  getCenteredCTAContent: (templateId: keyof typeof CenteredCTAContent, blockId?: string) => {
+    // Use the smart content adapter which checks session first
+    const content = contentAdapter.getContent(String(templateId), blockId);
+    // If nothing found, fallback to static content (should rarely happen now)
+    return content || CenteredCTAContent[templateId];
+  },
+  getSplitCTAContent: (templateId: keyof typeof SplitCTAContent, blockId?: string) => {
+    // Use the smart content adapter which checks session first  
+    const content = contentAdapter.getContent(String(templateId), blockId);
+    // If nothing found, fallback to static content (should rarely happen now)
+    return content || SplitCTAContent[templateId];
+  },
+    
+    // Helper method to check if content is coming from session
+    isContentFromSession: (templateId: string) => {
+      // Check if there's session content for this template
       return contentAdapter.hasCustomContent(templateId);
     }
   };
